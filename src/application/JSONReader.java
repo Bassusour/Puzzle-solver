@@ -24,7 +24,7 @@ public class JSONReader {
 				JSONArray cornerArray = (JSONArray) piece.get("corners");
 				Iterator<JSONObject> cornerIterator = cornerArray.iterator();
 				while (cornerIterator.hasNext()) {
-					JSONObject coords = (JSONObject) cornerIterator.next();
+					JSONObject coords = cornerIterator.next();
 					JSONObject coord = (JSONObject) coords.get("coord");
 					System.out.println("X:" + (double) coord.get("x"));
 					System.out.println("Y:" + (double) coord.get("y"));
