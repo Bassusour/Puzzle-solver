@@ -7,6 +7,8 @@ public class Puzzle extends Polygon {
 	private String name;
 	private long noOfPieces;
 	private Piece[] pieces;
+	//private double width;
+	//private double height;
 	
 	public String getName() {
 		return name;
@@ -26,7 +28,27 @@ public class Puzzle extends Polygon {
 	}
 	
 	public void addPieceToArray(Piece piece) {
-		pieces[(int) piece.getNumber() - 1] = piece;
+		pieces[(int) piece.getNumber()] = piece;
 	}
+	
+	public Piece getPiece(int index) {
+		return pieces[index];
+	}
+	/*
+	public void setWidth(double width) {
+		this.width = width;
+	}
+	
+	public void setHeight(double height) {
+		this.height = height;
+	}
+	
+	public double getWidth() {
+		return width;
+	}
+	
+	public double getHeight() {
+		return height;
+	}*/
 
 }
