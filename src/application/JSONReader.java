@@ -58,13 +58,14 @@ public class JSONReader {
 				JSONArray cornerArray = (JSONArray) pieces.get("corners");
 				Iterator<JSONObject> cornerIterator = cornerArray.iterator();
 				while (cornerIterator.hasNext()) {
+
 					JSONObject corners = (JSONObject) cornerIterator.next();
 					JSONObject coordinate = (JSONObject) corners.get("coord");
 					
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
 					piece.getPoints().addAll(x, y);
-					
+				
 				}
 				
 				puzzle.addPieceToArray(piece);
