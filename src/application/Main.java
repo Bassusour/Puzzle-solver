@@ -40,7 +40,6 @@ public class Main extends Application {
 		
 		Pane pane = new Pane();
 		
-		
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			Piece piece = puzzle.getPiece(i);
 			initializePiece(piece, pane, i);
