@@ -31,6 +31,8 @@ public class Main extends Application {
 	double originalY;
 	double originalTX;
 	double originalTY;
+	double deltaTX;
+	double deltaTY;
 
 	
 	@Override
@@ -44,11 +46,12 @@ public class Main extends Application {
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			Piece piece = puzzle.getPiece(i);
 			initializePiece(piece, pane, i);
+			System.out.println(piece.getPoints().toString());
 		}
 		
-		Piece p1 = puzzle.getPiece(0);
-		Piece p2 = puzzle.getPiece(1);
-		unionPieces(p1, p2, pane);
+//		Piece p1 = puzzle.getPiece(0);
+//		Piece p2 = puzzle.getPiece(1);
+//		unionPieces(p1, p2, pane);
 		
 		Scene scene = new Scene(pane, width, height);
 		stage.setScene(scene);
@@ -79,10 +82,10 @@ public class Main extends Application {
 		}
 
 		// creating new Polygon with these points
-		Piece newPolygon = new Piece();
-		newPolygon.getPoints().addAll(points);
-		
-		initializePiece(newPolygon, pane, 3);
+//		Piece newPolygon = new Piece();
+//		newPolygon.getPoints().addAll(points);
+//		
+//		initializePiece(newPolygon, pane, 3);
 	}
 	
 	private void initializePiece(Piece piece, Pane pane, int i) {
@@ -115,12 +118,10 @@ public class Main extends Application {
 	        	if(event.getButton() == MouseButton.PRIMARY) {
 	        		double deltaX = event.getSceneX() - originalX;
 		            double deltaY = event.getSceneY() - originalY;
-		            double deltaTX = originalTX + deltaX;
-		            double deltaTY = originalTY + deltaY;
+		            deltaTX = originalTX + deltaX;
+		            deltaTY = originalTY + deltaY;
 		            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
 		            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
-		            piece.updatePoints(deltaX, deltaY);
-		            System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
 	        	}
 	        	
 	        	if (event.getButton() == MouseButton.SECONDARY) {
@@ -131,13 +132,23 @@ public class Main extends Application {
 	            
 	        }
 	    });
-	    if(i == 0) {
-	    	piece.setLayoutX(50);
-	    	piece.setLayoutY(50);
-	    } else if(i == 1) {
-	    	piece.setLayoutX(211); //212
-	    	piece.setLayoutY(50);
-	    }
+	    
+	    piece.setOnMouseReleased(new EventHandler<MouseEvent>() {
+	    	public void handle(MouseEvent event) {
+	        	if(event.getButton() == MouseButton.PRIMARY) {
+	        		piece.updatePoints(deltaTX, deltaTY);
+		            System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
+	        	}
+
+	        }
+	    });
+//	    if(i == 0) {
+//	    	piece.setLayoutX(50);
+//	    	piece.setLayoutY(50);
+//	    } else if(i == 1) {
+//	    	piece.setLayoutX(211); //212
+//	    	piece.setLayoutY(50);
+//	    }
 	    
 	    pane.getChildren().add(piece);
 	}

@@ -53,12 +53,8 @@ public class Piece extends Polygon {
 	}
 	
 	public void updatePoints( double translatex, double translatey ) {
-		for (Point2D point : this.points) {
-			double x = point.getX();
-			double y = point.getY();
-			point.setLocation(x+translatex, y+translatey);
-//			System.out.println("y after: " + point.getX());
-//			System.out.println("x after: " + point.getY());
+		for (int i = 0; i < this.getPoints().size(); i += 2) {
+			this.points.get(i/2).setLocation(this.getPoints().get(i)+translatex, this.getPoints().get(i+1)+translatey);
 		}
 	}
 
