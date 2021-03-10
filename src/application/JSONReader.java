@@ -65,7 +65,6 @@ public class JSONReader {
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
 					piece.getPoints().addAll(x, y);
-				
 				}
 				
 				puzzle.addPieceToArray(piece);

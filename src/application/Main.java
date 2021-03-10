@@ -119,7 +119,9 @@ public class Main extends Application {
 	    	piece.setLayoutX(211); //212
 	    	piece.setLayoutY(50);
 	    }
+	    piece.updatePoints(); 
 	    
+	    System.out.println(piece.getPoints());
 	    pane.getChildren().add(piece);
 	}
 	
