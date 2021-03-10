@@ -6,18 +6,19 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 
@@ -91,26 +92,44 @@ public class Main extends Application {
 		
 		piece.setCursor(Cursor.HAND);
 		
-	    piece.setOnMousePressed(new EventHandler<MouseEvent>() {
+		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent event) {
-	            originalX = event.getSceneX();
-	            originalY = event.getSceneY();
-	            originalTX = ((Polygon) event.getSource()).getTranslateX();
-	            originalTY = ((Polygon) event.getSource()).getTranslateY();
+	            if(event.getButton() == MouseButton.PRIMARY) {
+	            	originalX = event.getSceneX();
+		            originalY = event.getSceneY();
+		            originalTX = ((Polygon) event.getSource()).getTranslateX();
+		            originalTY = ((Polygon) event.getSource()).getTranslateY();
+	            }
+	            
+	            if(event.getButton() == MouseButton.SECONDARY) {
+	            	originalX = event.getSceneX();
+		            originalY = event.getSceneY();
+	            }
+	        	
 	        }
 	    });
 
 	    piece.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent event) {
-	        	//System.out.println(event.getSceneX() + " " + event.getSceneY());
-	            double deltaX = event.getSceneX() - originalX;
-	            double deltaY = event.getSceneY() - originalY;
-	            double deltaTX = originalTX + deltaX;
-	            double deltaTY = originalTY + deltaY;
-	            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
-	            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
+	        	if(event.getButton() == MouseButton.PRIMARY) {
+	        		double deltaX = event.getSceneX() - originalX;
+		            double deltaY = event.getSceneY() - originalY;
+		            double deltaTX = originalTX + deltaX;
+		            double deltaTY = originalTY + deltaY;
+		            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
+		            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
+		            piece.updatePoints(deltaX, deltaY);
+		            System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
+	        	}
+	        	
+	        	if (event.getButton() == MouseButton.SECONDARY) {
+	        		double deltaY = event.getSceneY() - originalY;
+	        		piece.setRotate(piece.getRotate()+deltaY);
+	        		originalY = event.getSceneY();
+	        	}
+	            
 	        }
 	    });
 	    if(i == 0) {
