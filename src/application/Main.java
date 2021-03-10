@@ -49,7 +49,7 @@ public class Main extends Application {
 		
 		Piece p1 = puzzle.getPiece(0);
 		Piece p2 = puzzle.getPiece(1);
-		unionPieces(p1, p2, pane);
+		//unionPieces(p1, p2, pane);
 		
 		Scene scene = new Scene(pane, width, height);
 		stage.setScene(scene);
@@ -121,22 +121,40 @@ public class Main extends Application {
 		            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
 		            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
 		            piece.updatePoints(deltaX, deltaY);
-		            System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
+		            //System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
 	        	}
 	        	
 	        	if (event.getButton() == MouseButton.SECONDARY) {
 	        		double deltaY = event.getSceneY() - originalY;
-	        		piece.setRotate(piece.getRotate()+deltaY);
+	        		piece.setRotate(piece.getRotate() + deltaY);
 	        		originalY = event.getSceneY();
+	        		
+	        		System.out.println(Math.abs(piece.getRotate()) % 360);
+	        		
 	        	}
 	            
 	        }
 	    });
-	    if(i == 0) {
+	    
+	    piece.setOnMouseReleased(new EventHandler<MouseEvent>() {
+	    	@Override
+	    	public void handle(MouseEvent event) {
+	    		if (event.getButton() == MouseButton.SECONDARY) {
+	    			
+	    			double rotation = Math.abs(piece.getRotate()) % 360;
+	    			if (rotation < 5 || rotation > 355) {
+	    				piece.setRotate(0);
+	    			}
+	    			
+	    		}
+	    	}
+	    });
+	    
+	    if (i == 0) {
 	    	piece.setLayoutX(50);
 	    	piece.setLayoutY(50);
-	    } else if(i == 1) {
-	    	piece.setLayoutX(211); //212
+	    } else if (i == 1) {
+	    	piece.setLayoutX(400); //211
 	    	piece.setLayoutY(50);
 	    }
 	    
