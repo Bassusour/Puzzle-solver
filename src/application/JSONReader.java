@@ -67,7 +67,7 @@ public class JSONReader {
 					piece.getPoints().addAll(x, y);
 				
 				}
-				
+				piece.setPoints(piece.getPoints());
 				puzzle.addPieceToArray(piece);
 			}
 		} catch (IOException | ParseException e) {
