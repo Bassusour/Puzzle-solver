@@ -5,6 +5,7 @@ import javafx.scene.Group;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -52,14 +53,13 @@ public class Main extends Application {
 		            originalX = event.getSceneX();
 		            originalY = event.getSceneY();
 		            originalTX = ((Polygon) event.getSource()).getTranslateX();
-		            originalTY = ((Polygon) event.getSource()).getTranslateY();
+		            originalTY = ((Polygon) event.getSource()).getTranslateY();     
 		        }
 		    });
 
 		    piece.setOnMouseDragged(new EventHandler<MouseEvent>() {
 		        @Override
 		        public void handle(MouseEvent event) {
-		        	System.out.println(event.getSceneX() + " " + event.getSceneY());
 		            double deltaX = event.getSceneX() - originalX;
 		            double deltaY = event.getSceneY() - originalY;
 		            double deltaTX = originalTX + deltaX;
@@ -68,6 +68,14 @@ public class Main extends Application {
 		            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
 		        }
 		    });
+		    
+		    piece.setOnKeyPressed(e -> {
+            	if (e.getCode() == KeyCode.R) {
+            		System.out.println("ROTATE");
+            	}
+            });
+		    
+		    piece.setOnKeyPressed(arg0);
 			
 			pieces.getChildren().add(piece);
 			
