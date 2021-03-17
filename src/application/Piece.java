@@ -57,5 +57,13 @@ public class Piece extends Polygon {
 			this.points.get(i/2).setLocation(this.getPoints().get(i)+translatex, this.getPoints().get(i+1)+translatey);
 		}
 	}
+	
+	public void updatePointsRotate(double degrees) {
+		for(int i = 0; i < this.getPoints().size(); i += 2) {
+			double newX = (this.getPoints().get(i) + this.getTranslateX() - this.getCenterX()) * Math.cos(Math.toRadians(degrees)) - (this.getPoints().get(i+1) + this.getTranslateY() - this.getCenterY()) * Math.sin(Math.toRadians(degrees)) + this.getCenterX();
+			double newY = (this.getPoints().get(i) + this.getTranslateX() - this.getCenterX()) * Math.sin(Math.toRadians(degrees)) + (this.getPoints().get(i+1) + this.getTranslateY() - this.getCenterY()) * Math.cos(Math.toRadians(degrees)) + this.getCenterY();
+			this.points.get(i/2).setLocation(newX, newY);
+		}
+	}
 
 }

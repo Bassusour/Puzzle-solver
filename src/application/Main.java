@@ -105,6 +105,11 @@ public class Main extends Application {
 	            }
 	            
 	            if(event.getButton() == MouseButton.SECONDARY) {
+	            	String msg =
+	        		          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
+	        		          "(sceneX: "  + event.getSceneX() + ", sceneY: "  + event.getSceneY()  + ") -- " +
+	        		          "(screenX: " + event.getScreenX()+ ", screenY: " + event.getScreenY() + ")";
+	            	System.out.println(msg);
 	            	originalX = event.getSceneX();
 		            originalY = event.getSceneY();
 	            }
@@ -125,6 +130,11 @@ public class Main extends Application {
 	        	}
 	        	
 	        	if (event.getButton() == MouseButton.SECONDARY) {
+	        		String msg =
+	        		          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
+	        		          "(sceneX: "  + event.getSceneX() + ", sceneY: "  + event.getSceneY()  + ") -- " +
+	        		          "(screenX: " + event.getScreenX()+ ", screenY: " + event.getScreenY() + ")";
+	        		System.out.println(msg);
 	        		double deltaY = event.getSceneY() - originalY;
 	        		piece.setRotate(piece.getRotate()+deltaY);
 	        		originalY = event.getSceneY();
@@ -137,7 +147,9 @@ public class Main extends Application {
 	    	public void handle(MouseEvent event) {
 	        	if(event.getButton() == MouseButton.PRIMARY) {
 	        		piece.updatePoints(deltaTX, deltaTY);
-		            System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
+	        	}
+	        	if(event.getButton() == MouseButton.SECONDARY) {
+	        		piece.updatePointsRotate(piece.getRotate());
 	        	}
 
 	        }
