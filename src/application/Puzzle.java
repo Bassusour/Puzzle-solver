@@ -18,6 +18,10 @@ public class Puzzle extends Polygon {
 		this.name = name;
 	}
 	
+	public Piece[] getPieces() {
+		return pieces;
+	}
+	
 	public long getNoOfPieces() {
 		return noOfPieces;
 	}

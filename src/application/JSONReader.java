@@ -48,6 +48,9 @@ public class JSONReader {
 			JSONArray pieceArray = (JSONArray) jsonObject.get("pieces");
 			Iterator<JSONObject> pieceIterator = pieceArray.iterator();
 			
+			// Used for hard coded initial position for each piece
+			int i = 0;
+			
 			while (pieceIterator.hasNext()) {
 				JSONObject pieces = pieceIterator.next();
 
@@ -64,11 +67,19 @@ public class JSONReader {
 					
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
-					piece.getPoints().addAll(x, y);
+					
+					if (i == 0) {
+						piece.getPoints().addAll(x + 50, y + 50);
+					} else {
+						piece.getPoints().addAll(x + 300, y + 50);
+					}
+					
+					// piece.getPoints().addAll(x, y);
 				
 				}
 				piece.setPoints(piece.getPoints());
 				puzzle.addPieceToArray(piece);
+				i++;
 			}
 		} catch (IOException | ParseException e) {
 		}

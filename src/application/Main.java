@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.geom.Point2D;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.event.EventHandler;
@@ -27,11 +29,16 @@ public class Main extends Application {
 	public static int width = 1000;
 	public static int height = 600;
 	private Puzzle puzzle;
+	private Pane pane;
 
 	double originalX;
 	double originalY;
 	double originalTX;
 	double originalTY;
+	double deltaTX;
+	double deltaTY;
+	
+	private int snapRange = 20;
 
 	
 	@Override
@@ -39,13 +46,17 @@ public class Main extends Application {
 		
 		puzzle = new JSONReader().getPuzzle();
 		
-		Pane pane = new Pane();
+		pane = new Pane();
 		
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			Piece piece = puzzle.getPiece(i);
 			initializePiece(piece, pane, i);
-
+			piece.setOriginalCenterX(piece.getCenterX());
+			piece.setOriginalCenterY(piece.getCenterY());
+			System.out.println(piece.getPoints().toString());
 		}
+		
+		//setOriginalCenters(puzzle.getPieces());
 		
 		Piece p1 = puzzle.getPiece(0);
 		Piece p2 = puzzle.getPiece(1);
@@ -79,9 +90,12 @@ public class Main extends Application {
 		    i += 2;
 		}
 
-		// creating new Polygon with these points
+		//creating new Polygon with these points
 		Piece newPolygon = new Piece();
 		newPolygon.getPoints().addAll(points);
+		
+		puzzle.addPieceToArray(newPolygon);
+		newPolygon.setPoints(newPolygon.getPoints());
 		
 		initializePiece(newPolygon, pane, 3);
 	}
@@ -116,12 +130,10 @@ public class Main extends Application {
 	        	if(event.getButton() == MouseButton.PRIMARY) {
 	        		double deltaX = event.getSceneX() - originalX;
 		            double deltaY = event.getSceneY() - originalY;
-		            double deltaTX = originalTX + deltaX;
-		            double deltaTY = originalTY + deltaY;
+		            deltaTX = originalTX + deltaX;
+		            deltaTY = originalTY + deltaY;
 		            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
 		            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
-		            piece.updatePoints(deltaX, deltaY);
-		            //System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
 	        	}
 	        	
 	        	if (event.getButton() == MouseButton.SECONDARY) {
@@ -129,7 +141,7 @@ public class Main extends Application {
 	        		piece.setRotate(piece.getRotate() + deltaY);
 	        		originalY = event.getSceneY();
 	        		
-	        		System.out.println(Math.abs(piece.getRotate()) % 360);
+	        		//System.out.println(Math.abs(piece.getRotate()) % 360);
 	        		
 	        	}
 	            
@@ -137,12 +149,33 @@ public class Main extends Application {
 	    });
 	    
 	    piece.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
 	    	@Override
 	    	public void handle(MouseEvent event) {
-	    		if (event.getButton() == MouseButton.SECONDARY) {
+	    		if (event.getButton() == MouseButton.PRIMARY) {
+	    			
+	    			piece.updatePoints(deltaTX, deltaTY);
+		            //System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
+		            
+		            for (Piece element : puzzle.getPieces()) {
+		            	
+		            	if (piece != element) {
+		            		
+		            		Shape intersect = Shape.intersect(piece, element);
+				            
+				            if (intersect.getBoundsInLocal().getWidth() > -snapRange) {
+				            	matchPoints(piece,element,3);
+				            }
+		            		
+		            	}
+		            	
+		            }
+		            
+	    		} else if (event.getButton() == MouseButton.SECONDARY) {
+	    			
 	    			
 	    			double rotation = Math.abs(piece.getRotate()) % 360;
-	    			if (rotation < 5 || rotation > 355) {
+	    			if (rotation < 10 || rotation > 350) {
 	    				piece.setRotate(0);
 	    			}
 	    			
@@ -150,15 +183,70 @@ public class Main extends Application {
 	    	}
 	    });
 	    
-	    if (i == 0) {
-	    	piece.setLayoutX(50);
-	    	piece.setLayoutY(50);
-	    } else if (i == 1) {
-	    	piece.setLayoutX(400); //211
-	    	piece.setLayoutY(50);
-	    }
-	    
+//	    if (i == 0) {
+//	    	piece.setLayoutX(50);
+//	    	piece.setLayoutY(50);
+//	    } else if (i == 1) {
+//	    	piece.setLayoutX(211); //211
+//	    	piece.setLayoutY(50);
+//	    }
+
 	    pane.getChildren().add(piece);
+	}
+	
+	public void matchPoints(Piece a, Piece b, int threshold) {
+		
+		int matches = 0;
+		
+		double deltaX = 0;
+		double deltaY = 0;
+		
+		for (Point2D pointA : a.getPointList()) {
+			
+			for (Point2D pointB : b.getPointList()) {
+				
+				if (pointA.getX() < pointB.getX() + snapRange) {
+					if (pointA.getX() > pointB.getX() - snapRange) {
+						if (pointA.getY() < pointB.getY() + snapRange) {
+							if (pointA.getY() > pointB.getY() - snapRange) {
+								
+								deltaX = pointB.getX() - pointA.getX();
+								deltaY = pointB.getY() - pointA.getY();
+								
+								matches++;
+								
+							}
+						}
+					}
+				}	
+			}
+		}
+		
+		if (matches == threshold) {
+			
+			double translateX = deltaX - (a.getOriginalCenterX() - a.getCenterX());
+			double translateY = b.getCenterY() - a.getOriginalCenterY();
+			
+			a.setTranslateX(translateX);
+			a.setTranslateY(translateY);
+			a.updatePoints(translateX, translateY);
+			
+			unionPieces(a, b, pane);
+			
+			pane.getChildren().remove(a);
+			pane.getChildren().remove(b);
+			
+		}
+		
+	}
+	
+	public void setOriginalCenters(Piece[] pieces) {
+		
+		for (Piece element : pieces) {
+			element.setOriginalCenterX(element.getCenterX());
+			element.setOriginalCenterY(element.getCenterY());
+		}
+		
 	}
 	
 	public static void main(String[] args) {
