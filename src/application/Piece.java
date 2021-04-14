@@ -5,8 +5,10 @@ package application;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
+
 import javafx.scene.shape.Polygon;
+
+import java.awt.geom.Point2D;
 import java.lang.Object;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -52,7 +54,7 @@ public class Piece extends Polygon implements Comparable<Piece> {
 	
 	public void setPoints(ObservableList<Double> list) {
 		for (int i = 0; i < list.size(); i += 2) {
-			this.points.add(new Point2D(list.get(i), list.get(i+1)));
+			this.points.add(new Point2D.Double(list.get(i), list.get(i+1)));
 		}
 		calculateValues(list);
 	}
@@ -69,8 +71,6 @@ public class Piece extends Polygon implements Comparable<Piece> {
 			lengths.add(length);
 			sumOfLengths += length;
 		}
-		System.out.println(this.number);
-		System.out.println("angles");
 		
 		while(!closeEnough(sumOfAngles, expectedSumOfAngles)) {
 			for (int i = 0; i < noOfLines; i++) {
@@ -78,14 +78,10 @@ public class Piece extends Polygon implements Comparable<Piece> {
 				if(sumOfAngles > expectedSumOfAngles) {
 					reverseOrder = true;
 					sumOfAngles = 0;
-					System.out.println("Reverse");
 					break;
 				}
 				
 				int negMod = Math.floorMod(i-1, noOfLines);
-//				double a = lengths.get(i);
-//				double b = lengths.get(negMod);
-//				double c = points.get((i+1)%noOfLines).distance(points.get(negMod));
 				Vector v1 = new Vector(points.get(i), points.get((i+1)%noOfLines));
 				Vector v2 = new Vector(points.get(i), points.get(negMod));
 				double det;
@@ -94,7 +90,6 @@ public class Piece extends Polygon implements Comparable<Piece> {
 				} else {
 					det = Vector.determinant(v1, v2);
 				}
-				//double angle = 180*Math.acos((Math.pow(a, 2)+Math.pow(b, 2)-Math.pow(c, 2))/(2*a*b))/Math.PI;
 				double angle = Vector.angle(v1, v2);
 				if(det < 0) {
 					angle = 360 - angle;
@@ -118,15 +113,8 @@ public class Piece extends Polygon implements Comparable<Piece> {
 				}
 				sumOfAngles += angle;
 				angles[i] = angle;
-				System.out.println(angles[i]);
 			}
 		}
-		
-		System.out.println(sumOfAngles);
-		System.out.println();
-		System.out.println("lengths");
-		System.out.println(lengths);
-		System.out.println();
 		
 		//Find index of smallest angle 
 		double smallestAngle = angles[0];
@@ -141,7 +129,6 @@ public class Piece extends Polygon implements Comparable<Piece> {
 			}
 		}
 		
-		System.out.println("angles reordered");
 		//Re-order arrays, so the first element corresponds to the smallest value of the angle
 		double[] tmpAngles = angles.clone();
 		ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
@@ -149,17 +136,6 @@ public class Piece extends Polygon implements Comparable<Piece> {
 			angles[i] = tmpAngles[(indexOfSV+i)%noOfLines];
 			lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
 		}
-		
-		for(int i = 0; i < noOfLines; i++) {
-			System.out.println(angles[i]);
-		}
-		
-		System.out.println();
-		System.out.println("lengths reordered");
-		System.out.println(lengths);
-		System.out.println();
-		System.out.println("Sum of lengths: " + sumOfLengths);
-		System.out.println();
 	}
 	
 	private boolean closeEnough(double v1, double v2) {
@@ -182,12 +158,16 @@ public class Piece extends Polygon implements Comparable<Piece> {
 	}
 	
 	public void updatePoints( double translatex, double translatey ) {
-		for (Point2D point : this.points) {
-			double x = point.getX();
-			double y = point.getY();
-			//point.setLocation(x+translatex, y+translatey);
-//			System.out.println("y after: " + point.getX());
-//			System.out.println("x after: " + point.getY());
+		for (int i = 0; i < this.getPoints().size(); i += 2) {
+			this.points.get(i/2).setLocation(this.getPoints().get(i)+translatex, this.getPoints().get(i+1)+translatey);
+		}
+	}
+	
+	public void updatePointsRotate(double degrees) {
+		for(int i = 0; i < this.getPoints().size(); i += 2) {
+			double newX = (this.getPoints().get(i) + this.getTranslateX() - this.getCenterX()) * Math.cos(Math.toRadians(degrees)) - (this.getPoints().get(i+1) + this.getTranslateY() - this.getCenterY()) * Math.sin(Math.toRadians(degrees)) + this.getCenterX();
+			double newY = (this.getPoints().get(i) + this.getTranslateX() - this.getCenterX()) * Math.sin(Math.toRadians(degrees)) + (this.getPoints().get(i+1) + this.getTranslateY() - this.getCenterY()) * Math.cos(Math.toRadians(degrees)) + this.getCenterY();
+			this.points.get(i/2).setLocation(newX, newY);
 		}
 	}
 
