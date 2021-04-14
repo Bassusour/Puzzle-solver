@@ -1,26 +1,29 @@
 package application;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 
-public class Main extends Application {
+public class Main extends Application  {
 	
 	public static int width = 1000;
 	public static int height = 600;
@@ -36,18 +39,36 @@ public class Main extends Application {
 	public void start(Stage stage) {
 		
 		puzzle = new JSONReader().getPuzzle();
-		
 		Pane pane = new Pane();
 		
-		
-		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
+		for (int i = 1; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i) == null) {
+				continue;
+			}
 			Piece piece = puzzle.getPiece(i);
 			initializePiece(piece, pane, i);
 		}
 		
-		Piece p1 = puzzle.getPiece(0);
-		Piece p2 = puzzle.getPiece(1);
-		unionPieces(p1, p2, pane);
+		//Checks if pieces are identical
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i) == null) {
+				continue;
+			}
+			Piece p1 = puzzle.getPiece(i);
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(puzzle.getPiece(j) == null) {
+					continue;
+				}
+				Piece p2 = puzzle.getPiece(j);
+				if(p1.compareTo(p2) == 0) {
+					System.out.print("(" + p1.getNumber() + "," + p2.getNumber() + ")" + " ");
+				}
+			}
+		}
+		
+//		Piece p1 = puzzle.getPiece(0);
+//		Piece p2 = puzzle.getPiece(1);
+//		unionPieces(p1, p2, pane);
 		
 		Scene scene = new Scene(pane, width, height);
 		stage.setScene(scene);
@@ -90,38 +111,53 @@ public class Main extends Application {
 		
 		piece.setCursor(Cursor.HAND);
 		
-	    piece.setOnMousePressed(new EventHandler<MouseEvent>() {
+		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent event) {
-	            originalX = event.getSceneX();
-	            originalY = event.getSceneY();
-	            originalTX = ((Polygon) event.getSource()).getTranslateX();
-	            originalTY = ((Polygon) event.getSource()).getTranslateY();
+	            if(event.getButton() == MouseButton.PRIMARY) {
+	            	originalX = event.getSceneX();
+		            originalY = event.getSceneY();
+		            originalTX = ((Polygon) event.getSource()).getTranslateX();
+		            originalTY = ((Polygon) event.getSource()).getTranslateY();
+	            }
+	            
+	            if(event.getButton() == MouseButton.SECONDARY) {
+	            	originalX = event.getSceneX();
+		            originalY = event.getSceneY();
+	            }
+	        	
 	        }
 	    });
 
 	    piece.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent event) {
-	        	//System.out.println(event.getSceneX() + " " + event.getSceneY());
-	            double deltaX = event.getSceneX() - originalX;
-	            double deltaY = event.getSceneY() - originalY;
-	            double deltaTX = originalTX + deltaX;
-	            double deltaTY = originalTY + deltaY;
-	            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
-	            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
+	        	if(event.getButton() == MouseButton.PRIMARY) {
+	        		double deltaX = event.getSceneX() - originalX;
+		            double deltaY = event.getSceneY() - originalY;
+		            double deltaTX = originalTX + deltaX;
+		            double deltaTY = originalTY + deltaY;
+		            ((Polygon) (event.getSource())).setTranslateX(deltaTX);  //transform the object
+		            ((Polygon) (event.getSource())).setTranslateY(deltaTY);
+		            piece.updatePoints(deltaX, deltaY);
+		            //System.out.println(piece.getCenterX() + " , " + piece.getCenterY());
+	        	}
+	        	
+	        	if (event.getButton() == MouseButton.SECONDARY) {
+	        		double deltaY = event.getSceneY() - originalY;
+	        		piece.setRotate(piece.getRotate()+deltaY);
+	        		originalY = event.getSceneY();
+	        	}
+	            
 	        }
 	    });
-	    if(i == 0) {
-	    	piece.setLayoutX(50);
-	    	piece.setLayoutY(50);
-	    } else if(i == 1) {
-	    	piece.setLayoutX(211); //212
-	    	piece.setLayoutY(50);
-	    }
-	    piece.updatePoints(); 
+//	    if(piece.getNumber() == 3) {
+//	    	piece.setLayoutX(100);
+//	    	piece.setLayoutY(100);
+//	    } 
 	    
-	    System.out.println(piece.getPoints());
+	    piece.setPoints(piece.getPoints());
+	    
 	    pane.getChildren().add(piece);
 	}
 	
