@@ -77,14 +77,7 @@ public class JSONReader {
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
 
-					
-					if (i == 0) {
-						piece.getPoints().addAll(x + 50, y + 50);
-					} else {
-						piece.getPoints().addAll(x + 300, y + 50);
-					}
-					
-					// piece.getPoints().addAll(x, y);
+					piece.getPoints().addAll(x + 200, y + 200);
 				
 
 				}
