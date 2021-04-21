@@ -12,13 +12,15 @@ import org.json.simple.parser.ParseException;
 public class JSONReader {
 	
 	private Puzzle puzzle;
+	private int previousCorners = 0;
+	private int corners = 0;
 	
 	public JSONReader() {
 		
 		JSONParser parser = new JSONParser();
 	
 		try {
-			Object obj = parser.parse(new FileReader("Puzzles/Puzzle-1r-2c-0995.json"));
+			Object obj = parser.parse(new FileReader("Puzzles/Puzzle-2r-2c-1430.json"));
 			JSONObject jsonObject = (JSONObject) obj;
 			
 			puzzle = new Puzzle();
@@ -52,6 +54,11 @@ public class JSONReader {
 			int i = 0;
 			
 			while (pieceIterator.hasNext()) {
+				
+				if (corners > previousCorners) {
+					previousCorners = corners;
+				}
+				
 				JSONObject pieces = pieceIterator.next();
 
 				Piece piece = new Piece();
@@ -61,6 +68,8 @@ public class JSONReader {
 				JSONArray cornerArray = (JSONArray) pieces.get("corners");
 				Iterator<JSONObject> cornerIterator = cornerArray.iterator();
 				while (cornerIterator.hasNext()) {
+					
+					corners = corners + 1;
 
 					JSONObject corners = (JSONObject) cornerIterator.next();
 					JSONObject coordinate = (JSONObject) corners.get("coord");
@@ -81,6 +90,8 @@ public class JSONReader {
 				puzzle.addPieceToArray(piece);
 				i++;
 			}
+			previousCorners = 2 + (previousCorners  - 4) % 4;
+			System.out.println("Corner no. " + previousCorners);
 		} catch (IOException | ParseException e) {
 		}
 	}
