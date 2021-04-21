@@ -110,7 +110,7 @@ public class Main extends Application  {
 	
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
-		piece.setFill(Color.AZURE);
+		piece.setFill(Color.BISQUE);
 		
 		piece.setCursor(Cursor.HAND);
 		

@@ -2,7 +2,7 @@ package application;
 
 import javafx.scene.shape.Polygon;
 
-public class Puzzle extends Polygon {
+public class Puzzle {
 	
 	private String name;
 	private long noOfPieces;

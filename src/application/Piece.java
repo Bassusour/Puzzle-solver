@@ -17,14 +17,10 @@ public class Piece extends Polygon implements Comparable<Piece> {
 	
 	private long number;
 	private double angles[];
-	double sumOfAngles = 0;
-	double sumOfLengths = 0;
+	private double sumOfAngles = 0;
+	private double sumOfLengths = 0;
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
-	ArrayList<Double> lengths = new ArrayList<Double>();
-	
-	public Piece() {
-		
-	}
+	private ArrayList<Double> lengths = new ArrayList<Double>();
 	
 	public long getNumber() {
 		return number;
@@ -71,6 +67,8 @@ public class Piece extends Polygon implements Comparable<Piece> {
 			lengths.add(length);
 			sumOfLengths += length;
 		}
+		System.out.println(this.number);
+		System.out.println("angles");
 		
 		while(!closeEnough(sumOfAngles, expectedSumOfAngles)) {
 			for (int i = 0; i < noOfLines; i++) {
@@ -78,6 +76,7 @@ public class Piece extends Polygon implements Comparable<Piece> {
 				if(sumOfAngles > expectedSumOfAngles) {
 					reverseOrder = true;
 					sumOfAngles = 0;
+					System.out.println("Reverse");
 					break;
 				}
 				
@@ -107,14 +106,21 @@ public class Piece extends Polygon implements Comparable<Piece> {
 					lengths.remove(i);
 					lengths.remove(negMod);
 					lengths.add(negMod, points.get(negMod).distance(points.get(i)));
-					//Start again from the same point, but with no incorrect point
+					//Start again from the next point, with no incorrect point
 					i-=1;
 					continue;
 				}
 				sumOfAngles += angle;
 				angles[i] = angle;
+				System.out.println(angles[i]);
 			}
 		}
+		
+		System.out.println(sumOfAngles);
+		System.out.println();
+		System.out.println("lengths");
+		System.out.println(lengths);
+		System.out.println();
 		
 		//Find index of smallest angle 
 		double smallestAngle = angles[0];
@@ -129,13 +135,33 @@ public class Piece extends Polygon implements Comparable<Piece> {
 			}
 		}
 		
+		System.out.println("angles reordered");
 		//Re-order arrays, so the first element corresponds to the smallest value of the angle
 		double[] tmpAngles = angles.clone();
-		ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
-		for(int i = 0; i < noOfLines; i++) {
-			angles[i] = tmpAngles[(indexOfSV+i)%noOfLines];
-			lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
+		//ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
+		if(!reverseOrder) {
+			for(int i = 0; i < noOfLines; i++) {
+				angles[i] = tmpAngles[(indexOfSV+i)%noOfLines];
+				//lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
+			}
+		} else {
+			for(int i = 0; i < noOfLines; i++) {
+				int negMod = Math.floorMod(-i, noOfLines);
+				angles[negMod] = tmpAngles[(indexOfSV+i)%noOfLines];
+			}
 		}
+		
+		
+		for(int i = 0; i < noOfLines; i++) {
+			System.out.println(angles[i]);
+		}
+		
+		/*System.out.println();
+		System.out.println("lengths reordered");
+		System.out.println(lengths);*/
+		System.out.println();
+		System.out.println("Sum of lengths: " + sumOfLengths);
+		System.out.println();
 	}
 	
 	private boolean closeEnough(double v1, double v2) {
@@ -180,15 +206,16 @@ public class Piece extends Polygon implements Comparable<Piece> {
 				for(int i = 0; i < p.points.size(); i++) {
 					if(closeEnough(p.angles[i], this.angles[i])) {
 						if(i == (p.points.size()-1)) {
-							match = true;
+							//match
+							return 0;
 						}
-						continue;
 					} else {
-						break;
+						//no match
+						return -1;
 					}
 				}
 				//Chekcs angles in reverse order
-				for(int i = 0; i < p.points.size(); i++) {
+				/*for(int i = 0; i < p.points.size(); i++) {
 					int negMod = Math.floorMod(-i, p.points.size());
 					if(closeEnough(p.angles[i], this.angles[negMod])) {
 						if(i == (p.points.size()-1)) {
@@ -198,7 +225,7 @@ public class Piece extends Polygon implements Comparable<Piece> {
 					} else {
 						break;
 					}
-				}
+				}*/
 			}
 		}
 		return match ? 0 : -1;

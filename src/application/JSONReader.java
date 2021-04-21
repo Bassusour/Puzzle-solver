@@ -18,7 +18,7 @@ public class JSONReader {
 		JSONParser parser = new JSONParser();
 	
 		try {
-			Object obj = parser.parse(new FileReader("Puzzles/Puzzle-1r-2c-0995.json"));
+			Object obj = parser.parse(new FileReader("Piecelist/PieceList03.json"));
 			JSONObject jsonObject = (JSONObject) obj;
 			
 			puzzle = new Puzzle();
@@ -32,18 +32,18 @@ public class JSONReader {
 				
 				double x = (double) coordinate.get("x") * 100;
 				double y = (double) coordinate.get("y") * 100;
-				puzzle.getPoints().addAll(x, y);
+				piece.getPoints().addAll(x, y);
 				//puzzle.setWidth(puzzle.getWidth() + x);
 				//puzzle.setHeight(puzzle.getHeight() + y);
 				
 			}
 			
-			String name = (String) jsonObject.get("name");
-			name = name.substring(0, name.length() - 5);
-			puzzle.setName(name);
+			//String name = (String) jsonObject.get("name");
+			//name = name.substring(0, name.length() - 5);
+			puzzle.setName("Piecelist");
 			
 			long noOfPieces = (long) jsonObject.get("no. of pieces");
-			puzzle.setNoOfPieces(noOfPieces);
+			puzzle.setNoOfPieces(noOfPieces+20);
 			
 			JSONArray pieceArray = (JSONArray) jsonObject.get("pieces");
 			Iterator<JSONObject> pieceIterator = pieceArray.iterator();
@@ -66,7 +66,6 @@ public class JSONReader {
 					double y = (double) coordinate.get("y") * 100;
 					piece.getPoints().addAll(x, y);
 				}
-				
 				puzzle.addPieceToArray(piece);
 			}
 		} catch (IOException | ParseException e) {
