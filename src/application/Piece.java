@@ -1,20 +1,13 @@
 package application;
 
-
-
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
-
 import javafx.scene.shape.Polygon;
 
-import java.awt.geom.Point2D;
-import java.lang.Object;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+public class Piece extends Polygon implements Comparable<Piece>{
 
-public class Piece extends Polygon implements Comparable<Piece> {
-	
 	private long number;
 	private double angles[];
 	private double sumOfAngles = 0;
@@ -22,32 +15,51 @@ public class Piece extends Polygon implements Comparable<Piece> {
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
 	private ArrayList<Double> lengths = new ArrayList<Double>();
 	
+	private double OriginalCenterX;
+	private double OriginalCenterY;
+	
 	public long getNumber() {
 		return number;
 	}
-	
-	public void setNumber(long number2) {
-		this.number = number2;
+
+	public void setNumber(long number) {
+		this.number = number;
 	}
-	
+
+	public double getOriginalCenterX() {
+		return OriginalCenterX;
+	}
+
+	public double getOriginalCenterY() {
+		return OriginalCenterY;
+	}
+
+	public void setOriginalCenterX(double centerX) {
+		this.OriginalCenterX = centerX;
+	}
+
+	public void setOriginalCenterY(double centerY) {
+		this.OriginalCenterY = centerY;
+	}
+
 	public double getCenterX() {
 		double avg = 0;
-		for (int i = 0; i < this.points.size(); i++) {
-			avg += this.points.get(i).getX();
+		for (int i = 0; i < this.getPoints().size(); i += 2) {
+			avg += this.getPoints().get(i) + this.getTranslateX();
 		}
-		avg = avg/this.points.size();
+		avg = avg / (this.getPoints().size() / 2);
 		return avg;
 	}
-	
+
 	public double getCenterY() {
 		double avg = 0;
-		for (int i = 0; i < this.points.size(); i++) {
-			avg += this.points.get(i).getY();
+		for (int i = 1; i < this.getPoints().size(); i += 2) {
+			avg += this.getPoints().get(i) + this.getTranslateY();
 		}
-		avg = avg/this.points.size();
+		avg = avg / (this.getPoints().size() / 2);
 		return avg;
 	}
-	
+
 	public void setPoints(ObservableList<Double> list) {
 		for (int i = 0; i < list.size(); i += 2) {
 			this.points.add(new Point2D.Double(list.get(i), list.get(i+1)));
@@ -182,24 +194,9 @@ public class Piece extends Polygon implements Comparable<Piece> {
 	public ArrayList<Point2D> getPointList() {
 		return this.points;
 	}
-	
-	public void updatePoints( double translatex, double translatey ) {
-		for (int i = 0; i < this.getPoints().size(); i += 2) {
-			this.points.get(i/2).setLocation(this.getPoints().get(i)+translatex, this.getPoints().get(i+1)+translatey);
-		}
-	}
-	
-	public void updatePointsRotate(double degrees) {
-		for(int i = 0; i < this.getPoints().size(); i += 2) {
-			double newX = (this.getPoints().get(i) + this.getTranslateX() - this.getCenterX()) * Math.cos(Math.toRadians(degrees)) - (this.getPoints().get(i+1) + this.getTranslateY() - this.getCenterY()) * Math.sin(Math.toRadians(degrees)) + this.getCenterX();
-			double newY = (this.getPoints().get(i) + this.getTranslateX() - this.getCenterX()) * Math.sin(Math.toRadians(degrees)) + (this.getPoints().get(i+1) + this.getTranslateY() - this.getCenterY()) * Math.cos(Math.toRadians(degrees)) + this.getCenterY();
-			this.points.get(i/2).setLocation(newX, newY);
-		}
-	}
 
 	@Override
 	public int compareTo(Piece p) {
-		boolean match = false;
 		if(closeEnough(p.sumOfLengths, this.sumOfLengths) && closeEnough(p.sumOfAngles, this.sumOfAngles)) {
 			if(p.points.size() == this.points.size()) {
 				//Checks angles in clockwise order
@@ -210,24 +207,47 @@ public class Piece extends Polygon implements Comparable<Piece> {
 							return 0;
 						}
 					} else {
-						//no match
-						return -1;
-					}
-				}
-				//Chekcs angles in reverse order
-				/*for(int i = 0; i < p.points.size(); i++) {
-					int negMod = Math.floorMod(-i, p.points.size());
-					if(closeEnough(p.angles[i], this.angles[negMod])) {
-						if(i == (p.points.size()-1)) {
-							match = true;
-						}
-						continue;
-					} else {
 						break;
 					}
-				}*/
+				}
 			}
 		}
-		return match ? 0 : -1;
+		//no match
+		return -1;
 	}
+
+	public void setPoint(int index, Point2D element) {
+		points.set(index, element);
+	}
+
+	public void updatePoints(double translatex, double translatey) {
+		for (int i = 0; i < this.getPointList().size(); i++) {
+			this.points.get(i).setLocation(this.getPointList().get(i).getX() + translatex,
+					this.getPointList().get(i).getY() + translatey);
+		}
+	}
+
+	public void updatePointsRotate(double degrees) {
+		double sin;
+		double cos;
+		if (degrees % 180.0 == 0 && degrees != 0 && degrees % 360 != 0) {
+			sin = 0.0;
+			cos = -1.0;
+		} else {
+			sin = Math.sin(Math.toRadians(degrees));
+			cos = Math.cos(Math.toRadians(degrees));
+		}
+		for(int i = 0; i < this.getPoints().size(); i += 2) {
+            double oldX = (this.getPoints().get(i) + this.getTranslateX()) - (this.getLayoutBounds().getCenterX()+this.getTranslateX());
+            double oldY = (this.getPoints().get(i+1) + this.getTranslateY()) - (this.getLayoutBounds().getCenterY()+this.getTranslateY());
+
+            double newX = oldX * cos - oldY * sin;
+            double newY = oldX * sin + oldY * cos;
+
+            newX += this.getLayoutBounds().getCenterX()+this.getTranslateX();
+            newY += this.getLayoutBounds().getCenterY()+this.getTranslateY();
+            this.points.get(i/2).setLocation(newX, newY);
+        }
+	}
+
 }

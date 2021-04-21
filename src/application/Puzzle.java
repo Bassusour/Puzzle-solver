@@ -2,20 +2,22 @@ package application;
 
 import javafx.scene.shape.Polygon;
 
-public class Puzzle {
+public class Puzzle extends Polygon {
 	
 	private String name;
 	private long noOfPieces;
 	private Piece[] pieces;
-	//private double width;
-	//private double height;
-	
+
 	public String getName() {
 		return name;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Piece[] getPieces() {
+		return pieces;
 	}
 	
 	public long getNoOfPieces() {
@@ -34,21 +36,5 @@ public class Puzzle {
 	public Piece getPiece(int index) {
 		return pieces[index];
 	}
-	/*
-	public void setWidth(double width) {
-		this.width = width;
-	}
-	
-	public void setHeight(double height) {
-		this.height = height;
-	}
-	
-	public double getWidth() {
-		return width;
-	}
-	
-	public double getHeight() {
-		return height;
-	}*/
 
 }
