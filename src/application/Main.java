@@ -177,6 +177,8 @@ public class Main extends Application {
 
 			}
 		});
+		
+		piece.setPoints(piece.getPoints());
 
 		piece.setOnMouseReleased(new EventHandler<MouseEvent>() {
 
@@ -195,8 +197,6 @@ public class Main extends Application {
 						
 					}
 					
-					
-					
 					for (Object element : groups.getChildren().toArray()) {
 						
 						Group group = (Group) element;
@@ -204,9 +204,9 @@ public class Main extends Application {
 						for (Object things : group.getChildren().toArray()) {
 							
 							Piece piece = (Piece) things;
-							
+							System.out.println("MEN JEG ER HER ");
 							for (Point2D point : piece.getPointList()) {
-								
+								System.out.println("NU ER JEG HER");
 								Circle circle = new Circle(point.getX(), point.getY(), 5);
 								pane.getChildren().add(circle);
 								
@@ -320,18 +320,32 @@ public class Main extends Application {
 			}
 		});
 
-		pane.getChildren().add(piece);
+//		pane.getChildren().add(piece);
 		
 		Group group = new Group();
 		group.getChildren().add(piece);
 		groups.getChildren().add(group);
+		
+		/*
+		for (Point2D element : piece.getPointList()) {
+			Circle point = new Circle(element.getX(), element.getY(), 5);
+			pane.getChildren().add(point);
+			circles.add(point);
+		}
+		*/
 
 	}
 
 	public void matchPoints(Piece a, Piece b, int threshold) {
 
 		int matches = 0;
-	
+
+		double deltaX = 0;
+		double deltaY = 0;
+//		System.out.println("New one...");
+//		System.out.println("Piece A POINTS : " + a.getPointList().toString());
+//		System.out.println("Piece B POINTS : " + b.getPointList().toString());
+//		
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
 
 		for (Point2D pointA : a.getPointList()) {
@@ -343,8 +357,19 @@ public class Main extends Application {
 						if (pointA.getY() < pointB.getY() + snapRange) {
 							if (pointA.getY() > pointB.getY() - snapRange) {
 
+								//System.out.println(a.getPointList().toString());
+
+								System.out.println("Match " + matches + " found");
+								System.out.println("Point A: " + pointA.getX() + ", " + pointA.getY());
+								System.out.println("Point B: " + pointB.getX() + ", " + pointB.getY());
+
 								points.add(pointA);
 								points.add(pointB);
+								
+								/*
+								deltaX = pointB.getX() - pointA.getX();
+								deltaY = pointB.getY() - pointA.getY();
+								*/
 
 								matches++;
 
@@ -357,10 +382,15 @@ public class Main extends Application {
 		
 		if (matches == threshold) {
 			
+			System.out.println("Snapped");
+			
 			Group A = (Group) a.getParent();
 			Group B = (Group) b.getParent();
 			
 			if (A == B) { return; }
+			
+			// System.out.println("A. TranslateX: " + a.getParent().getTranslateX());
+			// System.out.println("A. TranslateY: " + a.getParent().getTranslateY());
 			
 			a.setRotate(Math.ceil(a.getRotate()));
 			a.updatePointsRotate(a.getRotate());
@@ -397,7 +427,43 @@ public class Main extends Application {
 						break;
 					}
 				}
+				
 			}
+			
+//			A.setTranslateX(A.getTranslateX() + dx);
+//			A.setTranslateY(A.getTranslateY() + dy);
+			
+//			for (Object element : A.getChildren().toArray()) {
+//				
+//				Piece piece = (Piece) element;
+//				piece.setTranslateX(piece.getTranslateX() + dx);
+//				piece.setTranslateY(piece.getTranslateY() + dy);
+//				piece.updatePoints(dx, dy);
+//				
+//			}
+			
+//			a.setTranslateX(a.getTranslateX() + dx);
+//			a.setTranslateY(a.getTranslateY() + dy);
+//			a.updatePoints(dx, dy);
+		
+			
+//			if (a.getParent().equals(singles)) {
+//				if (b.getParent().equals(singles)) {
+//					Group group = new Group();
+//					group.getChildren().add(a);
+//					group.getChildren().add(b);
+//					groups.getChildren().add(group);
+//				}
+//				if (b.getParent().getParent().equals(groups)) {
+//					((Group) b.getParent()).getChildren().add(a);
+//				}
+//			} else {
+//				
+//			}
+			
+//			((Group) a.getParent()).getChildren().remove(a);
+//			groups.getChildren().remove(a.getParent());
+//			((Group) b.getParent()).getChildren().add(a);
 			
 			b.updatePoints(b.getParent().getTranslateX(), 
 					       b.getParent().getTranslateY());
@@ -407,6 +473,9 @@ public class Main extends Application {
 				
 				Piece piece = (Piece) element;
 				boolean selected = piece.equals(a);
+				
+				double pieceTranslateX = dx;
+				double pieceTranslateY = dy;
 
 				piece.setTranslateX(piece.getTranslateX() + dx);
 				piece.setTranslateY(piece.getTranslateY() + dy);
@@ -417,19 +486,56 @@ public class Main extends Application {
 				} else {
 					piece.updatePoints(B.getTranslateX() - A.getTranslateX() + dx, 
 							           B.getTranslateY() - A.getTranslateY() + dy);
+					
 				}
+				
+				
+//				if (piece.equals(a)) {
+//					piece.updatePoints(B.getTranslateX() + pieceTranslateX, 
+//					           B.getTranslateY() + pieceTranslateY);
+//				} else {
+//					piece.updatePoints(B.getTranslateX() - A.getTranslateX() + pieceTranslateX, 
+//					           B.getTranslateY() - A.getTranslateY() + pieceTranslateY);
+//				}
+				
+//				piece.updatePoints(B.getTranslateX() + pieceTranslateX, 
+//						           B.getTranslateY() + pieceTranslateY);
 				
 				A.getChildren().remove(piece);
 				B.getChildren().add(piece);
 				
 			}
 			
+//			B.getChildren().addAll(A.getChildren());
+//			A.getChildren().removeAll(A.getChildren());
+			
+			System.out.println("Group A: " + A);
+			System.out.println("Group B: " + B);
+			
 			groups.getChildren().remove(A);
 
+			/*
+			
+			double translateX = deltaX - (a.getOriginalCenterX() - a.getCenterX());
+			double translateY = b.getCenterY() - a.getOriginalCenterY();
+
+			a.setTranslateX(translateX);
+			a.setTranslateY(translateY);
+			a.updatePoints(translateX, translateY);
+
+			unionPieces(a, b, pane);
+
+			pane.getChildren().remove(a);
+			pane.getChildren().remove(b);
+			
+			*/
+
 		}
+
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 }
+

@@ -76,6 +76,7 @@ public class JSONReader {
 					
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
+
 					
 					if (i == 0) {
 						piece.getPoints().addAll(x + 50, y + 50);
@@ -85,8 +86,9 @@ public class JSONReader {
 					
 					// piece.getPoints().addAll(x, y);
 				
+
 				}
-				piece.setPoints(piece.getPoints());
+				
 				puzzle.addPieceToArray(piece);
 				i++;
 			}
