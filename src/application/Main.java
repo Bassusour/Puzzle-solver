@@ -56,11 +56,32 @@ public class Main extends Application {
 		pane.getChildren().add(groups);
 
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i) == null) {
+				continue;
+			}
 			Piece piece = puzzle.getPiece(i);
 			initializePiece(piece, pane, i);
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
 		}
+		
+		//Checks if pieces are identical
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i) == null) {
+				continue;
+			}
+			Piece p1 = puzzle.getPiece(i);
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(puzzle.getPiece(j) == null) {
+					continue;
+				}
+				Piece p2 = puzzle.getPiece(j);
+				if(p1.compareTo(p2) == 0) {
+					System.out.print("(" + p1.getNumber() + "," + p2.getNumber() + ")" + " ");
+				}
+			}
+		}
+
 		
 		Scene scene = new Scene(pane, width, height);
 		stage.setScene(scene);
@@ -71,7 +92,6 @@ public class Main extends Application {
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
 		piece.setFill(Color.BISQUE);
-
 		piece.setCursor(Cursor.HAND);
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -164,6 +184,10 @@ public class Main extends Application {
 					if (!groups.getChildren().contains(piece)) {
 						
 						for (Piece element : puzzle.getPieces()) {
+							//Some elements are null, since Piece numbers start at 1 or are not properly incremented (1-2-13-14)
+							if(element == null) {
+								continue;
+							}
 
 							if (piece != element) {
 								

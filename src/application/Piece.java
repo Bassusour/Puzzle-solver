@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import javafx.collections.ObservableList;
 import javafx.scene.shape.Polygon;
 
-public class Piece extends Polygon {
+public class Piece extends Polygon implements Comparable<Piece>{
 
 	private long number;
+	private double angles[];
+	private double sumOfAngles = 0;
+	private double sumOfLengths = 0;
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
+	private ArrayList<Double> lengths = new ArrayList<Double>();
+	
 	private double OriginalCenterX;
 	private double OriginalCenterY;
-
-	public Piece() {
-
-	}
-
+	
 	public long getNumber() {
 		return number;
 	}
@@ -61,12 +62,136 @@ public class Piece extends Polygon {
 
 	public void setPoints(ObservableList<Double> list) {
 		for (int i = 0; i < list.size(); i += 2) {
-			this.points.add(new Point2D.Double(list.get(i), list.get(i + 1)));
+			this.points.add(new Point2D.Double(list.get(i), list.get(i+1)));
 		}
+		calculateValues(list);
 	}
-
+	
+	private void calculateValues(ObservableList<Double> list) {
+		int noOfLines = list.size()/2;
+		int expectedSumOfAngles = 180*(noOfLines-2);
+		boolean reverseOrder = false;
+		angles = new double[noOfLines];
+		
+		//Calculate and save the lengths between points
+		for (int i = 0; i < noOfLines; i++) {
+			double length = points.get(i).distance(points.get((i+1)%noOfLines));
+			lengths.add(length);
+			sumOfLengths += length;
+		}
+		
+		while(!closeEnough(sumOfAngles, expectedSumOfAngles)) {
+			for (int i = 0; i < noOfLines; i++) {
+				//If wrong order, start over with correct order
+				if(sumOfAngles > expectedSumOfAngles) {
+					reverseOrder = true;
+					sumOfAngles = 0;
+					break;
+				}
+				
+				int negMod = Math.floorMod(i-1, noOfLines);
+				Vector v1 = new Vector(points.get(i), points.get((i+1)%noOfLines));
+				Vector v2 = new Vector(points.get(i), points.get(negMod));
+				double det;
+				if(reverseOrder) {
+					det = Vector.determinant(v2, v1);
+				} else {
+					det = Vector.determinant(v1, v2);
+				}
+				double angle = Vector.angle(v1, v2);
+				if(det < 0) {
+					angle = 360 - angle;
+				}
+				
+				//If angle is 180 degrees, remove the point, and update the length
+				if(closeEnough(angle, 180)) {
+					//Decrease number of lines, and remove the point
+					noOfLines--;
+					expectedSumOfAngles = 180*(noOfLines-2);
+					points.remove(i);
+					
+					//Remove and correct length caused by the point
+					negMod = Math.floorMod(i-1, lengths.size()-1);
+					lengths.remove(i);
+					lengths.remove(negMod);
+					lengths.add(negMod, points.get(negMod).distance(points.get(i)));
+					//Start again from the next point, with no incorrect point
+					i-=1;
+					continue;
+				}
+				sumOfAngles += angle;
+				angles[i] = angle;
+			}
+		}
+		
+		//Find index of smallest angle 
+		double smallestAngle = angles[0];
+		int indexOfSV = 0;
+		for(int i = 1; i < angles.length; i++) {
+			if(closeEnough(smallestAngle, angles[i])) {
+				continue;
+			}
+			if(smallestAngle > angles[i]) {
+				smallestAngle = angles[i];
+				indexOfSV = i;
+			}
+		}
+		
+		//Re-order arrays, so the first element corresponds to the smallest value of the angle
+		double[] tmpAngles = angles.clone();
+		//ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
+		if(!reverseOrder) {
+			for(int i = 0; i < noOfLines; i++) {
+				angles[i] = tmpAngles[(indexOfSV+i)%noOfLines];
+				//lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
+			}
+		} else {
+			for(int i = 0; i < noOfLines; i++) {
+				int negMod = Math.floorMod(-i, noOfLines);
+				angles[negMod] = tmpAngles[(indexOfSV+i)%noOfLines];
+			}
+		}
+	
+	}
+	
+	private boolean closeEnough(double v1, double v2) {
+	    if(Math.abs(v1 - v2) <= 1e-3) {
+	    	return true;
+	    } 
+	    return false;
+	}
+	
+	public double[] getAngles() {
+		return angles;
+	}
+	
+	public ArrayList<Double> getLengths() {
+		return lengths;
+	}
+	
 	public ArrayList<Point2D> getPointList() {
 		return this.points;
+	}
+
+	@Override
+	public int compareTo(Piece p) {
+		if(closeEnough(p.sumOfLengths, this.sumOfLengths) && closeEnough(p.sumOfAngles, this.sumOfAngles)) {
+			if(p.points.size() == this.points.size()) {
+				//Checks angles in clockwise order
+				for(int i = 0; i < p.points.size(); i++) {
+					if(closeEnough(p.angles[i], this.angles[i])) {
+						if(i == (p.points.size()-1)) {
+							//match
+							return 0;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		//no match
+		return -1;
 	}
 
 	public void setPoint(int index, Point2D element) {

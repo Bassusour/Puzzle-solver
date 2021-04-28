@@ -22,7 +22,7 @@ public class JSONReader {
 		JSONParser parser = new JSONParser();
 	
 		try {
-			Object obj = parser.parse(new FileReader("Puzzles/Puzzle-2r-2c-1430.json"));
+			Object obj = parser.parse(new FileReader("Puzzles/Puzzle-4r-4c-4808.json"));
 			JSONObject jsonObject = (JSONObject) obj;
 			
 			puzzle = new Puzzle();
