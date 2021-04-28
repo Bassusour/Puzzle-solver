@@ -15,6 +15,8 @@ public class JSONReader {
 	private int previousCorners = 0;
 	private int corners = 0;
 	
+	private static int matches;
+	
 	public JSONReader() {
 		
 		JSONParser parser = new JSONParser();
@@ -44,6 +46,7 @@ public class JSONReader {
 			name = name.substring(0, name.length() - 5);
 			puzzle.setName(name);
 			
+			
 			long noOfPieces = (long) jsonObject.get("no. of pieces");
 			puzzle.setNoOfPieces(noOfPieces);
 			
@@ -52,6 +55,8 @@ public class JSONReader {
 			
 			// Used for hard coded initial position for each piece
 			int i = 0;
+			int bufferX = 25;
+			int bufferY = 25;
 			
 			while (pieceIterator.hasNext()) {
 				
@@ -76,23 +81,51 @@ public class JSONReader {
 					
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
-
-					piece.getPoints().addAll(x + 200, y + 200);
+					
+					piece.getPoints().addAll(x + bufferX, y + bufferY);
 				
-
+				}
+				
+				if (bufferX > 1000 - 325) {
+					bufferX = 25;
+					bufferY = bufferY + 150;
+				} else {
+					bufferX = bufferX + 150;
 				}
 				
 				puzzle.addPieceToArray(piece);
+				
 				i++;
 			}
+			
+			int first = name.indexOf('-');
+			int second = name.indexOf('-', first + 1);
+			int third = name.indexOf('-', second + 1);
+			
+			String rows = name.substring(first + 1, second - 1);
+			String columns = name.substring(second + 1, third - 1);
+			
+			int fourpiece = (Integer.parseInt(rows) - 1) * (Integer.parseInt(columns) - 1);
+			int twopiece = (corners - 4 - fourpiece) / 2;
+			int sides = (Integer.parseInt(rows) - 1) * Integer.parseInt(columns) +
+						(Integer.parseInt(columns) - 1) * Integer.parseInt(rows);
+			
+			matches = (twopiece + (fourpiece * 4)) / sides;
+			
+			System.out.println("Matches " + matches);
+			
 			previousCorners = 2 + (previousCorners  - 4) % 4;
-			System.out.println("Corner no. " + previousCorners);
+			System.out.println("Corner no. " + corners);
 		} catch (IOException | ParseException e) {
 		}
 	}
 	
 	public Puzzle getPuzzle() {
 		return puzzle;
+	}
+	
+	public static int getMatches() {
+		return matches;
 	}
 	
 }

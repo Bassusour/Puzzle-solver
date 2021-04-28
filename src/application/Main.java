@@ -2,6 +2,7 @@ package application;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -41,7 +42,7 @@ public class Main extends Application {
 	double originalGY;
 
 	private int snapRange = 10;
-	private int amountOfCorners = 5;
+	private int amountOfCorners = 0;
 	private ArrayList<Circle> circles = new ArrayList<Circle>();
 	private Group groups;
 
@@ -49,7 +50,7 @@ public class Main extends Application {
 	public void start(Stage stage) {
 
 		puzzle = new JSONReader().getPuzzle();
-
+		amountOfCorners = JSONReader.getMatches();
 		groups = new Group();
 		pane = new Pane();
 		pane.getChildren().add(groups);
@@ -59,7 +60,6 @@ public class Main extends Application {
 			initializePiece(piece, pane, i);
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
-			System.out.println(piece.getPoints().toString());
 		}
 		
 		Scene scene = new Scene(pane, width, height);
@@ -70,7 +70,7 @@ public class Main extends Application {
 
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
-		piece.setFill(Color.AZURE);
+		piece.setFill(Color.BISQUE);
 
 		piece.setCursor(Cursor.HAND);
 
@@ -144,22 +144,22 @@ public class Main extends Application {
 						
 					}
 					
-					for (Object element : groups.getChildren().toArray()) {
-						
-						Group group = (Group) element;
-						
-						for (Object things : group.getChildren().toArray()) {
-							
-							Piece piece = (Piece) things;
-							for (Point2D point : piece.getPointList()) {
-								Circle circle = new Circle(point.getX(), point.getY(), 5);
-								pane.getChildren().add(circle);
-								
-							}
-							
-						}
-						
-					}
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
 					
 					if (!groups.getChildren().contains(piece)) {
 						
