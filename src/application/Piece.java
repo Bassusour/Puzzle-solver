@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Group;
 import javafx.scene.shape.Polygon;
 
 public class Piece extends Polygon implements Comparable<Piece>{
@@ -224,6 +225,32 @@ public class Piece extends Polygon implements Comparable<Piece>{
 
             newX += this.getLayoutBounds().getCenterX()+this.getTranslateX();
             newY += this.getLayoutBounds().getCenterY()+this.getTranslateY();
+            this.points.get(i/2).setLocation(newX, newY);
+        }
+	}
+	
+	public void updateGroupRotate(double degrees, Group group) {
+		double sin;
+		double cos;
+
+		if (degrees % 180.0 == 0 && degrees != 0 && degrees % 360 != 0) {
+			sin = 0.0;
+			cos = -1.0;
+		} else {
+			sin = Math.sin(Math.toRadians(degrees));
+			cos = Math.cos(Math.toRadians(degrees));
+		}
+		for(int i = 0; i < this.getPoints().size(); i += 2) {
+            
+            double oldX = (this.getPoints().get(i) + group.getTranslateX() + this.getTranslateX()) - (group.getLayoutBounds().getCenterX()+group.getTranslateX());
+            double oldY = (this.getPoints().get(i+1) + group.getTranslateY() + this.getTranslateY()) - (group.getLayoutBounds().getCenterY()+group.getTranslateY());
+
+            double newX = oldX * cos - oldY * sin;
+            double newY = oldX * sin + oldY * cos;
+
+            newX += group.getLayoutBounds().getCenterX()+group.getTranslateX();
+            newY += group.getLayoutBounds().getCenterY()+group.getTranslateY();
+            
             this.points.get(i/2).setLocation(newX, newY);
         }
 	}

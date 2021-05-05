@@ -14,6 +14,10 @@ public class JSONReader {
 	private Puzzle puzzle;
 	private int previousCorners = 0;
 	private int corners = 0;
+	private String name;
+	
+	private String file = "Puzzles/Puzzle-2r-2c-1430.json";
+//	private String file = "PieceList/PieceList01.json";
 	
 	private static int matches;
 	
@@ -22,33 +26,37 @@ public class JSONReader {
 		JSONParser parser = new JSONParser();
 	
 		try {
-			Object obj = parser.parse(new FileReader("Puzzles/Puzzle-4r-4c-4808.json"));
+			Object obj = parser.parse(new FileReader(file));
 			JSONObject jsonObject = (JSONObject) obj;
 			
 			puzzle = new Puzzle();
 			
-			JSONObject puzzles = (JSONObject) jsonObject.get("puzzle");
-			JSONArray formArray = (JSONArray) puzzles.get("form");
-			Iterator<JSONObject> formIterator = formArray.iterator();
-			while (formIterator.hasNext()) {
-				JSONObject corners = (JSONObject) formIterator.next();
-				JSONObject coordinate = (JSONObject) corners.get("coord");
-				
-				double x = (double) coordinate.get("x") * 100;
-				double y = (double) coordinate.get("y") * 100;
-				puzzle.getPoints().addAll(x, y);
-				//puzzle.setWidth(puzzle.getWidth() + x);
-				//puzzle.setHeight(puzzle.getHeight() + y);
-				
-			}
+			String start = file.substring(0,2);
 			
-			String name = (String) jsonObject.get("name");
-			name = name.substring(0, name.length() - 5);
-			puzzle.setName(name);
+			if (start.equals("Pu")) {
+				JSONObject puzzles = (JSONObject) jsonObject.get("puzzle");
+				JSONArray formArray = (JSONArray) puzzles.get("form");
+				Iterator<JSONObject> formIterator = formArray.iterator();
+				while (formIterator.hasNext()) {
+					JSONObject corners = (JSONObject) formIterator.next();
+					JSONObject coordinate = (JSONObject) corners.get("coord");
+					
+					double x = (double) coordinate.get("x") * 100;
+					double y = (double) coordinate.get("y") * 100;
+					puzzle.getPoints().addAll(x, y);
+					//puzzle.setWidth(puzzle.getWidth() + x);
+					//puzzle.setHeight(puzzle.getHeight() + y);
+					
+					name = (String) jsonObject.get("name");
+					name = name.substring(0, name.length() - 5);
+					puzzle.setName(name);
+					
+				}
+			}
 			
 			
 			long noOfPieces = (long) jsonObject.get("no. of pieces");
-			puzzle.setNoOfPieces(noOfPieces);
+			puzzle.setNoOfPieces(noOfPieces+15);
 			
 			JSONArray pieceArray = (JSONArray) jsonObject.get("pieces");
 			Iterator<JSONObject> pieceIterator = pieceArray.iterator();
@@ -98,24 +106,24 @@ public class JSONReader {
 				i++;
 			}
 			
-			int first = name.indexOf('-');
-			int second = name.indexOf('-', first + 1);
-			int third = name.indexOf('-', second + 1);
+			if (start.equals("Pu")) {
+				int first = name.indexOf('-');
+				int second = name.indexOf('-', first + 1);
+				int third = name.indexOf('-', second + 1);
+				
+				String rows = name.substring(first + 1, second - 1);
+				String columns = name.substring(second + 1, third - 1);
+				
+				int fourpiece = (Integer.parseInt(rows) - 1) * (Integer.parseInt(columns) - 1);
+				int twopiece = (corners - 4 - fourpiece) / 2;
+				int sides = (Integer.parseInt(rows) - 1) * Integer.parseInt(columns) +
+							(Integer.parseInt(columns) - 1) * Integer.parseInt(rows);
+				
+				matches = (twopiece + (fourpiece * 4)) / sides;
+							
+				previousCorners = 2 + (previousCorners  - 4) % 4;
+			}
 			
-			String rows = name.substring(first + 1, second - 1);
-			String columns = name.substring(second + 1, third - 1);
-			
-			int fourpiece = (Integer.parseInt(rows) - 1) * (Integer.parseInt(columns) - 1);
-			int twopiece = (corners - 4 - fourpiece) / 2;
-			int sides = (Integer.parseInt(rows) - 1) * Integer.parseInt(columns) +
-						(Integer.parseInt(columns) - 1) * Integer.parseInt(rows);
-			
-			matches = (twopiece + (fourpiece * 4)) / sides;
-			
-			System.out.println("Matches " + matches);
-			
-			previousCorners = 2 + (previousCorners  - 4) % 4;
-			System.out.println("Corner no. " + corners);
 		} catch (IOException | ParseException e) {
 		}
 	}

@@ -162,6 +162,7 @@ public class Main extends Application {
 						piece.updatePoints(event.getSceneX() - originalX, 
 										   event.getSceneY() - originalY);
 						
+						
 					}
 					
 //					for (Object element : groups.getChildren().toArray()) {
@@ -202,13 +203,34 @@ public class Main extends Application {
 							}
 						}
 					}
-					
 
 				} else if (event.getButton() == MouseButton.SECONDARY) {
 
-					piece.updatePointsRotate(piece.getRotate());
+					Group parent = (Group) piece.getParent();
+					for (Object element : parent.getChildren().toArray()) {
+						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
+					}
+					
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
+						
 
 				}
+
 			}
 		});
 		
@@ -252,10 +274,10 @@ public class Main extends Application {
 			
 			if (A == B) { return; }
 			
-			a.setRotate(Math.ceil(a.getRotate()));
+			a.setRotate(Math.round(a.getRotate()));
 			a.updatePointsRotate(a.getRotate());
 
-			b.setRotate(Math.ceil(b.getRotate()));
+			b.setRotate(Math.round(b.getRotate()));
 			b.updatePointsRotate(b.getRotate());
 			
 			
@@ -282,7 +304,7 @@ public class Main extends Application {
 						continue;
 					} else {
 						notEqualDistances = true;
-						a.setRotate(Math.ceil(a.getRotate()) + 1);
+						a.setRotate(Math.round(a.getRotate()) + 1);
 						a.updatePointsRotate(a.getRotate());
 						break;
 					}
@@ -315,6 +337,12 @@ public class Main extends Application {
 			}
 			
 			groups.getChildren().remove(A);
+			
+			for (Object element : B.getChildren().toArray()) {
+				((Piece) element).updateGroupRotate(B.getRotate(), B);
+			}
+			
+			
 
 		}
 	}
