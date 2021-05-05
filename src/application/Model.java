@@ -15,7 +15,7 @@ import javafx.scene.shape.Shape;
 public class Model {
 	private Puzzle puzzle;
 	private Group groups;
-	private int amountOfCorners = 2;
+	private int amountOfCorners = 0;
 	private int snapRange = 10;
 	private double originalX;
 	private double originalY;
@@ -28,7 +28,9 @@ public class Model {
 
 	public Model() {
 		puzzle = new JSONReader().getPuzzle();
-		groups = new Group();
+        amountOfCorners = JSONReader.getMatches();
+        //System.out.println(amountOfCorners);
+        groups = new Group();
 
 		// Initializes all the pieces from puzzle
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
@@ -42,7 +44,7 @@ public class Model {
 			System.out.println(piece.getPoints().toString());
 		}
 
-		// Checks if some pieces are identical
+		// Checks if pieces are identical
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			if (puzzle.getPiece(i) == null) {
 				continue;
@@ -65,7 +67,6 @@ public class Model {
 		piece.setFill(Color.BISQUE);
 		piece.setCursor(Cursor.HAND);
 
-		// Initializes piece handlers
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -116,8 +117,9 @@ public class Model {
 				}
 			}
 		});
-		//Initialize the piece itself
+
 		piece.setPoints(piece.getPoints());
+
 		piece.setOnMouseReleased(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -134,22 +136,22 @@ public class Model {
 
 					}
 
-//					for (Object element : groups.getChildren().toArray()) {
-//						
-//						Group group = (Group) element;
-//						
-//						for (Object things : group.getChildren().toArray()) {
-//							
-//							Piece piece = (Piece) things;
-//							for (Point2D point : piece.getPointList()) {
-//								Circle circle = new Circle(point.getX(), point.getY(), 5);
-//								pane.getChildren().add(circle);
+//							for (Object element : groups.getChildren().toArray()) {
+//								
+//								Group group = (Group) element;
+//								
+//								for (Object things : group.getChildren().toArray()) {
+//									
+//									Piece piece = (Piece) things;
+//									for (Point2D point : piece.getPointList()) {
+//										Circle circle = new Circle(point.getX(), point.getY(), 5);
+//										pane.getChildren().add(circle);
+//										
+//									}
+//									
+//								}
 //								
 //							}
-//							
-//						}
-//						
-//					}
 
 					if (!groups.getChildren().contains(piece)) {
 
@@ -176,9 +178,30 @@ public class Model {
 
 				} else if (event.getButton() == MouseButton.SECONDARY) {
 
-					piece.updatePointsRotate(piece.getRotate());
+					Group parent = (Group) piece.getParent();
+					for (Object element : parent.getChildren().toArray()) {
+						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
+					}
+
+//							for (Object element : groups.getChildren().toArray()) {
+//								
+//								Group group = (Group) element;
+//								
+//								for (Object things : group.getChildren().toArray()) {
+//									
+//									Piece piece = (Piece) things;
+//									for (Point2D point : piece.getPointList()) {
+//										Circle circle = new Circle(point.getX(), point.getY(), 5);
+//										pane.getChildren().add(circle);
+//										
+//									}
+//									
+//								}
+//								
+//							}
 
 				}
+
 			}
 		});
 
@@ -188,7 +211,7 @@ public class Model {
 
 	}
 
-	private void matchPoints(Piece a, Piece b, int threshold) {
+	public void matchPoints(Piece a, Piece b, int threshold) {
 
 		int matches = 0;
 
@@ -224,10 +247,10 @@ public class Model {
 				return;
 			}
 
-			a.setRotate(Math.ceil(a.getRotate()));
+			a.setRotate(Math.round(a.getRotate()));
 			a.updatePointsRotate(a.getRotate());
 
-			b.setRotate(Math.ceil(b.getRotate()));
+			b.setRotate(Math.round(b.getRotate()));
 			b.updatePointsRotate(b.getRotate());
 
 			double[] distances = new double[amountOfCorners];
@@ -253,7 +276,7 @@ public class Model {
 						continue;
 					} else {
 						notEqualDistances = true;
-						a.setRotate(Math.ceil(a.getRotate()) + 1);
+						a.setRotate(Math.round(a.getRotate()) + 1);
 						a.updatePointsRotate(a.getRotate());
 						break;
 					}
@@ -285,9 +308,13 @@ public class Model {
 
 			groups.getChildren().remove(A);
 
+			for (Object element : B.getChildren().toArray()) {
+				((Piece) element).updateGroupRotate(B.getRotate(), B);
+			}
+
 		}
 	}
-	
+
 	public Group getGroups() {
 		return groups;
 	}

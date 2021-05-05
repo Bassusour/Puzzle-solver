@@ -10,9 +10,9 @@ public class Puzzlesolver {
 	public Puzzlesolver() {
 		JSONReader js = new JSONReader();
 		puzzle = js.getPuzzle();
-		int corners = js.getCorners();
+		int corners = JSONReader.getMatches();
 		
-		//Loop for corrent piece
+		//Loop for current piece
 		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			Piece currPiece = puzzle.getPiece(i);
 			ArrayList<Double> currLenghts = currPiece.getLengths();
@@ -42,7 +42,7 @@ public class Puzzlesolver {
 		}
 	}
 	
-	private boolean checkMiddleAngles(Piece p1, Piece p2) {
+	private boolean checkMiddleAngles(Piece p1, Piece p2, int h) {
 		
 		
 		return false;

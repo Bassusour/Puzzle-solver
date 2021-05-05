@@ -4,12 +4,14 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Group;
 import javafx.scene.shape.Polygon;
 
 public class Piece extends Polygon implements Comparable<Piece>{
 
 	private long number;
 	private double angles[];
+	private double unorderedAngles[];
 	private double sumOfAngles = 0;
 	private double sumOfLengths = 0;
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
@@ -137,18 +139,18 @@ public class Piece extends Polygon implements Comparable<Piece>{
 			}
 		}
 		
-		//Re-order arrays, so the first element corresponds to the smallest value of the angle
-		double[] tmpAngles = angles.clone();
+		//Re-order array, so the first element corresponds to the smallest value of the angle
+		unorderedAngles = angles.clone();
 		//ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
 		if(!reverseOrder) {
 			for(int i = 0; i < noOfLines; i++) {
-				angles[i] = tmpAngles[(indexOfSV+i)%noOfLines];
+				angles[i] = unorderedAngles[(indexOfSV+i)%noOfLines];
 				//lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
 			}
 		} else {
 			for(int i = 0; i < noOfLines; i++) {
 				int negMod = Math.floorMod(-i, noOfLines);
-				angles[negMod] = tmpAngles[(indexOfSV+i)%noOfLines];
+				angles[negMod] = unorderedAngles[(indexOfSV+i)%noOfLines];
 			}
 		}
 	
@@ -171,6 +173,10 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	
 	public ArrayList<Point2D> getPointList() {
 		return this.points;
+	}
+	
+	public double[] getUnorderedAngles() {
+		return unorderedAngles;
 	}
 
 	@Override
@@ -224,6 +230,32 @@ public class Piece extends Polygon implements Comparable<Piece>{
 
             newX += this.getLayoutBounds().getCenterX()+this.getTranslateX();
             newY += this.getLayoutBounds().getCenterY()+this.getTranslateY();
+            this.points.get(i/2).setLocation(newX, newY);
+        }
+	}
+	
+	public void updateGroupRotate(double degrees, Group group) {
+		double sin;
+		double cos;
+
+		if (degrees % 180.0 == 0 && degrees != 0 && degrees % 360 != 0) {
+			sin = 0.0;
+			cos = -1.0;
+		} else {
+			sin = Math.sin(Math.toRadians(degrees));
+			cos = Math.cos(Math.toRadians(degrees));
+		}
+		for(int i = 0; i < this.getPoints().size(); i += 2) {
+            
+            double oldX = (this.getPoints().get(i) + group.getTranslateX() + this.getTranslateX()) - (group.getLayoutBounds().getCenterX()+group.getTranslateX());
+            double oldY = (this.getPoints().get(i+1) + group.getTranslateY() + this.getTranslateY()) - (group.getLayoutBounds().getCenterY()+group.getTranslateY());
+
+            double newX = oldX * cos - oldY * sin;
+            double newY = oldX * sin + oldY * cos;
+
+            newX += group.getLayoutBounds().getCenterX()+group.getTranslateX();
+            newY += group.getLayoutBounds().getCenterY()+group.getTranslateY();
+            
             this.points.get(i/2).setLocation(newX, newY);
         }
 	}
