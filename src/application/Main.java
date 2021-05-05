@@ -14,7 +14,7 @@ public class Main extends Application {
 		//Model and View only communicate through this class
 		Group groups = model.getGroups();
 		view.setView(groups);
-		//Puzzlesolver puzzlesolver = new Puzzlesolver();
+		Puzzlesolver puzzlesolver = new Puzzlesolver();
 	}
 
 	public static void main(String[] args) {

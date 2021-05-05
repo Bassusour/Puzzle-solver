@@ -25,9 +25,11 @@ public class Model {
 	private double deltaTY;
 	private double originalGX;
 	private double originalGY;
+	private static JSONReader jr;
 
 	public Model() {
-		puzzle = new JSONReader().getPuzzle();
+		jr = new JSONReader();
+		puzzle = jr.getPuzzle();
         amountOfCorners = JSONReader.getMatches();
         //System.out.println(amountOfCorners);
         groups = new Group();
@@ -41,7 +43,7 @@ public class Model {
 			initializePiece(piece, i);
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
-			System.out.println(piece.getPoints().toString());
+			//System.out.println(piece.getPoints().toString());
 		}
 
 		// Checks if pieces are identical
@@ -168,7 +170,7 @@ public class Model {
 
 									Shape intersect = Shape.intersect(piece, element);
 
-									if (intersect.getBoundsInLocal().getWidth() > -25) {
+									if (intersect.getBoundsInLocal().getWidth() > -25) { //Change
 										matchPoints(piece, element, amountOfCorners);
 									}
 								}
@@ -311,8 +313,11 @@ public class Model {
 			for (Object element : B.getChildren().toArray()) {
 				((Piece) element).updateGroupRotate(B.getRotate(), B);
 			}
-
 		}
+	}
+	
+	public static JSONReader getJSONReader() {
+		return jr;
 	}
 
 	public Group getGroups() {
