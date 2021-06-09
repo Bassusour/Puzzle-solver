@@ -16,8 +16,8 @@ public class JSONReader {
 	private int corners = 0;
 	private String name;
 	
-	private String file = "Puzzles/Puzzle-2r-2c-1430.json";
-//	private String file = "PieceList/PieceList01.json";
+	private String file = "Puzzles/Puzzle-8r-10c-8480.json";
+	//private String file = "Puzzles/Puzzle-2r-2c-1430.json";
 	
 	private static int matches;
 	
@@ -126,6 +126,8 @@ public class JSONReader {
 			
 		} catch (IOException | ParseException e) {
 		}
+		
+		System.out.println(matches);
 	}
 	
 	public Puzzle getPuzzle() {

@@ -45,29 +45,67 @@ public class Puzzlesolver {
 
 						if (closeEnoughLists(currSublist, otherSublist)) {
 							if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
-								System.out.println("match between piece " + i + " and piece " + k + " with values j: " + j + " and h: " + h);
+								System.out.println("match between piece " + i + " and piece " + k + " with values j: "
+										+ j + " and h: " + h);
+								
+								System.out.println(otherPiece.getParent());
+								
+								// Gets two points that match
+								Point2D point1 = currPiece.getPointList().get(j + 1);
+								Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
+//								double distance = Point2D.distance(point1.getX(), point1.getY(), point2.getX(),
+//										point2.getY());
+//								Vector vector = new Vector(point1, point2);
+//								Vector xaxis = new Vector(point2.getX(), point2.getY(), point2.getX() - 1,
+//										point2.getY());
+//								double angle = (Vector.angle(vector, xaxis) * Math.PI) / 180;
+
+								otherPiece.getParent().setTranslateX(otherPiece.getParent().getTranslateX()
+										+ point1.getX() - point2.getX());
+
+								otherPiece.getParent().setTranslateY(otherPiece.getParent().getTranslateY()
+										+ point1.getY() - point2.getY());
+
+								otherPiece.updatePoints(point1.getX() - point2.getX(), point1.getY() - point2.getY());
+
+								// System.out.println(otherPiece.getParent().getTranslateX()+otherPiece.getTranslateX());
+
+								Model.matchPoints(currPiece, otherPiece, sideMatch + 1);
+
+								// currPiece.getParent().setTranslateX(otherPiece.getTranslateX()+point1.getX()-point2.getX());
 							}
 						}
 
 						if (closeEnoughLists(currSublist, otherSublistRev)) {
 							if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
-								System.out.println("match between piece " + i + " and piece " + k + " with values j: " + j + " and h: " + h);
+								System.out.println("match between piece " + i + " and piece " + k + " with values j: "
+										+ j + " and h: " + h);
+								
+								System.out.println(otherPiece.getParent());
+								
 								// Gets two points that match
 								Point2D point1 = currPiece.getPointList().get(j + 1);
 								Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
-								double distance = Point2D.distance(point1.getX(), point1.getY(), point2.getX(), point2.getY());
-								Vector vector = new Vector(point1, point2);
-								Vector xaxis = new Vector(point2.getX(), point2.getY(), point2.getX()-1, point2.getY());
-								double angle = (Vector.angle(vector, xaxis)*Math.PI)/180;
-								
-								if(point1.getX() < point2.getX()) {
-									System.out.println(angle);
-									otherPiece.getParent().setTranslateX(-distance*Math.cos(angle));
-									otherPiece.getParent().setTranslateY(-distance*Math.sin(angle));
-								} else {
-//									otherPiece.getParent().setTranslateX(distance*Math.cos(angle));
-//									otherPiece.getParent().setTranslateY(distance*Math.sin(angle));
-								}
+//								double distance = Point2D.distance(point1.getX(), point1.getY(), point2.getX(),
+//										point2.getY());
+//								Vector vector = new Vector(point1, point2);
+//								Vector xaxis = new Vector(point2.getX(), point2.getY(), point2.getX() - 1,
+//										point2.getY());
+//								double angle = (Vector.angle(vector, xaxis) * Math.PI) / 180;
+
+								otherPiece.getParent().setTranslateX(otherPiece.getParent().getTranslateX()
+										+ point1.getX() - point2.getX());
+
+								otherPiece.getParent().setTranslateY(otherPiece.getParent().getTranslateY()
+										+ point1.getY() - point2.getY());
+
+								otherPiece.updatePoints(point1.getX() - point2.getX(), point1.getY() - point2.getY());
+
+								// System.out.println(otherPiece.getParent().getTranslateX()+otherPiece.getTranslateX());
+
+								Model.matchPoints(currPiece, otherPiece, sideMatch + 1);
+
+								// currPiece.getParent().setTranslateX(otherPiece.getTranslateX()+point1.getX()-point2.getX());
 
 							}
 						}
@@ -78,6 +116,26 @@ public class Puzzlesolver {
 				shift(currLenghts);
 			}
 		}
+		
+		
+//		for(int i = 0; i < puzzle.getNoOfPieces()-1; i++) {
+//			if(puzzle.getPiece(i).getParent() == puzzle.getPiece(i+1).getParent()) {
+//				continue;
+//			} else {
+//				System.out.println("No solution");
+//			}
+//		}
+		
+		System.out.println(puzzle.getPiece(0).getTranslateX());
+		System.out.println(puzzle.getPiece(0).getTranslateY());
+		System.out.println(puzzle.getPiece(0).getParent());
+		
+//		puzzle.getPiece(0).getParent().setTranslateX(100);
+//		puzzle.getPiece(0).getParent().setTranslateY(-7000);
+		
+		System.out.println(puzzle.getPiece(0).getParent().getTranslateX());
+		System.out.println(puzzle.getPiece(0).getParent().getTranslateY());
+		
 	}
 
 	private boolean closeEnoughLists(List<Double> list1, List<Double> list2) {

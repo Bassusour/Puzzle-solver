@@ -15,9 +15,9 @@ import javafx.scene.shape.Shape;
 
 public class Model {
 	private Puzzle puzzle;
-	private Group groups;
-	private int amountOfCorners = 0;
-	private int snapRange = 10;
+	private static Group groups;
+	private static int amountOfCorners = 0;
+	private static int snapRange = 1;
 	private double originalX;
 	private double originalY;
 	private double originalTX;
@@ -67,7 +67,15 @@ public class Model {
 
 	private void initializePiece(Piece piece, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
-		piece.setFill(Color.BISQUE);
+		if(piece.getNumber() == 0) {
+			piece.setFill(Color.BLACK);
+		} else if(piece.getNumber() == 1){
+			piece.setFill(Color.RED);
+		} else if(piece.getNumber() == 2){
+			piece.setFill(Color.GREEN);
+		} else {
+			piece.setFill(Color.BLUE);
+		}
 		piece.setCursor(Cursor.HAND);
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -132,9 +140,9 @@ public class Model {
 					Group parent = (Group) piece.getParent();
 
 					for (Object element : parent.getChildren().toArray()) {
-//						if(element.getClass() == javafx.scene.shape.Circle.class) {
-//							continue;
-//						}
+						if(element.getClass() == javafx.scene.shape.Circle.class) {
+							continue;
+						}
 
 						Piece piece = (Piece) element;
 
@@ -147,7 +155,9 @@ public class Model {
 //								Group group = (Group) element;
 //								
 //								for (Object things : group.getChildren().toArray()) {
-//									
+//									if(things.getClass() == javafx.scene.shape.Circle.class) {
+//										continue;
+//									}
 //									Piece piece = (Piece) things;
 //									for (Point2D point : piece.getPointList()) {
 //										Circle circle = new Circle(point.getX(), point.getY(), 5);
@@ -217,8 +227,7 @@ public class Model {
 
 	}
 
-	public void matchPoints(Piece a, Piece b, int threshold) {
-
+	public static void matchPoints(Piece a, Piece b, int threshold) {
 		int matches = 0;
 
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
@@ -267,7 +276,7 @@ public class Model {
 			double dy = 0;
 
 			while (notEqualDistances) {
-
+				
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
 
 					dx = points.get(i + 1).getX() - points.get(i).getX();
