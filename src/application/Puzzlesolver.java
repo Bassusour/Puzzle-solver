@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,12 +41,22 @@ public class Puzzlesolver {
 						if(closeEnoughLists(currSublist, otherSublist)) {
 							if(checkMiddleAngles(currPiece, otherPiece, j, h)) {
 								System.out.println("match between piece " + i + " and piece " + k + " with values j: " + j + " and k: " + h);
+								
+								currPiece.getParent().setTranslateX(100);
+								currPiece.getParent().setTranslateY(100);
 							}
 						} 
 						
 						if(closeEnoughLists(currSublist, otherSublistRev)) {
 							if(checkMiddleAngles(currPiece, otherPiece, j, h)) {
 								System.out.println("match between piece " + i + " and piece " + k + " with values j: " + j + " and k: " + h);
+								//Gets two points that match
+								Point2D point1 = currPiece.getPointList().get(j+1);
+								Point2D point2 = otherPiece.getPointList().get(h+sideMatch-1);
+								double distance = Point2D.distance(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+								
+								//otherPiece.getParent().setTranslateX(-distance);
+								//currPiece.getParent().setTranslateY(100);
 							}
 						}
 						shift(otherLengths);

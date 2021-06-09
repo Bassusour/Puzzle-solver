@@ -8,13 +8,17 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 
 public class Model {
 	private Puzzle puzzle;
-	private Group groups;
+	AnchorPane anchor;
 	private int amountOfCorners = 0;
 	private int snapRange = 10;
 	private double originalX;
@@ -32,8 +36,8 @@ public class Model {
 		puzzle = jr.getPuzzle();
         amountOfCorners = JSONReader.getMatches();
         //System.out.println(amountOfCorners);
-        groups = new Group();
-
+        
+        anchor = new AnchorPane();
 		// Initializes all the pieces from puzzle
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			if (puzzle.getPiece(i) == null) {
@@ -68,6 +72,7 @@ public class Model {
 		piece.setStroke(Color.LIGHTGRAY);
 		piece.setFill(Color.BISQUE);
 		piece.setCursor(Cursor.HAND);
+		
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -128,34 +133,38 @@ public class Model {
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
 
-					Group parent = (Group) piece.getParent();
-
+					StackPane parent = (StackPane) piece.getParent();
+					
+					//Each element in StackPane
 					for (Object element : parent.getChildren().toArray()) {
-
+						if(element.getClass() == javafx.scene.text.Text.class || element.getClass() == javafx.scene.shape.Circle.class) {
+							continue;
+						}
 						Piece piece = (Piece) element;
 
 						piece.updatePoints(event.getSceneX() - originalX, event.getSceneY() - originalY);
 
 					}
 
-//							for (Object element : groups.getChildren().toArray()) {
+//							for (Object element : anchor.getChildren().toArray()) {
+//								if(element.getClass() == javafx.scene.text.Text.class) {
+//									continue;
+//								}
+//								StackPane group = (StackPane) element;
 //								
-//								Group group = (Group) element;
 //								
 //								for (Object things : group.getChildren().toArray()) {
-//									
+//									if(things.getClass() == javafx.scene.text.Text.class || things.getClass() == javafx.scene.shape.Circle.class) {
+//										continue;
+//									}
 //									Piece piece = (Piece) things;
 //									for (Point2D point : piece.getPointList()) {
 //										Circle circle = new Circle(point.getX(), point.getY(), 5);
-//										pane.getChildren().add(circle);
-//										
+//										group.getChildren().add(circle);
 //									}
-//									
 //								}
-//								
 //							}
-
-					if (!groups.getChildren().contains(piece)) {
+					if (!anchor.getChildren().contains(piece)) { //groups
 
 						for (Piece element : puzzle.getPieces()) {
 							// Some elements are null, since Piece numbers start at 1 or are not properly
@@ -180,8 +189,11 @@ public class Model {
 
 				} else if (event.getButton() == MouseButton.SECONDARY) {
 
-					Group parent = (Group) piece.getParent();
+					StackPane parent = (StackPane) piece.getParent();
 					for (Object element : parent.getChildren().toArray()) {
+						if(element.getClass() == javafx.scene.text.Text.class) {
+							continue;
+						}
 						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
 					}
 
@@ -206,11 +218,27 @@ public class Model {
 
 			}
 		});
-
-		Group group = new Group();
-		group.getChildren().add(piece);
-		groups.getChildren().add(group);
-
+		Text text = new Text (piece.getNumber()+"");
+		//Group group = new Group();
+		StackPane stack = new StackPane();
+		
+		stack.getChildren().add(piece);
+		stack.getChildren().add(text);
+		
+		//group.getChildren().add(piece);
+		//group.getChildren().add(text);
+//		System.out.println("pre:" + anchor.getChildren());
+//		System.out.println(piece.getNumber() + " , " + text);
+		anchor.getChildren().add(stack);
+//		System.out.println("post:" + anchor.getChildren());
+		
+		//System.out.println(anchor.getChildren().contains(puzzle.getPiece(0)));
+		//System.out.println(stack.getChildren().contains(puzzle.getPiece(1)));
+		//System.out.println(stack.getChildren());
+		//group.getChildren().add(stack);
+		
+		//groups.getChildren().add(stack);
+		
 	}
 
 	public void matchPoints(Piece a, Piece b, int threshold) {
@@ -241,9 +269,12 @@ public class Model {
 		}
 
 		if (matches == threshold) {
-
-			Group A = (Group) a.getParent();
-			Group B = (Group) b.getParent();
+			
+			System.out.println((StackPane) a.getParent());
+			StackPane A = (StackPane) a.getParent();
+			StackPane B = (StackPane) a.getParent();
+			//Group A = (Group) a.getParent();
+			//Group B = (Group) b.getParent();
 
 			if (A == B) {
 				return;
@@ -271,7 +302,7 @@ public class Model {
 					distances[i / 2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
 
 				}
-
+				
 				for (int i = 0; i < distances.length - 1; i++) {
 					if (Math.abs(distances[i] - distances[i + 1]) < 0.1) {
 						notEqualDistances = false;
@@ -308,7 +339,7 @@ public class Model {
 
 			}
 
-			groups.getChildren().remove(A);
+			anchor.getChildren().remove(A); //groups
 
 			for (Object element : B.getChildren().toArray()) {
 				((Piece) element).updateGroupRotate(B.getRotate(), B);
@@ -320,7 +351,7 @@ public class Model {
 		return jr;
 	}
 
-	public Group getGroups() {
-		return groups;
+	public AnchorPane getGroups() {
+		return anchor;
 	}
 }

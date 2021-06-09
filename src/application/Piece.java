@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Polygon;
 
 public class Piece extends Polygon implements Comparable<Piece>{
@@ -238,7 +240,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
         }
 	}
 	
-	public void updateGroupRotate(double degrees, Group group) {
+	public void updateGroupRotate(double degrees, StackPane group) {
 		double sin;
 		double cos;
 

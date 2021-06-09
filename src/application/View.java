@@ -2,7 +2,9 @@ package application;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 
@@ -17,7 +19,7 @@ public class View {
 		pane = new Pane();
 	}
 	
-	public void setView(Group groups) {
+	public void setView(AnchorPane groups) {
 		pane.getChildren().add(groups);
 		Scene scene = new Scene(pane, width, height);
 		stage.setScene(scene);

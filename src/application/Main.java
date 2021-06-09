@@ -2,6 +2,8 @@ package application;
 
 import javafx.application.Application;
 import javafx.scene.Group;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 //Main class acts as the controller
@@ -12,7 +14,7 @@ public class Main extends Application {
 		View view = new View(stage);
 		
 		//Model and View only communicate through this class
-		Group groups = model.getGroups();
+		AnchorPane groups = model.getGroups();
 		view.setView(groups);
 		Puzzlesolver puzzlesolver = new Puzzlesolver();
 	}
