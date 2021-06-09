@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
@@ -131,6 +132,9 @@ public class Model {
 					Group parent = (Group) piece.getParent();
 
 					for (Object element : parent.getChildren().toArray()) {
+//						if(element.getClass() == javafx.scene.shape.Circle.class) {
+//							continue;
+//						}
 
 						Piece piece = (Piece) element;
 
@@ -147,7 +151,7 @@ public class Model {
 //									Piece piece = (Piece) things;
 //									for (Point2D point : piece.getPointList()) {
 //										Circle circle = new Circle(point.getX(), point.getY(), 5);
-//										pane.getChildren().add(circle);
+//										group.getChildren().add(circle);
 //										
 //									}
 //									
