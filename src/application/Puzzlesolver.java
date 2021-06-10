@@ -58,12 +58,6 @@ public class Puzzlesolver {
 										// Gets two points that match
 										Point2D point1 = currPiece.getPointList().get(j + 1);
 										Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
-//										double distance = Point2D.distance(point1.getX(), point1.getY(), point2.getX(),
-//												point2.getY());
-//										Vector vector = new Vector(point1, point2);
-//										Vector xaxis = new Vector(point2.getX(), point2.getY(), point2.getX() - 1,
-//												point2.getY());
-//										double angle = (Vector.angle(vector, xaxis) * Math.PI) / 180;
 
 										otherPiece.getParent().setTranslateX(otherPiece.getParent().getTranslateX()
 												+ point1.getX() - point2.getX());
@@ -73,9 +67,8 @@ public class Puzzlesolver {
 
 										otherPiece.updatePoints(point1.getX() - point2.getX(), point1.getY() - point2.getY());
 
-										// System.out.println(otherPiece.getParent().getTranslateX()+otherPiece.getTranslateX());
 
-										CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1);
+										CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
 
 										// currPiece.getParent().setTranslateX(otherPiece.getTranslateX()+point1.getX()-point2.getX());
 									}
@@ -97,15 +90,28 @@ public class Puzzlesolver {
 //					}
 //				}
 				
-				System.out.println(puzzle.getPiece(0).getTranslateX());
-				System.out.println(puzzle.getPiece(0).getTranslateY());
-				System.out.println(puzzle.getPiece(0).getParent());
+				double maxX = 0.0;
+				double maxY = 0.0;
 				
-//				puzzle.getPiece(0).getParent().setTranslateX(100);
-//				puzzle.getPiece(0).getParent().setTranslateY(-7000);
+				for (int i = 0; i < js.getPuzzle().getNoOfPieces(); i++) {
+
+					double currX = js.getPuzzle().getPiece(i).getTranslateX();
+					double currY = js.getPuzzle().getPiece(i).getTranslateY();
+					
+					if ( Math.abs(currX) > Math.abs(maxX)) {
+						maxX = currX;
+					}
+					
+					if ( Math.abs(currY) > Math.abs(maxY)) {
+						maxY = currY;
+					}
+				}
 				
-				System.out.println(puzzle.getPiece(0).getParent().getTranslateX());
-				System.out.println(puzzle.getPiece(0).getParent().getTranslateY());
+				
+				puzzle.getPiece(0).getParent().setTranslateX(-maxX/2);
+				puzzle.getPiece(0).getParent().setTranslateY(-maxY/2);
+				
+
 	}
 
 	private boolean closeEnoughLists(List<Double> list1, List<Double> list2) {

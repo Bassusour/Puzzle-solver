@@ -77,7 +77,7 @@ public class CanvasController {
 	double originalGX;
 	double originalGY;
 
-	private static int snapRange = 1;
+	private static int snapRange = 10;
 	private static int amountOfCorners = 0;
 	private ArrayList<Circle> circles = new ArrayList<Circle>();
 	private static Group groups;
@@ -102,15 +102,6 @@ public class CanvasController {
 	
 	
 	public void backToMenuButtonPushed(ActionEvent event) throws IOException {
-		
-//		Parent menuParent = Main.menu;
-//		System.out.println("Menu Parent Menu Parent: " + menuParent);
-//		Scene menuScene = new Scene(menuParent);
-//		//Node source = (Node) event.getSource();
-//		Stage window = (Stage) menuBar.getScene().getWindow();
-//		window.setScene(menuScene);
-//		window.show();
-//		window.centerOnScreen();
 		
 		View.window.setScene(View.sceneMenu);
 		View.window.show();
@@ -147,13 +138,7 @@ public class CanvasController {
 	}
 	
 	
-	public void puzzleSetup(String file) throws IOException {
-		
-//		loaderCanvas = new FXMLLoader(getClass().getResource("Canvas.fxml"));
-//		canvas = loaderCanvas.load();
-//		canvasController = loaderCanvas.getController();
-//		
-		
+	public void puzzleSetup(String file) throws IOException {		
 		
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
@@ -174,31 +159,6 @@ public class CanvasController {
 		}
 		
 	}
-	
-//	private void assemble(Group A, Group B) {
-//		
-//		Piece a = (Piece) A.getChildren().get(0);
-//		Piece b = (Piece) B.getChildren().get(0);
-//		
-//		B.setTranslateY(300);
-//		b.updatePoints(0, 300);
-//	
-//		A.setTranslateY(B.getTranslateY());
-//		
-//		Shape intersect = Shape.intersect(a, b);
-//		
-//		if (intersect.getBoundsInLocal().getWidth() > -1) {
-//			System.out.println("INSIDE");
-//			A.setTranslateX(A.getTranslateX() - 1);
-//			a.updatePoints(-1,0);
-//		} else {
-//			System.out.println("OUTSIDE");
-//			A.setTranslateX(A.getTranslateX() + 1);
-//			a.updatePoints(1,0);
-//		}
-//		
-//		//matchPoints(a, b, amountOfCorners);
-//	}
 
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
@@ -307,8 +267,8 @@ public class CanvasController {
 									
 									Shape intersect = Shape.intersect(piece, element);
 
-									if (intersect.getBoundsInLocal().getWidth() > -1) {
-										matchPoints(piece, element, amountOfCorners);
+									if (intersect.getBoundsInLocal().getWidth() > -10) {
+										matchPoints(piece, element, amountOfCorners, snapRange);
 									}	
 								}
 							}
@@ -351,7 +311,7 @@ public class CanvasController {
 
 	}
 
-	public static void matchPoints(Piece a, Piece b, int threshold) {
+	public static void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
 
 		int matches = 0;
 		
@@ -361,10 +321,10 @@ public class CanvasController {
 
 			for (Point2D pointB : b.getPointList()) {
 
-				if (pointA.getX() < pointB.getX() + snapRange) {
-					if (pointA.getX() > pointB.getX() - snapRange) {
-						if (pointA.getY() < pointB.getY() + snapRange) {
-							if (pointA.getY() > pointB.getY() - snapRange) {
+				if (pointA.getX() < pointB.getX() + snap_range) {
+					if (pointA.getX() > pointB.getX() - snap_range) {
+						if (pointA.getY() < pointB.getY() + snap_range) {
+							if (pointA.getY() > pointB.getY() - snap_range) {
 
 								points.add(pointA);
 								points.add(pointB);
@@ -461,13 +421,5 @@ public class CanvasController {
 	public static JSONReader getReader() {
 		return reader;
 	}
-	
-//	public Group getGroups() {
-//		return groups;
-//	}
-//	
-//	public static void setPuzzle(String input) {
-//		puzzle = input;
-//	}
 
 }
