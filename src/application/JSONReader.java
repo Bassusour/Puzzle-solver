@@ -25,7 +25,7 @@ public class JSONReader {
 		this.file = filename;
 		
 		JSONParser parser = new JSONParser();
-		System.out.println(file);
+//		System.out.println(file);
 	
 		try {
 			Object obj = parser.parse(new FileReader(file));
@@ -114,7 +114,7 @@ public class JSONReader {
 		} catch (IOException | ParseException e) {
 		}
 		
-		System.out.println(matches);
+//		System.out.println(matches);
 	}
 	
 	public void setFile(String input) {

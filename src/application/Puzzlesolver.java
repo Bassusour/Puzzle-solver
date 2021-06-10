@@ -50,10 +50,10 @@ public class Puzzlesolver {
 
 								if (closeEnoughLists(currSublist, otherSublist) || closeEnoughLists(currSublist, otherSublistRev)) {
 									if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
-										System.out.println("match between piece " + i + " and piece " + k + " with values j: "
-												+ j + " and h: " + h);
+//										System.out.println("match between piece " + i + " and piece " + k + " with values j: "
+//												+ j + " and h: " + h);
 										
-										System.out.println(otherPiece.getParent());
+//										System.out.println(otherPiece.getParent());
 										
 										// Gets two points that match
 										Point2D point1 = currPiece.getPointList().get(j + 1);

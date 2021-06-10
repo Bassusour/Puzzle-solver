@@ -260,5 +260,31 @@ public class Piece extends Polygon implements Comparable<Piece>{
             this.points.get(i/2).setLocation(newX, newY);
         }
 	}
+	
+//	public void updateGroupRotate2(double degrees, Group group) {
+//		double sin;
+//		double cos;
+//
+//		if (degrees % 180.0 == 0 && degrees != 0 && degrees % 360 != 0) {
+//			sin = 0.0;
+//			cos = -1.0;
+//		} else {
+//			sin = Math.sin(Math.toRadians(degrees));
+//			cos = Math.cos(Math.toRadians(degrees));
+//		}
+//		for(int i = 0; i < this.getPointList().size(); i++) {
+//            
+//            double oldX = (this.getPointList().get(i).getX() + group.getTranslateX()) - (group.getLayoutBounds().getCenterX()+group.getTranslateX());
+//            double oldY = (this.getPointList().get(i).getY() + group.getTranslateY()) - (group.getLayoutBounds().getCenterY()+group.getTranslateY());
+//
+//            double newX = oldX * cos - oldY * sin;
+//            double newY = oldX * sin + oldY * cos;
+//
+//            newX += group.getLayoutBounds().getCenterX()+group.getTranslateX();
+//            newY += group.getLayoutBounds().getCenterY()+group.getTranslateY();
+//            
+//            this.points.get(i).setLocation(newX, newY);
+//        }
+//	}
 
 }

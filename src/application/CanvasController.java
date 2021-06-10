@@ -236,22 +236,22 @@ public class CanvasController {
 						
 					}
 					
-//					for (Object element : groups.getChildren().toArray()) {
-//						
-//						Group group = (Group) element;
-//						
-//						for (Object things : group.getChildren().toArray()) {
-//							
-//							Piece piece = (Piece) things;
-//							for (Point2D point : piece.getPointList()) {
-//								Circle circle = new Circle(point.getX(), point.getY(), 5);
-//								pane.getChildren().add(circle);
-//								
-//							}
-//							
-//						}
-//						
-//					}
+					for (Object element : groups.getChildren().toArray()) {
+						
+						Group group = (Group) element;
+						
+						for (Object things : group.getChildren().toArray()) {
+							
+							Piece piece = (Piece) things;
+							for (Point2D point : piece.getPointList()) {
+								Circle circle = new Circle(point.getX(), point.getY(), 5);
+								pane.getChildren().add(circle);
+								
+							}
+							
+						}
+						
+					}
 					
 					if (!groups.getChildren().contains(piece)) {
 						
@@ -274,6 +274,8 @@ public class CanvasController {
 							}
 						}
 					}
+					
+//					System.out.println("Piece rotate: " + piece.getRotate());
 
 				} else if (event.getButton() == MouseButton.SECONDARY) {
 
@@ -282,22 +284,22 @@ public class CanvasController {
 						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
 					}
 					
-//					for (Object element : groups.getChildren().toArray()) {
-//						
-//						Group group = (Group) element;
-//						
-//						for (Object things : group.getChildren().toArray()) {
-//							
-//							Piece piece = (Piece) things;
-//							for (Point2D point : piece.getPointList()) {
-//								Circle circle = new Circle(point.getX(), point.getY(), 5);
-//								pane.getChildren().add(circle);
-//								
-//							}
-//							
-//						}
-//						
-//					}
+					for (Object element : groups.getChildren().toArray()) {
+						
+						Group group = (Group) element;
+						
+						for (Object things : group.getChildren().toArray()) {
+							
+							Piece piece = (Piece) things;
+							for (Point2D point : piece.getPointList()) {
+								Circle circle = new Circle(point.getX(), point.getY(), 5);
+								pane.getChildren().add(circle);
+								
+							}
+							
+						}
+						
+					}
 						
 
 				}
@@ -343,6 +345,7 @@ public class CanvasController {
 			Group A = (Group) a.getParent();
 			Group B = (Group) b.getParent();
 			
+			//Already same group
 			if (A == B) { return; }
 			
 			a.setRotate(Math.round(a.getRotate()));
@@ -351,48 +354,68 @@ public class CanvasController {
 			b.setRotate(Math.round(b.getRotate()));
 			b.updatePointsRotate(b.getRotate());
 			
-			
+			//Distances between points in each piece
 			double[] distances = new double[amountOfCorners];
 			
 			boolean notEqualDistances = true;
 			
 			double dx = 0;
 			double dy = 0;
+			double rot = 0;
 			
+			//Distances should be same when orientation fits
 			while (notEqualDistances) {
+				
+				if( a.getRotate() > 360) {
+					break;
+				}
 				
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
 					
+					//Distances are calculated
 					dx = points.get(i + 1).getX() - points.get(i).getX();
 					dy = points.get(i + 1).getY() - points.get(i).getY();
 					distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
 					
 				}
 				
-				for (int i = 0; i < distances.length - 1; i ++) {
+				for (int i = 0; i < distances.length-1; i++) {
+//					System.out.println(i);
 					if (Math.abs(distances[i] - distances[i + 1]) < 0.1) {
 						notEqualDistances = false;
 						continue;
 					} else {
 						notEqualDistances = true;
-						a.setRotate(Math.round(a.getRotate()) + 1);
+						a.setRotate(a.getRotate() + 1);
 						a.updatePointsRotate(a.getRotate());
 						break;
 					}
 				}
 				
+//				System.out.println("Piece number: " + a.getNumber());
+//				System.out.println("Piece rotation: " + a.getRotate());
+//				System.out.println("Center X: " + a.getLayoutBounds().getCenterX());
+//				System.out.println("Center X: " + a.getLayoutBounds().getCenterY());
+//				System.out.println("Piece original points: " + a.getPoints().toString());
+//				System.out.println("Piece points: " + a.getPointList().toString());
+//				System.out.println();
+				
+				
 			}
 			
-			b.updatePoints(b.getParent().getTranslateX(), 
-					       b.getParent().getTranslateY());
+//			b.updatePoints(b.getParent().getTranslateX(), 
+//					       b.getParent().getTranslateY());
 			
 			for (Object element : A.getChildren().toArray()) {
 				
 				Piece piece = (Piece) element;
 				boolean selected = piece.equals(a);
+				
+				System.out.println("X: " + piece.getParent().getTranslateX());
+				System.out.println("Y: " + piece.getParent().getTranslateY());
 
-				piece.setTranslateX(piece.getTranslateX() + dx);
-				piece.setTranslateY(piece.getTranslateY() + dy);
+				piece./*getParent().*/setTranslateX(piece./*getParent().*/getTranslateX() + dx);
+				piece./*getParent().*/setTranslateY(piece./*getParent().*/getTranslateY() + dy);
 				
 				if (selected) {
 					piece.updatePoints(B.getTranslateX() + dx,
@@ -402,8 +425,19 @@ public class CanvasController {
 							           B.getTranslateY() - A.getTranslateY() + dy);
 				}
 				
+				ArrayList<Point2D> pointList = a.getPointList();
+				
+				Piece newPiece = new Piece();
+				
+				for (Point2D point : pointList) {
+					newPiece.getPoints().addAll(point.getX(), point.getY());
+				}
+				
+				System.out.println(newPiece.getRotate());
+				
+				
 				A.getChildren().remove(piece);
-				B.getChildren().add(piece);
+				B.getChildren().add(newPiece);
 				
 			}
 			
