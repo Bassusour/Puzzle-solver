@@ -60,7 +60,7 @@ public class JSONReader {
 			
 			
 			long noOfPieces = (long) jsonObject.get("no. of pieces");
-			puzzle.setNoOfPieces(noOfPieces+15);
+			puzzle.setNoOfPieces(noOfPieces);
 			
 			JSONArray pieceArray = (JSONArray) jsonObject.get("pieces");
 			Iterator<JSONObject> pieceIterator = pieceArray.iterator();
@@ -130,6 +130,8 @@ public class JSONReader {
 			
 		} catch (IOException | ParseException e) {
 		}
+		
+		System.out.println(matches);
 	}
 	
 	public void setFile(String input) {

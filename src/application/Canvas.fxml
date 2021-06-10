@@ -18,7 +18,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="Solve puzzle" />
+              <MenuItem fx:id="solve" mnemonicParsing="false" onAction="#solvePuzzle" text="Solve puzzle" />
                   <MenuItem mnemonicParsing="false" text="Give hint" />
             </items>
           </Menu>

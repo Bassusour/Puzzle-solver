@@ -11,6 +11,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 
 	private long number;
 	private double angles[];
+	private double unorderedAngles[];
 	private double sumOfAngles = 0;
 	private double sumOfLengths = 0;
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
@@ -65,6 +66,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		for (int i = 0; i < list.size(); i += 2) {
 			this.points.add(new Point2D.Double(list.get(i), list.get(i+1)));
 		}
+		//System.out.println("points are " + points);
 		calculateValues(list);
 	}
 	
@@ -89,6 +91,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 					sumOfAngles = 0;
 					break;
 				}
+				//System.out.println("SumOfAngles is " + sumOfAngles);
 				
 				int negMod = Math.floorMod(i-1, noOfLines);
 				Vector v1 = new Vector(points.get(i), points.get((i+1)%noOfLines));
@@ -122,6 +125,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 				}
 				sumOfAngles += angle;
 				angles[i] = angle;
+				//System.out.println("Angle is " + angle);
 			}
 		}
 		
@@ -138,24 +142,24 @@ public class Piece extends Polygon implements Comparable<Piece>{
 			}
 		}
 		
-		//Re-order arrays, so the first element corresponds to the smallest value of the angle
-		double[] tmpAngles = angles.clone();
+		//Re-order array, so the first element corresponds to the smallest value of the angle
+		unorderedAngles = angles.clone();
 		//ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
 		if(!reverseOrder) {
 			for(int i = 0; i < noOfLines; i++) {
-				angles[i] = tmpAngles[(indexOfSV+i)%noOfLines];
+				angles[i] = unorderedAngles[(indexOfSV+i)%noOfLines];
 				//lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
 			}
 		} else {
 			for(int i = 0; i < noOfLines; i++) {
 				int negMod = Math.floorMod(-i, noOfLines);
-				angles[negMod] = tmpAngles[(indexOfSV+i)%noOfLines];
+				angles[negMod] = unorderedAngles[(indexOfSV+i)%noOfLines];
 			}
 		}
 	
 	}
 	
-	private boolean closeEnough(double v1, double v2) {
+	public static boolean closeEnough(double v1, double v2) {
 	    if(Math.abs(v1 - v2) <= 1e-3) {
 	    	return true;
 	    } 
@@ -171,7 +175,12 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	}
 	
 	public ArrayList<Point2D> getPointList() {
+		//System.out.println("points size is " + this.points);
 		return this.points;
+	}
+	
+	public double[] getUnorderedAngles() {
+		return unorderedAngles;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -58,12 +59,13 @@ public class CanvasController {
 	
 	@FXML private MenuBar menuBar;
 	@FXML private Pane pane;
+	@FXML private MenuItem solve;
 
 	private static String filename = "Puzzles/Puzzle-1r-2c-0995.json";
 	
 	public static int width = 1000;
 	public static int height = 600;
-	private JSONReader reader;
+	private static JSONReader reader;
 	private Puzzle puzzle;
 
 	double originalX;
@@ -75,10 +77,10 @@ public class CanvasController {
 	double originalGX;
 	double originalGY;
 
-	private int snapRange = 10;
-	private int amountOfCorners = 0;
+	private static int snapRange = 1;
+	private static int amountOfCorners = 0;
 	private ArrayList<Circle> circles = new ArrayList<Circle>();
-	private Group groups;
+	private static Group groups;
 	
 //	MenuController menuController;
 	CanvasController canvasController;
@@ -93,6 +95,11 @@ public class CanvasController {
 	Parent parentMenu;
 	Parent parentCanvas;
 	
+	public void solvePuzzle() {
+		Puzzlesolver puzzlesolver = new Puzzlesolver();
+		puzzlesolver.solvePuzzle();
+	}
+	
 	
 	public void backToMenuButtonPushed(ActionEvent event) throws IOException {
 		
@@ -105,21 +112,21 @@ public class CanvasController {
 //		window.show();
 //		window.centerOnScreen();
 		
-		Main.window.setScene(Main.sceneMenu);
-		Main.window.show();
-		Main.window.centerOnScreen();
+		View.window.setScene(View.sceneMenu);
+		View.window.show();
+		View.window.centerOnScreen();
 		
 	}
 	
 	public void initialize() throws IOException {
 				
-		 Main.window.sceneProperty().addListener(new ChangeListener<Scene>() {
+		 View.window.sceneProperty().addListener(new ChangeListener<Scene>() {
 			 @Override
 			 public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
 				 pane.getChildren().clear();
 				 try {
-//					 System.out.println(filename);
-					 puzzleSetup(filename);
+//					System.out.println(filename);
+					puzzleSetup(filename);
 				} catch (IOException e) {
 					 e.printStackTrace();
 				}
@@ -165,7 +172,6 @@ public class CanvasController {
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
 		}
-		
 		
 	}
 	
@@ -345,7 +351,7 @@ public class CanvasController {
 
 	}
 
-	public void matchPoints(Piece a, Piece b, int threshold) {
+	public static void matchPoints(Piece a, Piece b, int threshold) {
 
 		int matches = 0;
 		
@@ -452,6 +458,14 @@ public class CanvasController {
 		}
 	}
 	
+	public static JSONReader getReader() {
+		return reader;
+	}
+	
+//	public Group getGroups() {
+//		return groups;
+//	}
+//	
 //	public static void setPuzzle(String input) {
 //		puzzle = input;
 //	}

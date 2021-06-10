@@ -59,9 +59,9 @@ public class MenuController {
 //		Stage window = (Stage) source.getScene().getWindow();
 //		CanvasController.getPane().getChildren().clear();
 		CanvasController.setPuzzle("Puzzles/" + getSelectedPuzzle() + ".json");
-		Main.window.setScene(Main.sceneCanvas);
-		Main.window.show();
-		Main.window.centerOnScreen();
+		View.window.setScene(View.sceneCanvas);
+		View.window.show();
+		View.window.centerOnScreen();
 		
 	}
 	
