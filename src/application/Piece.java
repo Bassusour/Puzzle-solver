@@ -160,7 +160,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	}
 	
 	public static boolean closeEnough(double v1, double v2) {
-	    if(Math.abs(v1 - v2) <= 1e-3) {
+	    if(Math.abs(v1 - v2) <= 1e-5) {
 	    	return true;
 	    } 
 	    return false;

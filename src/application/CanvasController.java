@@ -77,7 +77,7 @@ public class CanvasController {
 	double originalGX;
 	double originalGY;
 
-	private static int snapRange = 1;
+	private static int snapRange = 10;
 	private static int amountOfCorners = 0;
 	private ArrayList<Circle> circles = new ArrayList<Circle>();
 	private static Group groups;
@@ -94,10 +94,18 @@ public class CanvasController {
 	
 	Parent parentMenu;
 	Parent parentCanvas;
+	Puzzlesolver puzzlesolver;
+	
+	public CanvasController() {
+		
+	}
 	
 	public void solvePuzzle() {
-		Puzzlesolver puzzlesolver = new Puzzlesolver();
-		puzzlesolver.solvePuzzle();
+		puzzlesolver.solvePuzzle(true);
+	}
+	
+	public void puzzleHint() {
+		puzzlesolver.giveHint();
 	}
 	
 	
@@ -157,6 +165,7 @@ public class CanvasController {
 		
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
+		puzzlesolver = new Puzzlesolver();
 		
 		amountOfCorners = reader.getMatches();
 		groups = new Group();
@@ -202,8 +211,8 @@ public class CanvasController {
 
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
-		piece.setFill(Color.BISQUE);
 		piece.setCursor(Cursor.HAND);
+		piece.setFill(Color.BISQUE);
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -452,9 +461,8 @@ public class CanvasController {
 			for (Object element : B.getChildren().toArray()) {
 				((Piece) element).updateGroupRotate(B.getRotate(), B);
 			}
-			
-			
-
+			a.setFill(Color.BISQUE);
+			b.setFill(Color.BISQUE);
 		}
 	}
 	
