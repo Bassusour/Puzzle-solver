@@ -16,14 +16,18 @@ public class JSONReader {
 	private int corners = 0;
 	private String name;
 	
-	private String file = "Puzzles/Puzzle-2r-2c-1430.json";
+	private String file = "Puzzles/Puzzle-1r-2c-0995.json";
 //	private String file = "PieceList/PieceList01.json";
+//	private String file = "PieceList/144Solutions.json";
 	
-	private static int matches;
+	private int matches;
 	
-	public JSONReader() {
+	public JSONReader(String filename) {
+		
+		this.file = filename;
 		
 		JSONParser parser = new JSONParser();
+		System.out.println(file);
 	
 		try {
 			Object obj = parser.parse(new FileReader(file));
@@ -128,11 +132,19 @@ public class JSONReader {
 		}
 	}
 	
+	public void setFile(String input) {
+		if (input == null) {
+			file = "Puzzles/Puzzle-1r-2c-0995.json";
+		} else {
+			file = "Puzzles/" + input + ".json";
+		}
+	}
+	
 	public Puzzle getPuzzle() {
 		return puzzle;
 	}
 	
-	public static int getMatches() {
+	public int getMatches() {
 		return matches;
 	}
 	
