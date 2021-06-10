@@ -29,17 +29,15 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
-
+	private CanvasController canvasController;
+	private MenuController menuController;
+	private View view;
 
 	public void start(Stage stage) throws IOException {
-		CanvasController model = new CanvasController();
+		CanvasController canvasController = new CanvasController();
+		MenuController menuController = new MenuController();
 		View view = new View(stage);
-		
-		//Model and View only communicate through this class
-//		Group groups = model.getGroups();
 		view.setView();
-		
-		
 	}
 
 	public static void main(String[] args) {
