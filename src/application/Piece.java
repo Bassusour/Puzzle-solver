@@ -66,7 +66,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		for (int i = 0; i < list.size(); i += 2) {
 			this.points.add(new Point2D.Double(list.get(i), list.get(i+1)));
 		}
-		//System.out.println("points are " + points);
 		calculateValues(list);
 	}
 	
@@ -91,7 +90,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 					sumOfAngles = 0;
 					break;
 				}
-				//System.out.println("SumOfAngles is " + sumOfAngles);
 				
 				int negMod = Math.floorMod(i-1, noOfLines);
 				Vector v1 = new Vector(points.get(i), points.get((i+1)%noOfLines));
@@ -125,7 +123,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 				}
 				sumOfAngles += angle;
 				angles[i] = angle;
-				//System.out.println("Angle is " + angle);
 			}
 		}
 		

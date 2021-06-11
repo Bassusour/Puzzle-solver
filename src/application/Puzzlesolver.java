@@ -15,9 +15,10 @@ public class Puzzlesolver {
 	private Puzzle puzzle;
 	int sideMatch;
 	int[] matchingPieces;
+	JSONReader js;
 
 	public Puzzlesolver() {
-		JSONReader js = CanvasController.getReader();
+		js = CanvasController.getReader();
 		puzzle = js.getPuzzle();
 		sideMatch = js.getMatches() - 1;
 		matchingPieces = new int[2];
@@ -38,7 +39,7 @@ public class Puzzlesolver {
 				for (int k = i + 1; k < puzzle.getNoOfPieces(); k++) {
 					Piece otherPiece = puzzle.getPiece(k);
 					ArrayList<Double> otherLengths = new ArrayList<Double>(otherPiece.getLengths());
-
+					
 					// Loop for all sublists for other piece, and match them
 					for (int h = 0; h < otherPiece.getPointList().size(); h++) {
 						List<Double> otherSublist = otherLengths.subList(0, sideMatch);
@@ -47,7 +48,7 @@ public class Puzzlesolver {
 						if (!currPiece.getParent().equals(otherPiece.getParent())) {
 							if (closeEnoughLists(currSublist, otherSublist) || closeEnoughLists(currSublist, otherSublistRev)) {
 								if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
-									System.out.println("match between piece " + i + " and piece " + k + " with values j: " + j + " and h: " + h);
+									//System.out.println("match between piece " + i + " and piece " + k + " with values j: " + j + " and h: " + h);
 									
 									if (!solve) {
 										matchingPieces[0] = i;
@@ -68,7 +69,7 @@ public class Puzzlesolver {
 									otherPiece.updatePoints(point1.getX() - point2.getX(),
 											point1.getY() - point2.getY());
 
-									CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1);
+									CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
 								}
 							}
 						}
@@ -78,6 +79,34 @@ public class Puzzlesolver {
 				shift(currLenghts);
 			}
 		}
+//		for(int i = 0; i < puzzle.getNoOfPieces()-1; i++) {
+//		if(puzzle.getPiece(i).getParent() == puzzle.getPiece(i+1).getParent()) {
+//			continue;
+//		} else {
+//			System.out.println("No solution");
+//		}
+//	}
+	
+	double maxX = 0.0;
+	double maxY = 0.0;
+	
+	for (int i = 0; i < js.getPuzzle().getNoOfPieces(); i++) {
+
+		double currX = js.getPuzzle().getPiece(i).getTranslateX();
+		double currY = js.getPuzzle().getPiece(i).getTranslateY();
+		
+		if ( Math.abs(currX) > Math.abs(maxX)) {
+			maxX = currX;
+		}
+		
+		if ( Math.abs(currY) > Math.abs(maxY)) {
+			maxY = currY;
+		}
+	}
+	
+	
+	puzzle.getPiece(0).getParent().setTranslateX(-maxX/2);
+	puzzle.getPiece(0).getParent().setTranslateY(-maxY/2);
 	}
 
 	public void giveHint() {

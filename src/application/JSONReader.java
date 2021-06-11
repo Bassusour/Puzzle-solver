@@ -17,8 +17,6 @@ public class JSONReader {
 	private String name;
 	
 	private String file = "Puzzles/Puzzle-1r-2c-0995.json";
-//	private String file = "PieceList/PieceList01.json";
-//	private String file = "PieceList/144Solutions.json";
 	
 	private int matches;
 	
@@ -48,8 +46,6 @@ public class JSONReader {
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
 					puzzle.getPoints().addAll(x, y);
-					//puzzle.setWidth(puzzle.getWidth() + x);
-					//puzzle.setHeight(puzzle.getHeight() + y);
 					
 					name = (String) jsonObject.get("name");
 					name = name.substring(0, name.length() - 5);
@@ -65,10 +61,6 @@ public class JSONReader {
 			JSONArray pieceArray = (JSONArray) jsonObject.get("pieces");
 			Iterator<JSONObject> pieceIterator = pieceArray.iterator();
 			
-			// Used for hard coded initial position for each piece
-			int i = 0;
-			int bufferX = 25;
-			int bufferY = 25;
 			
 			while (pieceIterator.hasNext()) {
 				
@@ -94,20 +86,11 @@ public class JSONReader {
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
 					
-					piece.getPoints().addAll(x + bufferX, y + bufferY);
+					piece.getPoints().addAll(x + 400, y + 200);
 				
-				}
-				
-				if (bufferX > 1000 - 325) {
-					bufferX = 25;
-					bufferY = bufferY + 150;
-				} else {
-					bufferX = bufferX + 150;
 				}
 				
 				puzzle.addPieceToArray(piece);
-				
-				i++;
 			}
 			
 			if (start.equals("Pu")) {
