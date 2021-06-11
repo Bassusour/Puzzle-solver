@@ -49,7 +49,8 @@ public class MenuController {
 			"Puzzle-5r-8c-1920-sol", "Puzzle-5r-8c-3603-pure", "Puzzle-5r-8c-4228-rot", "Puzzle-5r-8c-5144-rot-sol",
 			"Puzzle-5r-8c-6916", "Puzzle-8r-10c-0670-pure", "Puzzle-8r-10c-1628-sol", "Puzzle-8r-10c-2615-rot-sol",
 			"Puzzle-8r-10c-4267-rot", "Puzzle-8r-10c-8480", "Puzzle-15r-20c-0945-rot-sol", "Puzzle-15r-20c-3290-pure",
-			"Puzzle-15r-20c-4590-rot", "Puzzle-15r-20c-5737", "Puzzle-15r-20c-8696-sol" };
+			"Puzzle-15r-20c-4590-rot", "Puzzle-15r-20c-5737", "Puzzle-15r-20c-8696-sol", "PieceList01", 
+			"PieceList02", "PieceList03", "PieceList04"};
 
 	public void playButtonPushed(ActionEvent event) throws IOException {
 		

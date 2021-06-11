@@ -66,7 +66,7 @@ public class CanvasController {
 	public static int width = 1000;
 	public static int height = 600;
 	private static JSONReader reader;
-	private Puzzle puzzle;
+	private static Puzzle puzzle;
 
 	double originalX;
 	double originalY;
@@ -77,7 +77,7 @@ public class CanvasController {
 	double originalGX;
 	double originalGY;
 
-	private static int snapRange = 10;
+	private static int snapRange =10;
 	private static int amountOfCorners = 0;
 	private ArrayList<Circle> circles = new ArrayList<Circle>();
 	private static Group groups;
@@ -96,6 +96,8 @@ public class CanvasController {
 	Parent parentCanvas;
 	Puzzlesolver puzzlesolver;
 	
+	public final Color DEFAULT_COLOR = Color.BISQUE;
+	
 	public CanvasController() {
 		
 	}
@@ -106,6 +108,29 @@ public class CanvasController {
 	
 	public void puzzleHint() {
 		puzzlesolver.giveHint();
+	}
+	
+	public void showIdenticalPieces() {
+		boolean[][] identicals = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(i != j && puzzle.getPiece(i).compareTo(puzzle.getPiece(j)) == 0) {
+					identicals[i][j] = true;
+				}
+			}
+		}
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i).getFill() == DEFAULT_COLOR) {
+				puzzle.getPiece(i).setFill(Color.color(Math.random(), Math.random(), Math.random()));
+			} else {
+				continue;
+			}
+			for(int j = i+1; i < puzzle.getNoOfPieces(); j++) {
+				if(identicals[i][j]) {
+					puzzle.getPiece(j).setFill(puzzle.getPiece(i).getFill());
+				}
+			}
+		}
 	}
 	
 	
@@ -212,7 +237,7 @@ public class CanvasController {
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
 		piece.setCursor(Cursor.HAND);
-		piece.setFill(Color.BISQUE);
+		piece.setFill(DEFAULT_COLOR);
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -409,7 +434,7 @@ public class CanvasController {
 			double dy = 0;
 			
 			while (notEqualDistances) {
-				
+				System.out.println("asd");
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
 					
 					dx = points.get(i + 1).getX() - points.get(i).getX();
@@ -461,8 +486,11 @@ public class CanvasController {
 			for (Object element : B.getChildren().toArray()) {
 				((Piece) element).updateGroupRotate(B.getRotate(), B);
 			}
-			a.setFill(Color.BISQUE);
-			b.setFill(Color.BISQUE);
+			if(a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
+				for(int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
+					((Shape) a.getParent().getChildrenUnmodifiable().get(i)).setFill(Color.BISQUE);
+				}
+			}
 		}
 	}
 	

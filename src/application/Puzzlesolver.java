@@ -44,9 +44,6 @@ public class Puzzlesolver {
 						List<Double> otherSublist = otherLengths.subList(0, sideMatch);
 						List<Double> otherSublistRev = new ArrayList<Double>(otherSublist);
 						Collections.reverse(otherSublistRev);
-
-						System.out.println("Piece " + i + " with currSublist " + currSublist);
-						System.out.println("Piece " + k + " with otherSublist " + otherSublist);
 						if (!currPiece.getParent().equals(otherPiece.getParent())) {
 							if (closeEnoughLists(currSublist, otherSublist) || closeEnoughLists(currSublist, otherSublistRev)) {
 								if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
@@ -90,8 +87,14 @@ public class Puzzlesolver {
 			}
 		}
 		solvePuzzle(false);
-		puzzle.getPiece(matchingPieces[0]).setFill(Color.LIGHTBLUE);
-		puzzle.getPiece(matchingPieces[1]).setFill(Color.LIGHTBLUE);
+		for(int i = 0; i < puzzle.getPiece(matchingPieces[0]).getParent().getChildrenUnmodifiable().size(); i++) {
+			((javafx.scene.shape.Shape) puzzle.getPiece(matchingPieces[0]).getParent().getChildrenUnmodifiable().get(i)).setFill(Color.LIGHTBLUE);
+		}
+		for(int i = 0; i < puzzle.getPiece(matchingPieces[1]).getParent().getChildrenUnmodifiable().size(); i++) {
+			((javafx.scene.shape.Shape) puzzle.getPiece(matchingPieces[1]).getParent().getChildrenUnmodifiable().get(i)).setFill(Color.LIGHTBLUE);
+		}
+//		puzzle.getPiece(matchingPieces[0]).setFill(Color.LIGHTBLUE);
+//		puzzle.getPiece(matchingPieces[1]).setFill(Color.LIGHTBLUE);
 	}
 
 	private boolean closeEnoughLists(List<Double> list1, List<Double> list2) {
