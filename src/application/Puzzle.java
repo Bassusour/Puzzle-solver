@@ -7,6 +7,7 @@ public class Puzzle extends Polygon {
 	private String name;
 	private long noOfPieces;
 	private Piece[] pieces;
+	private int currPieceNo = 0;
 
 	public String getName() {
 		return name;
@@ -30,7 +31,8 @@ public class Puzzle extends Polygon {
 	}
 	
 	public void addPieceToArray(Piece piece) {
-		pieces[(int) piece.getNumber()] = piece;
+		pieces[currPieceNo] = piece;
+		currPieceNo++;
 	}
 	
 	public Piece getPiece(int index) {

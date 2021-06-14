@@ -104,6 +104,8 @@ public class CanvasController {
 	
 	public void solvePuzzle() {
 		puzzlesolver.solvePuzzle(true);
+		//showIdenticalPieces();
+		//puzzlesolver.giveHint();
 	}
 	
 	public void puzzleHint() {
@@ -111,6 +113,9 @@ public class CanvasController {
 	}
 	
 	public void showIdenticalPieces() {
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			puzzle.getPiece(i).setFill(DEFAULT_COLOR);
+		}
 		boolean[][] identicals = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
 		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
@@ -125,7 +130,7 @@ public class CanvasController {
 			} else {
 				continue;
 			}
-			for(int j = i+1; i < puzzle.getNoOfPieces(); j++) {
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
 				if(identicals[i][j]) {
 					puzzle.getPiece(j).setFill(puzzle.getPiece(i).getFill());
 				}
@@ -149,7 +154,7 @@ public class CanvasController {
 			 public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
 				 pane.getChildren().clear();
 				 try {
-//					System.out.println(filename);
+					//System.out.println(filename);
 					puzzleSetup(filename);
 				} catch (IOException e) {
 					 e.printStackTrace();
@@ -176,7 +181,6 @@ public class CanvasController {
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
 		puzzlesolver = new Puzzlesolver();
-		
 		amountOfCorners = reader.getMatches();
 		groups = new Group();
 		

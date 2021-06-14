@@ -25,11 +25,15 @@ import javafx.stage.Window;
 
 public class MenuController {
 
-	@FXML private ListView<String> listView;
-	@FXML private TextField textField;
-	@FXML private RadioButton randomButton;
-	@FXML private Button playButton;
-	
+	@FXML
+	private ListView<String> listView;
+	@FXML
+	private TextField textField;
+	@FXML
+	private RadioButton randomButton;
+	@FXML
+	private Button playButton;
+
 	private Scene scene;
 
 	private String[] puzzleList = { "Puzzle-1r-2c-0995", "Puzzle-1r-2c-6816-rot-sol", "Puzzle-1r-2c-7537-rot",
@@ -49,11 +53,13 @@ public class MenuController {
 			"Puzzle-5r-8c-1920-sol", "Puzzle-5r-8c-3603-pure", "Puzzle-5r-8c-4228-rot", "Puzzle-5r-8c-5144-rot-sol",
 			"Puzzle-5r-8c-6916", "Puzzle-8r-10c-0670-pure", "Puzzle-8r-10c-1628-sol", "Puzzle-8r-10c-2615-rot-sol",
 			"Puzzle-8r-10c-4267-rot", "Puzzle-8r-10c-8480", "Puzzle-15r-20c-0945-rot-sol", "Puzzle-15r-20c-3290-pure",
-			"Puzzle-15r-20c-4590-rot", "Puzzle-15r-20c-5737", "Puzzle-15r-20c-8696-sol", "PieceList01", 
-			"PieceList02", "PieceList03", "PieceList04"};
+			"Puzzle-15r-20c-4590-rot", "Puzzle-15r-20c-5737", "Puzzle-15r-20c-8696-sol", "PieceList01", "PieceList02",
+			"PieceList03", "PieceList04", "Classic-003-005-1331", "Classic-003-005-4813", "Classic-003-005-8825",
+			"Classic-005-008-4343", "Classic-005-008-4858", "Classic-005-008-7076", "Classic-008-015-0314",
+			"Classic-008-015-2625", "Classic-008-015-8137", "Classic-040-060-3882" };
 
 	public void playButtonPushed(ActionEvent event) throws IOException {
-		
+
 //		Parent canvasParent = Main.canvas;	
 //		Scene canvasScene = Main.sceneCanvas;
 //		Node source = (Node) event.getSource();
@@ -63,9 +69,9 @@ public class MenuController {
 		View.window.setScene(View.sceneCanvas);
 		View.window.show();
 		View.window.centerOnScreen();
-		
+
 	}
-	
+
 	public void filterList(String oldValue, String newValue) {
 
 		ObservableList<String> items = FXCollections.observableArrayList();
@@ -85,8 +91,7 @@ public class MenuController {
 	}
 
 	public void initialize() {
-		
-		
+
 //		playButton.setOnAction(new EventHandler<ActionEvent>() {
 //		    @Override public void handle(ActionEvent e) {
 //		        System.out.println("Puzzles/" + getSelectedPuzzle() + ".json");
@@ -122,7 +127,7 @@ public class MenuController {
 		}
 		return selectedPuzzle;
 	}
-	
+
 	public Scene getScene() {
 		return scene;
 	}
