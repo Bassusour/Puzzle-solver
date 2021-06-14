@@ -114,8 +114,8 @@ public class JSONReader {
 				
 				System.out.println("old: " + (twopiece + (fourpiece * 4)) / sides);
 				matches = (twopiece + (fourpiece * 4)) / sides;
-				
 			} 
+
 
 		} catch (IOException | ParseException e) {
 		}
