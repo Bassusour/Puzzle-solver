@@ -63,44 +63,37 @@ public class CanvasController {
 
 	private static String filename = "Puzzles/Puzzle-1r-2c-0995.json";
 	
-	public static int width = 1000;
-	public static int height = 600;
+//	public static int width = 1000;
+//	public static int height = 600;
 	private static JSONReader reader;
 	private static Puzzle puzzle;
 
-	double originalX;
-	double originalY;
-	double originalTX;
-	double originalTY;
-	double deltaTX;
-	double deltaTY;
-	double originalGX;
-	double originalGY;
+	private double originalX;
+	private double originalY;
+	private double originalTX;
+	private double originalTY;
+	private double deltaTX;
+	private double deltaTY;
+	private double originalGX;
+	private double originalGY;
 
 	private static int snapRange =10;
 	private static int amountOfCorners = 0;
-	private ArrayList<Circle> circles = new ArrayList<Circle>();
+	//private ArrayList<Circle> circles = new ArrayList<Circle>();
 	private static Group groups;
 	
-//	MenuController menuController;
-	CanvasController canvasController;
+//	private static Stage window;
+//	private static Scene sceneMenu;
+//	private static Scene sceneCanvas;
 	
-	static Stage window;
-	static Scene sceneMenu;
-	static Scene sceneCanvas;
-	
-	FXMLLoader loaderMenu;
-	FXMLLoader loaderCanvas;
-	
-	Parent parentMenu;
-	Parent parentCanvas;
-	Puzzlesolver puzzlesolver;
+//	private FXMLLoader loaderMenu;
+//	private FXMLLoader loaderCanvas;
+//	
+//	private Parent parentMenu;
+//	private Parent parentCanvas;
+	private Puzzlesolver puzzlesolver;
 	
 	public final Color DEFAULT_COLOR = Color.BISQUE;
-	
-	public CanvasController() {
-		
-	}
 	
 	public void solvePuzzle() {
 		puzzlesolver.solvePuzzle(true);
@@ -119,8 +112,10 @@ public class CanvasController {
 		boolean[][] identicals = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
 		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
-				if(i != j && puzzle.getPiece(i).compareTo(puzzle.getPiece(j)) == 0) {
-					identicals[i][j] = true;
+				if(i != j) {
+					if(puzzle.getPiece(i).compareTo(puzzle.getPiece(j)) == 0) {
+						identicals[i][j] = true;
+					}
 				}
 			}
 		}
@@ -221,7 +216,6 @@ public class CanvasController {
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
 				}
-
 			}
 		});
 

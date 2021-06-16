@@ -32,6 +32,7 @@ public class Puzzle extends Polygon {
 	
 	public void addPieceToArray(Piece piece) {
 		pieces[currPieceNo] = piece;
+		piece.setNumber(currPieceNo);
 		currPieceNo++;
 	}
 	

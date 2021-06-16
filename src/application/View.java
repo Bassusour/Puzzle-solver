@@ -11,20 +11,20 @@ import javafx.stage.Stage;
 
 
 public class View {
-	private static int width = 1000;
-	private static int height = 600;
-	private Pane pane;
+//	private static int width = 1000;
+//	private static int height = 600;
+//	private Pane pane;
 	private Stage stage;
 	
-	static Stage window;
-	static Scene sceneMenu;
-	static Scene sceneCanvas;
+	public static Stage window;
+	public static Scene sceneMenu;
+	public static Scene sceneCanvas;
 	
-	FXMLLoader loaderMenu;
-	FXMLLoader loaderCanvas;
+	private FXMLLoader loaderMenu;
+	private FXMLLoader loaderCanvas;
 	
-	Parent parentMenu;
-	Parent parentCanvas;
+	private Parent parentMenu;
+	private Parent parentCanvas;
 	
 	public View(Stage stage) {
 		this.stage = stage;

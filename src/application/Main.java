@@ -4,11 +4,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-	
-
 
 	public void start(Stage stage) throws IOException {
-		CanvasController model = new CanvasController();
+		//CanvasController model = new CanvasController();
 		View view = new View(stage);
 		
 		//Model and View only communicate through this class

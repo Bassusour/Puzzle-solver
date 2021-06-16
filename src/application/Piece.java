@@ -2,6 +2,7 @@ package application;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -76,11 +77,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		angles = new double[noOfLines];
 		
 		//Calculate and save the lengths between points
-		for (int i = 0; i < noOfLines; i++) {
-			double length = points.get(i).distance(points.get((i+1)%noOfLines));
-			lengths.add(length);
-			sumOfLengths += length;
-		}
+		setLengths(noOfLines);
 		
 		while(!closeEnough(sumOfAngles, expectedSumOfAngles)) {
 			for (int i = 0; i < noOfLines; i++) {
@@ -141,6 +138,8 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		
 		//Re-order array, so the first element corresponds to the smallest value of the angle
 		unorderedAngles = angles.clone();
+//		System.out.println(this.getNumber());
+//		System.out.println("before: " + Arrays.toString(angles));
 		//ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
 		if(!reverseOrder) {
 			for(int i = 0; i < noOfLines; i++) {
@@ -151,8 +150,11 @@ public class Piece extends Polygon implements Comparable<Piece>{
 			for(int i = 0; i < noOfLines; i++) {
 				int negMod = Math.floorMod(-i, noOfLines);
 				angles[negMod] = unorderedAngles[(indexOfSV+i)%noOfLines];
+				//lengths.set(negMod, tmpLengths.get((indexOfSV+i)%noOfLines));
 			}
 		}
+//		System.out.println("after: " + Arrays.toString(angles));
+//		System.out.println();
 	
 	}
 	
@@ -184,7 +186,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	public int compareTo(Piece p) {
 		if(closeEnough(p.sumOfLengths, this.sumOfLengths) && closeEnough(p.sumOfAngles, this.sumOfAngles)) {
 			if(p.points.size() == this.points.size()) {
-				//Checks angles in clockwise order
+				//Checks angles in counter-clockwise order
 				for(int i = 0; i < p.points.size(); i++) {
 					if(closeEnough(p.angles[i], this.angles[i])) {
 						if(i == (p.points.size()-1)) {
@@ -199,6 +201,16 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		}
 		//no match
 		return -1;
+	}
+	
+	private void setLengths(int noOfLines) {
+		lengths.clear();
+		sumOfLengths = 0;
+		for (int i = 0; i < noOfLines; i++) {			
+			double length = points.get(i).distance(points.get((i+1)%noOfLines));
+			lengths.add(length);
+			sumOfLengths += length;
+		}
 	}
 
 	public void setPoint(int index, Point2D element) {
