@@ -1,6 +1,7 @@
 package application;
 
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,34 +17,17 @@ import javafx.scene.shape.*;
 public class Puzzlesolver {
 	private Puzzle puzzle;
 	private int sideMatch;
-	private int noOfMatches = 0;
 	private int[] matchingPieces;
 	private JSONReader js;
+	CanvasController canvasController;
 	//Group groups = new Group();
 
-	public Puzzlesolver() {
+	public Puzzlesolver(CanvasController canvasController) {
 		js = CanvasController.getReader();
 		puzzle = js.getPuzzle();
 		sideMatch = js.getMatches() - 1;
 		matchingPieces = new int[2];
-
-//		System.out.println(CanvasController.groups.getChildren().size());
-//		System.out.println();
-//		
-//		for(int i = 0; i < CanvasController.groups.getChildren().size(); i++) {
-//			System.out.println(((Piece) ((Group) CanvasController.groups.getChildren().get(i)).getChildren().get(0)).getNumber());
-//			Group group = new Group();
-//			Piece piece = new Piece();
-//			piece.getPoints().addAll(puzzle.getPiece(i).getPoints());
-//			group.getChildren().add(piece);
-//			groups.getChildren().add(group);
-//			
-//		}
-//		System.out.println();
-//		for(int i = 0; i < groups.getChildren().size(); i++) {
-//			System.out.println(((Piece) ((Group) groups.getChildren().get(i)).getChildren().get(0)).getNumber());
-//		}
-		// System.out.println();
+		this.canvasController = canvasController;
 	}
 
 	public void solvePuzzle(boolean hint, boolean solve) {
@@ -67,40 +51,24 @@ public class Puzzlesolver {
 						List<Double> otherSublistRev = new ArrayList<Double>(otherSublist);
 						Collections.reverse(otherSublistRev);
 						if (!currPiece.getParent().equals(otherPiece.getParent())) {
-							if (closeEnoughLists(currSublist, otherSublist)
-									|| closeEnoughLists(currSublist, otherSublistRev)) {
+							if (closeEnoughLists(currSublist, otherSublist) || closeEnoughLists(currSublist, otherSublistRev)) {
 								if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
 //									if (!currPiece.getParent().getChildrenUnmodifiable().contains(otherPiece)
 //											|| !otherPiece.getParent().getChildrenUnmodifiable().contains(currPiece)) {
-										System.out.println("match between piece " + i + " and piece " + k
-												+ " with values j: " + j + " and h: " + h);
+//										System.out.println("match between piece " + i + " and piece " + k
+//												+ " with values j: " + j + " and h: " + h);
 
 										if (hint) {
 											matchingPieces[0] = i;
 											matchingPieces[1] = k;
 											return;
 										} else if (!solve) {
-//											noOfMatches++;
-											
 											Group A = (Group) currPiece.getParent();
 											Group B = (Group) otherPiece.getParent();
-											
-											for(int l = 0; l < CanvasController.groups.getChildren().size(); l++) {
-												System.out.println("Canvas1 " + ((Piece) ((Group) CanvasController.groups.getChildren().get(l)).getChildren().get(0)).getNumber());
-											}
 											
 											for (Object subgroup : A.getChildren().toArray()) {
 												Piece piece = (Piece) subgroup;
 												
-												for(int l = 0; l < A.getChildren().size(); l++) {
-													System.out.println("A " + ((Piece) A.getChildren().get(l)).getNumber());
-												}
-												for(int l = 0; l < B.getChildren().size(); l++) {
-													System.out.println("B " + ((Piece) B.getChildren().get(l)).getNumber());
-												}
-												for(int l = 0; l < CanvasController.groups.getChildren().size(); l++) {
-													System.out.println("Canvas2 " + ((Piece) ((Group) CanvasController.groups.getChildren().get(l)).getChildren().get(0)).getNumber());
-												}
 												
 												A.getChildren().remove(piece);
 												B.getChildren().add(piece);
@@ -133,13 +101,6 @@ public class Puzzlesolver {
 				shift(currLenghts);
 			}
 		}
-//		for(int i = 0; i < puzzle.getNoOfPieces()-1; i++) {
-//		if(puzzle.getPiece(i).getParent() == puzzle.getPiece(i+1).getParent()) {
-//			continue;
-//		} else {
-//			System.out.println("No solution");
-//		}
-//	}
 
 		double maxX = 0.0;
 		double maxY = 0.0;
@@ -182,8 +143,6 @@ public class Puzzlesolver {
 			((javafx.scene.shape.Shape) puzzle.getPiece(matchingPieces[1]).getParent().getChildrenUnmodifiable().get(i))
 					.setFill(Color.LIGHTBLUE);
 		}
-//		puzzle.getPiece(matchingPieces[0]).setFill(Color.LIGHTBLUE);
-//		puzzle.getPiece(matchingPieces[1]).setFill(Color.LIGHTBLUE);
 	}
 
 	public boolean solveable() {
@@ -195,44 +154,20 @@ public class Puzzlesolver {
 				continue;
 			} else {
 				returnValue = false;;
+				break;
 			}
 		}
 		
-		// Split up all subgroups
-		Group groups = new Group();
-		for (int j = 0; j < puzzle.getNoOfPieces(); j++) {
-			Group currGroup = (Group) puzzle.getPiece(j).getParent();
-			for (Object element : currGroup.getChildren().toArray()) {
-				if(groups.getChildren().size() == puzzle.getNoOfPieces()){
-					break;
-				}
-				Group group = new Group();
-				Piece piece = (Piece) element;
-				currGroup.getChildren().remove(piece);
-				group.getChildren().add(piece);
-				groups.getChildren().add(group);
-				// CanvasController.groups.getChildren().add(group);
-				// canvasController.puzzleSetup(file);
-				System.out.println("Removed piece " + piece.getNumber() + " with j as " + j);
-				for(int k = 0; k < groups.getChildren().size(); k++) {
-					System.out.println("group: " + ((Piece) ((Group) groups.getChildren().get(k)).getChildren().get(0)).getNumber());
-				}
-				
-			}
-			System.out.println("size: " + groups.getChildren().size());
+		((Group) puzzle.getPiece(0).getParent()).getChildren().clear();
+		//currGroup.getChildren().clear();
+		try {
+			canvasController.puzzleSetup(canvasController.getFilename());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		//CanvasController.setGroups(groups);
 		
 		return returnValue;
-
-//		solvePuzzle(false, false);
-//		System.out.println(noOfMatches + " " + puzzle.getNoOfPieces());
-//		if (noOfMatches == puzzle.getNoOfPieces()-1) {
-//			return true;
-//		} else {
-//			return false;
-//		}
 	}
 
 	private boolean closeEnoughLists(List<Double> list1, List<Double> list2) {

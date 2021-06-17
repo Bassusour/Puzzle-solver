@@ -96,16 +96,18 @@ public class CanvasController {
 	public final Color DEFAULT_COLOR = Color.BISQUE;
 	
 	public void solvePuzzle() {
-		System.out.println(puzzlesolver.solveable());
-//		if(puzzlesolver.solveable()) {
-//			System.out.println("Puzzle is solveable");
-//			puzzlesolver.solvePuzzle(false, true);
-//		} else {
-//			System.out.println("Puzzle is not solveable");
-//		}
-		
+		if(solveable()) {
+			System.out.println("Puzzle is solveable");
+			puzzlesolver.solvePuzzle(false, true);
+		} else {
+			System.out.println("Puzzle is not solveable");
+		}
 		//showIdenticalPieces();
 		//puzzlesolver.giveHint();
+	}
+	
+	public boolean solveable() {
+		return puzzlesolver.solveable();
 	}
 	
 	public void puzzleHint() {
@@ -196,7 +198,7 @@ public class CanvasController {
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
 		}
-		puzzlesolver = new Puzzlesolver();
+		puzzlesolver = new Puzzlesolver(this);
 	}
 
 	private void initializePiece(Piece piece, Pane pane, int i) {
@@ -456,6 +458,10 @@ public class CanvasController {
 	
 	public static JSONReader getReader() {
 		return reader;
+	}
+	
+	public String getFilename() {
+		return filename;
 	}
 	
 	public static void setGroups(Group groups) {
