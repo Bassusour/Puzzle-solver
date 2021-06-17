@@ -80,7 +80,7 @@ public class CanvasController {
 	private static int snapRange =10;
 	private static int amountOfCorners = 0;
 	//private ArrayList<Circle> circles = new ArrayList<Circle>();
-	private static Group groups;
+	public static Group groups;
 	
 //	private static Stage window;
 //	private static Scene sceneMenu;
@@ -96,7 +96,14 @@ public class CanvasController {
 	public final Color DEFAULT_COLOR = Color.BISQUE;
 	
 	public void solvePuzzle() {
-		puzzlesolver.solvePuzzle(true);
+		System.out.println(puzzlesolver.solveable());
+//		if(puzzlesolver.solveable()) {
+//			System.out.println("Puzzle is solveable");
+//			puzzlesolver.solvePuzzle(false, true);
+//		} else {
+//			System.out.println("Puzzle is not solveable");
+//		}
+		
 		//showIdenticalPieces();
 		//puzzlesolver.giveHint();
 	}
@@ -175,7 +182,6 @@ public class CanvasController {
 		
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
-		puzzlesolver = new Puzzlesolver();
 		amountOfCorners = reader.getMatches();
 		groups = new Group();
 		
@@ -190,7 +196,7 @@ public class CanvasController {
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
 		}
-		
+		puzzlesolver = new Puzzlesolver();
 	}
 
 	private void initializePiece(Piece piece, Pane pane, int i) {
@@ -268,30 +274,26 @@ public class CanvasController {
 						
 					}
 					
-//					for (Object element : groups.getChildren().toArray()) {
-//						
-//						Group group = (Group) element;
-//						
-//						for (Object things : group.getChildren().toArray()) {
-//							
-//							Piece piece = (Piece) things;
-//							for (Point2D point : piece.getPointList()) {
-//								Circle circle = new Circle(point.getX(), point.getY(), 5);
-//								pane.getChildren().add(circle);
-//								
-//							}
-//							
-//						}
-//						
-//					}
+					for (Object element : groups.getChildren().toArray()) {
+						
+						Group group = (Group) element;
+						
+						for (Object things : group.getChildren().toArray()) {
+							
+							Piece piece = (Piece) things;
+							for (Point2D point : piece.getPointList()) {
+								Circle circle = new Circle(point.getX(), point.getY(), 5);
+								pane.getChildren().add(circle);
+								
+							}
+							
+						}
+						
+					}
 					
 					if (!groups.getChildren().contains(piece)) {
 						
 						for (Piece element : puzzle.getPieces()) {
-							//Some elements are null, since Piece numbers start at 1 or are not properly incremented (1-2-13-14)
-							if (element == null) {
-								continue;
-							}
 
 							if (piece != element) {
 								
@@ -314,22 +316,22 @@ public class CanvasController {
 						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
 					}
 					
-//					for (Object element : groups.getChildren().toArray()) {
-//						
-//						Group group = (Group) element;
-//						
-//						for (Object things : group.getChildren().toArray()) {
-//							
-//							Piece piece = (Piece) things;
-//							for (Point2D point : piece.getPointList()) {
-//								Circle circle = new Circle(point.getX(), point.getY(), 5);
-//								pane.getChildren().add(circle);
-//								
-//							}
-//							
-//						}
-//						
-//					}
+					for (Object element : groups.getChildren().toArray()) {
+						
+						Group group = (Group) element;
+						
+						for (Object things : group.getChildren().toArray()) {
+							
+							Piece piece = (Piece) things;
+							for (Point2D point : piece.getPointList()) {
+								Circle circle = new Circle(point.getX(), point.getY(), 5);
+								pane.getChildren().add(circle);
+								
+							}
+							
+						}
+						
+					}
 						
 
 				}
@@ -454,6 +456,10 @@ public class CanvasController {
 	
 	public static JSONReader getReader() {
 		return reader;
+	}
+	
+	public static void setGroups(Group groups) {
+		CanvasController.groups = groups;
 	}
 
 }

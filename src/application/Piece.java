@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
 
 public class Piece extends Polygon implements Comparable<Piece>{
@@ -20,7 +21,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	
 	private double OriginalCenterX;
 	private double OriginalCenterY;
-	
+
 	public long getNumber() {
 		return number;
 	}
