@@ -19,7 +19,7 @@ public class JSONReader {
 	private String file;
 
 	private int matches;
-	//private int maxNoCorners = 0;
+	private int maxNoCorners = 0;
 	private long noOfPieces;
 
 	public JSONReader(String filename) {
@@ -67,7 +67,9 @@ public class JSONReader {
 
 				JSONArray cornerArray = (JSONArray) pieces.get("corners");
 				Iterator<JSONObject> cornerIterator = cornerArray.iterator();
+				int counter = 0;
 				while (cornerIterator.hasNext()) {
+					counter++;
 					corners = corners + 1;
 					JSONObject corners = (JSONObject) cornerIterator.next();
 					JSONObject coordinate = (JSONObject) corners.get("coord");
@@ -77,27 +79,25 @@ public class JSONReader {
 
 					piece.getPoints().addAll(x + 400, y + 200);
 				}
+				if(counter > maxNoCorners) {
+					maxNoCorners = counter;
+				}
 				puzzle.addPieceToArray(piece);
 			}
 
-			if (start.equals("Pu") && !file.contains("PieceList") && !file.contains("puzzle") && !file.contains("checkIdentical")) {
-				name = name.replace("r","");
-				name = name.replace("c","");
-				System.out.println(name);
-				int first = name.indexOf('-');
-				int second = name.indexOf('-', first + 1);
-				int third = name.indexOf('-', second + 1);
-				
-				String rows = name.substring(first + 1, second);
-				String columns = name.substring(second + 1, third);
-				
-				int fourpiece = (Integer.parseInt(rows) - 1) * (Integer.parseInt(columns) - 1);
-				int twopiece = (corners - 4 - fourpiece) / 2;
-				int sides = (Integer.parseInt(rows) - 1) * Integer.parseInt(columns) +
-							(Integer.parseInt(columns) - 1) * Integer.parseInt(rows);
-				matches = (twopiece + (fourpiece * 4)) / sides;
+			if (start.equals("Pu") && !file.contains("PieceList") && !file.contains("checkIdentical") && !file.contains("Spejlvendt")) {
+				if(noOfPieces < 3) {
+					matches = (int) Math.ceil(maxNoCorners / 2.0);
+				} else if(noOfPieces < 9) {
+					matches = maxNoCorners/2;
+				} else {
+					matches = (maxNoCorners+4)/4;
+				}
+				puzzle.setSolveable(true);
+				//System.out.println(maxNoCorners);
+				System.out.println("new matches: " + matches);
 			} else {
-				matches = 100;
+				puzzle.setSolveable(false);
 			}
 		} catch (IOException | ParseException e) {
 		}

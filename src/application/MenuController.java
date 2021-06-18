@@ -58,7 +58,7 @@ public class MenuController {
 			"Classic-005-008-4343", "Classic-005-008-4858", "Classic-005-008-7076", "Classic-008-015-0314",
 			"Classic-008-015-2625", "Classic-008-015-8137", "Classic-040-060-3882", "Spejlvendt", "checkIdentical",
 			"puzzle_01_manual", "puzzle_02_auto", "puzzle_03_manual", "puzzle_04_auto", "puzzle_05_auto", "puzzle_11_auto",
-			"puzzle_12_auto"};
+			"puzzle_12_auto", "Unsolveable"};
 
 	public void playButtonPushed(ActionEvent event) throws IOException {
 

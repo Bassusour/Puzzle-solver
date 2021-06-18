@@ -52,6 +52,7 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 public class CanvasController {
@@ -96,8 +97,8 @@ public class CanvasController {
 	public final Color DEFAULT_COLOR = Color.BISQUE;
 	
 	public void solvePuzzle() {
-		if(solveable()) {
-			System.out.println("Puzzle is solveable");
+		if(puzzle.getSolveable()) {
+			//System.out.println("Puzzle is solveable");
 			puzzlesolver.solvePuzzle(false, true);
 		} else {
 			System.out.println("Puzzle is not solveable");
@@ -194,9 +195,9 @@ public class CanvasController {
 				continue;
 			}
 			Piece piece = puzzle.getPiece(i);
-			initializePiece(piece, pane, i);
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
+			initializePiece(piece, pane, i);
 		}
 		puzzlesolver = new Puzzlesolver(this);
 	}
@@ -211,18 +212,26 @@ public class CanvasController {
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
 					
+					// Position of piece wrt. its starting position
 					originalGX = piece.getParent().getTranslateX();
 					originalGY = piece.getParent().getTranslateY();
 					
+					// Position of cursor wrt. top left
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
+					
+					// Position of piece wrt. the difference between starting position and matched position (starting position)
 					originalTX = ((Polygon) event.getSource()).getTranslateX();
 					originalTY = ((Polygon) event.getSource()).getTranslateY();
+					
+					//System.out.println("før venstreklik: " + piece.getParent().getRotate());
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
+					//Position of cursor wrt. top left
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
+					//System.out.println("før rotate: " + piece.getParent().getRotate());
 				}
 			}
 		});
@@ -233,16 +242,44 @@ public class CanvasController {
 				
 				if (event.getButton() == MouseButton.PRIMARY) {
 					
+					// Movement from picked up to current position
 					double deltaX = event.getSceneX() - originalX;
 					double deltaY = event.getSceneY() - originalY;
+					//System.out.println("delta: " + deltaX);
+					//System.out.println(deltaY);
 					
+					// Position of piece wrt. starting position
 					double deltaGX = originalGX + deltaX;
 					double deltaGY = originalGY + deltaY;
+//					System.out.println(deltaGX);
+//					System.out.println(deltaGY);
+					// Position of piece wrt. picked up position
 					deltaTX = originalTX + deltaX;
 					deltaTY = originalTY + deltaY;
 					
+//					Translate translate = new Translate();
+//					translate.setX(deltaX);
+//					translate.setY(deltaY);
+//					piece.getTransforms().addAll(translate); 
+//					originalX = event.getSceneX();
+//					originalY = event.getSceneY();
+//					System.out.println(piece.getPoints());
+//					//System.out.println(piece.localToParent(0,0));
+//					System.out.println(piece.getTransforms());
+					//System.out.println("("+piece.getCenterX()+","+piece.getCenterY()+") "+ piece.localToParent(piece.getCenterX(),piece.getCenterY()));
+//					for(int i = 0; i < piece.getPoints().size()-1; i++) {
+//						
+//					}
+//					Circle circle = new Circle(deltaGX, deltaGY, 5);
+//					pane.getChildren().add(circle);
+					
+					
+//					System.out.println(piece.getPoints());
 					piece.getParent().setTranslateX(deltaGX);
 					piece.getParent().setTranslateY(deltaGY);
+//					piece.getTransforms().add(new Rotate(piece.getCenterY(), piece.getCenterX(), 1));
+//					System.out.println(piece.getParent().getTranslateX());
+//					System.out.println(piece.getParent().getTranslateY());
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
@@ -251,7 +288,6 @@ public class CanvasController {
 					piece.getParent().setRotate(piece.getParent().getRotate() + deltaY);
 								
 					originalY = event.getSceneY();
-
 				}
 			}
 		});
@@ -272,26 +308,27 @@ public class CanvasController {
 						
 						piece.updatePoints(event.getSceneX() - originalX, 
 										   event.getSceneY() - originalY);
-						
-						
 					}
+//					System.out.println(piece.getPoints());
+//					System.out.println(piece.getPointList());
+					//System.out.println("efter venstreklik: " + piece.getParent().getRotate());
 					
-					for (Object element : groups.getChildren().toArray()) {
-						
-						Group group = (Group) element;
-						
-						for (Object things : group.getChildren().toArray()) {
-							
-							Piece piece = (Piece) things;
-							for (Point2D point : piece.getPointList()) {
-								Circle circle = new Circle(point.getX(), point.getY(), 5);
-								pane.getChildren().add(circle);
-								
-							}
-							
-						}
-						
-					}
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
 					
 					if (!groups.getChildren().contains(piece)) {
 						
@@ -317,23 +354,24 @@ public class CanvasController {
 					for (Object element : parent.getChildren().toArray()) {
 						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
 					}
+					//System.out.println("efter rotation: " + piece.getParent().getRotate());
 					
-					for (Object element : groups.getChildren().toArray()) {
-						
-						Group group = (Group) element;
-						
-						for (Object things : group.getChildren().toArray()) {
-							
-							Piece piece = (Piece) things;
-							for (Point2D point : piece.getPointList()) {
-								Circle circle = new Circle(point.getX(), point.getY(), 5);
-								pane.getChildren().add(circle);
-								
-							}
-							
-						}
-						
-					}
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
 						
 
 				}
@@ -348,11 +386,17 @@ public class CanvasController {
 	}
 
 	public static void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
-
+		if(!puzzle.getSolveable()) {
+			return;
+		}
+		
 		int matches = 0;
 		
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
-
+//		System.out.println("a");
+//		System.out.println(a.getPointList());
+//		System.out.println("b");
+//		System.out.println(b.getPointList());
 		for (Point2D pointA : a.getPointList()) {
 
 			for (Point2D pointB : b.getPointList()) {
@@ -366,7 +410,6 @@ public class CanvasController {
 								points.add(pointB);
 
 								matches++;
-
 							}
 						}
 					}
@@ -380,6 +423,8 @@ public class CanvasController {
 			Group B = (Group) b.getParent();
 			
 			if (A == B) { return; }
+			
+			
 			
 			a.setRotate(Math.round(a.getRotate()));
 			a.updatePointsRotate(a.getRotate());

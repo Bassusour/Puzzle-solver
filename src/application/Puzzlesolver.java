@@ -20,7 +20,7 @@ public class Puzzlesolver {
 	private int[] matchingPieces;
 	private JSONReader js;
 	CanvasController canvasController;
-	//Group groups = new Group();
+	// Group groups = new Group();
 
 	public Puzzlesolver(CanvasController canvasController) {
 		js = CanvasController.getReader();
@@ -51,47 +51,47 @@ public class Puzzlesolver {
 						List<Double> otherSublistRev = new ArrayList<Double>(otherSublist);
 						Collections.reverse(otherSublistRev);
 						if (!currPiece.getParent().equals(otherPiece.getParent())) {
-							if (closeEnoughLists(currSublist, otherSublist) || closeEnoughLists(currSublist, otherSublistRev)) {
+							if (closeEnoughLists(currSublist, otherSublist)
+									|| closeEnoughLists(currSublist, otherSublistRev)) {
 								if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
 //									if (!currPiece.getParent().getChildrenUnmodifiable().contains(otherPiece)
 //											|| !otherPiece.getParent().getChildrenUnmodifiable().contains(currPiece)) {
 //										System.out.println("match between piece " + i + " and piece " + k
 //												+ " with values j: " + j + " and h: " + h);
 
-										if (hint) {
-											matchingPieces[0] = i;
-											matchingPieces[1] = k;
-											return;
-										} else if (!solve) {
-											Group A = (Group) currPiece.getParent();
-											Group B = (Group) otherPiece.getParent();
-											
-											for (Object subgroup : A.getChildren().toArray()) {
-												Piece piece = (Piece) subgroup;
-												
-												
-												A.getChildren().remove(piece);
-												B.getChildren().add(piece);
-											}
-											
-											continue;
+									if (hint) {
+										matchingPieces[0] = i;
+										matchingPieces[1] = k;
+										return;
+									} else if (!solve) {
+										Group A = (Group) currPiece.getParent();
+										Group B = (Group) otherPiece.getParent();
+
+										for (Object subgroup : A.getChildren().toArray()) {
+											Piece piece = (Piece) subgroup;
+
+											A.getChildren().remove(piece);
+											B.getChildren().add(piece);
 										}
 
-										// Gets two points that match
-										Point2D point1 = currPiece.getPointList().get(j + 1);
-										Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
+										continue;
+									}
 
-										otherPiece.getParent().setTranslateX(
-												otherPiece.getParent().getTranslateX() + point1.getX() - point2.getX());
+									// Gets two points that match
+									Point2D point1 = currPiece.getPointList().get(j + 1);
+									Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
 
-										otherPiece.getParent().setTranslateY(
-												otherPiece.getParent().getTranslateY() + point1.getY() - point2.getY());
+									otherPiece.getParent().setTranslateX(
+											otherPiece.getParent().getTranslateX() + point1.getX() - point2.getX());
 
-										otherPiece.updatePoints(point1.getX() - point2.getX(),
-												point1.getY() - point2.getY());
+									otherPiece.getParent().setTranslateY(
+											otherPiece.getParent().getTranslateY() + point1.getY() - point2.getY());
 
-										CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
-									//}
+									otherPiece.updatePoints(point1.getX() - point2.getX(),
+											point1.getY() - point2.getY());
+
+									CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
+									// }
 								}
 							}
 						}
@@ -101,6 +101,8 @@ public class Puzzlesolver {
 				shift(currLenghts);
 			}
 		}
+		String solveable;
+		
 
 		double maxX = 0.0;
 		double maxY = 0.0;
@@ -121,11 +123,16 @@ public class Puzzlesolver {
 
 		puzzle.getPiece(0).getParent().setTranslateX(-maxX / 2);
 		puzzle.getPiece(0).getParent().setTranslateY(-maxY / 2);
-
-//		for (int i = 0; i < noOfGroups; i++) {
-//			// Group group = new Group();
-//
-//		}
+		
+		for (int i = 0; i < puzzle.getNoOfPieces() - 1; i++) {
+			if (puzzle.getPiece(i).getParent() == puzzle.getPiece(i + 1).getParent()) {
+				continue;
+			} else {
+				System.out.println("Puzzle was not solveable");
+				return;
+			}
+		}
+		System.out.println("Puzzle was solveable");
 	}
 
 	public void giveHint() {
@@ -153,20 +160,27 @@ public class Puzzlesolver {
 			if (puzzle.getPiece(i).getParent() == parent) {
 				continue;
 			} else {
-				returnValue = false;;
+				returnValue = false;
+				;
 				break;
 			}
 		}
-		
-		((Group) puzzle.getPiece(0).getParent()).getChildren().clear();
-		//currGroup.getChildren().clear();
+
+		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if (puzzle.getPiece(i).getParent() == null) {
+				continue;
+			}
+			((Group) puzzle.getPiece(i).getParent()).getChildren().clear();
+		}
+
+		// currGroup.getChildren().clear();
 		try {
 			canvasController.puzzleSetup(canvasController.getFilename());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return returnValue;
 	}
 
