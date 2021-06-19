@@ -45,20 +45,20 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	public void setOriginalCenterY(double centerY) {
 		this.OriginalCenterY = centerY;
 	}
-
-	public double getCenterX() {
+	
+	public double getLocalCenterX() {
 		double avg = 0;
 		for (int i = 0; i < this.getPoints().size(); i += 2) {
-			avg += this.getPoints().get(i) + this.getTranslateX();
+			avg += this.getPoints().get(i);
 		}
 		avg = avg / (this.getPoints().size() / 2);
 		return avg;
 	}
-
-	public double getCenterY() {
+	
+	public double getLocalCenterY() {
 		double avg = 0;
 		for (int i = 1; i < this.getPoints().size(); i += 2) {
-			avg += this.getPoints().get(i) + this.getTranslateY();
+			avg += this.getPoints().get(i);
 		}
 		avg = avg / (this.getPoints().size() / 2);
 		return avg;
