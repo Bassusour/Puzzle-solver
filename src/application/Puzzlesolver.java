@@ -90,7 +90,7 @@ public class Puzzlesolver {
 									otherPiece.updatePoints(point1.getX() - point2.getX(),
 											point1.getY() - point2.getY());
 
-									//CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
+									CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
 									// }
 								}
 							}

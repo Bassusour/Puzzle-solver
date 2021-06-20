@@ -55,16 +55,14 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 public class CanvasController {
-
-	@FXML
-	private MenuBar menuBar;
-	@FXML
-	private Pane pane;
-	@FXML
-	private MenuItem solve;
+	
+	
+	@FXML private MenuBar menuBar;
+	@FXML private Pane pane;
+	@FXML private MenuItem solve;
 
 	private static String filename = "Puzzles/Puzzle-1r-2c-0995.json";
-
+	
 //	public static int width = 1000;
 //	public static int height = 600;
 	private static JSONReader reader;
@@ -72,253 +70,402 @@ public class CanvasController {
 
 	private double originalX;
 	private double originalY;
+	private double originalTX;
+	private double originalTY;
+	private double deltaTX;
+	private double deltaTY;
+	private double originalGX;
+	private double originalGY;
+	private double centerX;
+	private double centerY;
 	private double pressX;
-	private double pressY;
-	private static int snapRange = 10;
-	private static int amountOfCorners = 0;
-	public static Group groups;
+    private double pressY;
 
+	private static int snapRange =10;
+	private static int amountOfCorners = 0;
+	//private ArrayList<Circle> circles = new ArrayList<Circle>();
+	public static Group groups;
+	
 //	private static Stage window;
 //	private static Scene sceneMenu;
 //	private static Scene sceneCanvas;
-
+	
 //	private FXMLLoader loaderMenu;
 //	private FXMLLoader loaderCanvas;
 //	
 //	private Parent parentMenu;
 //	private Parent parentCanvas;
 	private Puzzlesolver puzzlesolver;
-
+	
 	public final Color DEFAULT_COLOR = Color.BISQUE;
-
+	
 	public void solvePuzzle() {
-		if (puzzle.getSolveable()) {
-			// System.out.println("Puzzle is solveable");
+		if(puzzle.getSolveable()) {
+			//System.out.println("Puzzle is solveable");
 			puzzlesolver.solvePuzzle(false, true);
 		} else {
 			System.out.println("Puzzle is not solveable");
 		}
-		// showIdenticalPieces();
-		// puzzlesolver.giveHint();
+		//showIdenticalPieces();
+		//puzzlesolver.giveHint();
 	}
-
+	
 	public boolean solveable() {
 		return puzzlesolver.solveable();
 	}
-
+	
 	public void puzzleHint() {
 		puzzlesolver.giveHint();
 	}
-
+	
 	public void showIdenticalPieces() {
-		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			puzzle.getPiece(i).setFill(DEFAULT_COLOR);
 		}
 		boolean[][] identicals = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
-		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
-			for (int j = i + 1; j < puzzle.getNoOfPieces(); j++) {
-				if (i != j) {
-					if (puzzle.getPiece(i).compareTo(puzzle.getPiece(j)) == 0) {
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(i != j) {
+					if(puzzle.getPiece(i).compareTo(puzzle.getPiece(j)) == 0) {
 						identicals[i][j] = true;
 					}
 				}
 			}
 		}
-		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
-			if (puzzle.getPiece(i).getFill() == DEFAULT_COLOR) {
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i).getFill() == DEFAULT_COLOR) {
 				puzzle.getPiece(i).setFill(Color.color(Math.random(), Math.random(), Math.random()));
 			} else {
 				continue;
 			}
-			for (int j = i + 1; j < puzzle.getNoOfPieces(); j++) {
-				if (identicals[i][j]) {
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(identicals[i][j]) {
 					puzzle.getPiece(j).setFill(puzzle.getPiece(i).getFill());
 				}
 			}
 		}
 	}
-
+	
+	
 	public void backToMenuButtonPushed(ActionEvent event) throws IOException {
-
+		
 		View.window.setScene(View.sceneMenu);
 		View.window.show();
 		View.window.centerOnScreen();
-
+		
 	}
-
+	
 	public void initialize() throws IOException {
-
-		View.window.sceneProperty().addListener(new ChangeListener<Scene>() {
-			@Override
-			public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
-				pane.getChildren().clear();
-				try {
-					// System.out.println(filename);
+				
+		 View.window.sceneProperty().addListener(new ChangeListener<Scene>() {
+			 @Override
+			 public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
+				 pane.getChildren().clear();
+				 try {
+					//System.out.println(filename);
 					puzzleSetup(filename);
 				} catch (IOException e) {
-					e.printStackTrace();
+					 e.printStackTrace();
 				}
-			}
-		});
-
+			 }
+		 });
+		
+		
+		
+		
 	}
-
+	
 	public Pane getPane() {
 		return pane;
 	}
-
+	
 	public static void setPuzzle(String input) {
 		filename = input;
 	}
-
-	public void puzzleSetup(String file) throws IOException {
+	
+	
+	public void puzzleSetup(String file) throws IOException {		
+		
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
 		amountOfCorners = reader.getMatches();
 		groups = new Group();
-
+		
 		pane.getChildren().add(groups);
 
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i) == null) {
+				continue;
+			}
 			Piece piece = puzzle.getPiece(i);
 //			piece.setOriginalCenterX(piece.getCenterX());
 //			piece.setOriginalCenterY(piece.getCenterY());
-			initializePiece(piece, pane);
+			initializePiece(piece, pane, i);
 		}
-
 		puzzlesolver = new Puzzlesolver(this);
 	}
 
-	private void initializePiece(Piece piece, Pane pane) {
+	private void initializePiece(Piece piece, Pane pane, int i) {
+//		double minimum = 0;
+//		for(int j = 0; j < piece.getPoints().size(); j++) {
+//			if(piece.getPoints().get(j) - 400 < 0) {
+//				minimum = piece.getPoints().get(j)-400;
+//			}
+//		}
+//		if(minimum < 0) {
+//			Translate translate = new Translate();
+//			translate.setX(Math.abs(minimum));
+//			translate.setY(Math.abs(minimum));
+//			piece.getTransforms().addAll(translate); 
+//			System.out.println("minimum for piece " + piece.getNumber() + " with minimum " + minimum);
+//		}
+		
+		
 		piece.setStroke(Color.LIGHTGRAY);
 		piece.setCursor(Cursor.HAND);
-		piece.setFill(Color.RED);
+		piece.setFill(DEFAULT_COLOR);
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
+					
+					// Position of piece wrt. its starting position
+					originalGX = piece.getParent().getTranslateX();
+					originalGY = piece.getParent().getTranslateY();
+					
+					// Position of cursor wrt. top left
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
+					
+					// Position of piece wrt. the difference between starting position and matched position (starting position)
+					originalTX = ((Polygon) event.getSource()).getTranslateX();
+					originalTY = ((Polygon) event.getSource()).getTranslateY();
+					
 					pressX = event.getX();
-					pressY = event.getY();
+		            pressY = event.getY();
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
+					//Position of cursor wrt. top left
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
+					centerX = piece.getLocalCenterX();
+					centerY = piece.getLocalCenterY();
+					//System.out.println("før rotate: " + piece.getParent().getRotate());
 				}
 			}
 		});
-
+		
 		piece.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				
+				
 				if (event.getButton() == MouseButton.PRIMARY) {
+//					for(int i = 0; i < piece.getPoints().size()-1; i++) {
+//						Circle circle = new Circle(piece.getPoints().get(i)+piece.getLocalToParentTransform().getTx(), piece.getPoints().get(i+1)+piece.getLocalToParentTransform().getTy(), 5);
+//						
+//						pane.getChildren().add(circle);
+//					}
+//					for(int i = 0; i < piece.getPoints().size()-1; i+=2) {
+//						Circle circle = new Circle(piece.getLocalToParentTransform().transform(piece.getPoints().get(i), piece.getPoints().get(i+1)).getX(),
+//								piece.getLocalToParentTransform().transform(piece.getPoints().get(i), piece.getPoints().get(i+1)).getY(),5);
+//						pane.getChildren().add(circle);
+//					}
+					
+					// Position of piece wrt. picked up position
 					double deltaX = event.getSceneX() - originalX;
 					double deltaY = event.getSceneY() - originalY;
-
+					//System.out.println("delta: " + deltaX);
+					//System.out.println(deltaY);
+					
+					// Position of piece wrt. starting position
+					double deltaGX = originalGX + deltaX;
+					double deltaGY = originalGY + deltaY;
+//					System.out.println(deltaGX);
+//					System.out.println(deltaGY);
+					
+					// Position of piece wrt. picked up position
+					deltaTX = originalTX + deltaX;
+					deltaTY = originalTY + deltaY;
+					
 					Translate translate = new Translate();
 					translate.setX(event.getX() - pressX);
 					translate.setY(event.getY() - pressY);
-					piece.getParent().getTransforms().add(translate);
-					
+					//piece.getTransforms().add(new Translate(event.getX() - pressX, event.getY()-pressY));
+//					Translate translate = new Translate();
+//					translate.setX(deltaX);
+//					translate.setY(deltaY);
+					piece.getTransforms().addAll(translate); 
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
+//					System.out.println(piece.getPoints());
+//					System.out.println(piece.localToParent(0,0));
+					//System.out.println(piece.getLocalToParentTransform());
+//					System.out.println("("+piece.getCenterX()+","+piece.getCenterY()+") "+ piece.localToParent(piece.getCenterX(),piece.getCenterY()));
+//					for(int i = 0; i < piece.getPoints().size()-1; i++) {
+//						
+//					}
+//					Circle circle = new Circle(piece.getCenterX(), piece.getCenterY(), 5);
+//					pane.getChildren().add(circle);
+					
+					
+//					System.out.println(piece.getPoints());
+//					piece.getParent().setTranslateX(deltaGX);
+//					piece.getParent().setTranslateY(deltaGY);
+//					piece.getTransforms().add(new Rotate(piece.getCenterY(), piece.getCenterX(), 1));
+//					System.out.println(piece.getParent().getTranslateX());
+//					System.out.println(piece.getParent().getTranslateY());
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
 					double deltaY = event.getSceneY() - originalY;
-					double pivotPointX = 0;
-					double pivotPointY = 0;
+					Rotate rotation = new Rotate(deltaY, piece.getLocalCenterX(), piece.getLocalCenterY());
 					
-					for (int i = 0; i < piece.getParent().getChildrenUnmodifiable().size(); i++) {
-						Piece currPiece = (Piece) piece.getParent().getChildrenUnmodifiable().get(i);
-						pivotPointX += currPiece.getLocalCenterX();
-						pivotPointY += currPiece.getLocalCenterY();
+					for(int i = 0; i < piece.getPoints().size()-1; i+=2) {
+						Circle circle = new Circle(piece.getLocalToParentTransform().transform(piece.getPoints().get(i), piece.getPoints().get(i+1)).getX(),
+								piece.getLocalToParentTransform().transform(piece.getPoints().get(i), piece.getPoints().get(i+1)).getY(),5);
+//						System.out.println(i);
+//						System.out.println(piece.getPoints());
+						pane.getChildren().add(circle);
 					}
-
-					pivotPointX = pivotPointX / piece.getParent().getChildrenUnmodifiable().size();
-					pivotPointY = pivotPointY / piece.getParent().getChildrenUnmodifiable().size();
-
-					for(int i = 0; i < piece.getParent().getChildrenUnmodifiable().size(); i++) {
-						Piece currPiece = (Piece) piece.getParent().getChildrenUnmodifiable().get(i);
-						currPiece.setGroupedPivotPointX(pivotPointX);
-						currPiece.setGroupedPivotPointY(pivotPointY);
-					}
-
-					piece.getParent().getTransforms().add(new Rotate(deltaY, pivotPointX, pivotPointY));
+					
+//					Circle circle = new Circle(piece.getLocalCenterX(), piece.getLocalCenterY(), 5);
+//					pane.getChildren().add(circle);
+					
+					
+					
+					piece.getTransforms().add(rotation); 
+					
+//					piece.getParent().setRotate(piece.getParent().getRotate() + deltaY);
+//					
+//					Rotate rotationReverse = new Rotate(-deltaY, centerX, centerY);
+//					piece.getTransforms().add(rotationReverse); 
+					
 					originalY = event.getSceneY();
 				}
 			}
 		});
+		
+		//piece.setPoints(piece.getPoints());
 
 		piece.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
+					
 					Group parent = (Group) piece.getParent();
+					
+//					for (Object element : parent.getChildren().toArray()) {
+//						
+//						Piece piece = (Piece) element;
+//						
+//						piece.updatePoints(event.getSceneX() - originalX, 
+//										   event.getSceneY() - originalY);
+//					}
+					
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
+					
 					if (!groups.getChildren().contains(piece)) {
+						
 						for (Piece element : puzzle.getPieces()) {
+
 							if (piece != element) {
+								
 								if (!parent.getChildren().contains(element)) {
+									
 									Shape intersect = Shape.intersect(piece, element);
+
 									if (intersect.getBoundsInLocal().getWidth() > -10) {
-										matchPoints(piece, element, amountOfCorners, snapRange, pane);
-									}
+										matchPoints(piece, element, amountOfCorners, snapRange);
+									}	
 								}
 							}
 						}
 					}
+
+//				} else if (event.getButton() == MouseButton.SECONDARY) {
+//
+//					Group parent = (Group) piece.getParent();
+//					for (Object element : parent.getChildren().toArray()) {
+//						((Piece) element).updateGroupRotate(parent.getRotate(), parent);
+//					}
+					//System.out.println("efter rotation: " + piece.getParent().getRotate());
+					
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
+						
+
 				}
+
 			}
 		});
-
+		
 		Group group = new Group();
 		group.getChildren().add(piece);
 		groups.getChildren().add(group);
 	}
-
+	
 //	private double computeAngle(Piece piece, MouseEvent e) {
 //        return new Point2D(piece.getLocalCenterX(), piece.getLocalCenterY())
 //                   .angle(new Point2D(e.getX(), e.getY()));
 //    }
 
-	public static void matchPoints(Piece a, Piece b, int threshold, int snap_range, Pane pane) {
-		if (!puzzle.getSolveable()) {
+	public static void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
+		if(!puzzle.getSolveable()) {
 			return;
 		}
+		
 		int matches = 0;
-
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
-
-		for (int i = 0; i < a.getPoints().size() - 1; i += 2) {
-			Point2D pointA = a.getLocalToSceneTransform().transform(a.getPoints().get(i),
-					a.getPoints().get(i + 1));
+		
+		ArrayList<Point2D> points = new ArrayList<Point2D>();
+		
+		for(int i = 0; i < a.getPoints().size()-1; i++) {
+			Point2D pointA = a.getLocalToParentTransform().transform(a.getPoints().get(i), a.getPoints().get(i+1));
 			double pointAx = pointA.getX();
 			double pointAy = pointA.getY();
-
-			for (int j = 0; j < b.getPoints().size() - 1; j += 2) {
-				if (a.getParent() == b.getParent()) {
-					continue;
-				}
-				Point2D pointB = b.getLocalToSceneTransform().transform(b.getPoints().get(j),
-						b.getPoints().get(j + 1));
+			for(int j = 0; j < b.getPoints().size()-1; j++) {
+				Point2D pointB = a.getLocalToParentTransform().transform(a.getPoints().get(j), a.getPoints().get(j+1));
 				double pointBx = pointB.getX();
 				double pointBy = pointB.getY();
-
+				
 				if (pointAx < pointBx + snap_range) {
 					if (pointAx > pointBx - snap_range) {
 						if (pointAy < pointBy + snap_range) {
 							if (pointAy > pointBy - snap_range) {
-//								Circle circle1 = new Circle(pointA.getX(), pointA.getY(), 5);
-//								Circle circle2 = new Circle(pointB.getX(), pointB.getY(), 5);
-								
-								indexes.add(i);
-								indexes.add(j);
-								
-//								points.add(pointA);
-//								points.add(pointB);
+								points.add(pointA);
+								points.add(pointB);
 
 								matches++;
 							}
@@ -328,121 +475,119 @@ public class CanvasController {
 			}
 		}
 		
-		if (matches == threshold) {
-			
-			System.out.println("Match! wit piece a: " + a.getNumber() + " and piece b: " + b.getNumber());
-			Group A = (Group) a.getParent();
-			Group B = (Group) b.getParent();
-
-			a.setFill(Color.RED);
-			b.setFill(Color.BLUE);
-
-			if (A == B) {
-				return;
-			}
-
-//			double[] distances = new double[amountOfCorners];
-//			
-//			boolean notEqualDistances = true;
-			for(int i = 0; i < A.getChildren().size(); i++) {
-				i--;
-				Piece piece = (Piece) A.getChildren().get(0);
-				System.out.println("Piece is " + piece.getNumber());
-				piece.setFill(Color.AQUA);
-					B.getChildren().add(piece);
-					double dx = -piece.getLocalToSceneTransform().transform(piece.getPoints().get(indexes.get(0)),
-							piece.getPoints().get(indexes.get(0) + 1)).getX() + 
-						b.getLocalToSceneTransform().transform(b.getPoints().get(indexes.get(1)),
-							b.getPoints().get(indexes.get(1) + 1)).getX();
-				
-					double dy = -piece.getLocalToSceneTransform().transform(piece.getPoints().get(indexes.get(0)),
-							piece.getPoints().get(indexes.get(0) + 1)).getY() + 
-								b.getLocalToSceneTransform().transform(b.getPoints().get(indexes.get(1)),
-									b.getPoints().get(indexes.get(1) + 1)).getY();
-						
-					Circle circle1 = new Circle(
-							a.getLocalToSceneTransform().transform(a.getPoints().get(indexes.get(0)),
-									a.getPoints().get(indexes.get(0) + 1)).getX(),
-							a.getLocalToSceneTransform().transform(a.getPoints().get(indexes.get(0)),
-									a.getPoints().get(indexes.get(0) + 1)).getY(), 5);
-						
-					Circle circle2 = new Circle(
-							b.getLocalToSceneTransform().transform(b.getPoints().get(indexes.get(1)),
-									b.getPoints().get(indexes.get(1) + 1)).getX(), 
-							b.getLocalToSceneTransform().transform(b.getPoints().get(indexes.get(1)),
-									b.getPoints().get(indexes.get(1) + 1)).getY(), 5);
-					pane.getChildren().add(circle1);
-					pane.getChildren().add(circle2);
-						
-					System.out.println(dx + " " + dy);
-					if(!(piece.getNumber() == 0)) {
-						piece.getTransforms().add(new Translate(dx, dy));
-					} else {
-						piece.getTransforms().add(new Translate(12.539073957032883, 84.50436511310551));
-					}
-					
-				
-				
-				
-//				piece.getTransforms().add(new Translate(-centerBX+centerAX, -centerBY+centerAY));
-				
-				
-				
-				//double dx = b.getLocalToSceneTransform().transform(b.getPoints().get(indexes.get(1)), dx) - a.getLocalToSceneTransform().transform(a.getPoints().get(indexes.get(0)), dx);
-				
-//				while (notEqualDistances) {
-//					//System.out.println("asd");
-//					for (int i = 0; i < amountOfCorners * 2; i+=2) {
-//						dx = points.get(i + 1).getX() - points.get(i).getX();
-//						dy = points.get(i + 1).getY() - points.get(i).getY();
-//						distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
-//					}
-//					
-//					for (int i = 0; i < distances.length - 1; i ++) {
-//						if (Math.abs(distances[i] - distances[i + 1]) < 0.1) {
-//							notEqualDistances = false;
-//							continue;
-//						} else {
-//							notEqualDistances = true;
-////							a.setRotate(Math.round(a.getRotate()) + 1);
-////							a.updatePointsRotate(a.getRotate());
-//							break;
+//		for (Point2D pointA : a.getPointList()) {
+//
+//			for (Point2D pointB : b.getPointList()) {
+//
+//				if (pointA.getX() < pointB.getX() + snap_range) {
+//					if (pointA.getX() > pointB.getX() - snap_range) {
+//						if (pointA.getY() < pointB.getY() + snap_range) {
+//							if (pointA.getY() > pointB.getY() - snap_range) {
+//
+//								points.add(pointA);
+//								points.add(pointB);
+//
+//								matches++;
+//							}
 //						}
 //					}
 //				}
-				
-				A.getChildren().remove(piece);
-			}
-			//groups.getChildren().remove(A);
+//			}
+//		}
+		System.out.println("number of matches: " + matches + " and threshhold: " + threshold);
+		if (matches == threshold) {
 			
-
+			System.out.println("Match!");
+			Group A = (Group) a.getParent();
+			Group B = (Group) b.getParent();
+			
+			if (A == B) { return; }
 			
 			
-
-			if (a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
-				for (int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
+			
+//			a.setRotate(Math.round(a.getRotate()));
+//			a.updatePointsRotate(a.getRotate());
+//
+//			b.setRotate(Math.round(b.getRotate()));
+//			b.updatePointsRotate(b.getRotate());
+			
+			
+//			double[] distances = new double[amountOfCorners];
+//			
+//			boolean notEqualDistances = true;
+//			
+//			double dx = 0;
+//			double dy = 0;
+//			
+//			while (notEqualDistances) {
+//				//System.out.println("asd");
+//				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
+//					
+//					dx = points.get(i + 1).getX() - points.get(i).getX();
+//					dy = points.get(i + 1).getY() - points.get(i).getY();
+//					distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
+//					
+//				}
+//				
+//				for (int i = 0; i < distances.length - 1; i ++) {
+//					if (Math.abs(distances[i] - distances[i + 1]) < 0.1) {
+//						notEqualDistances = false;
+//						continue;
+//					} else {
+//						notEqualDistances = true;
+////						a.setRotate(Math.round(a.getRotate()) + 1);
+////						a.updatePointsRotate(a.getRotate());
+//						break;
+//					}
+//				}
+//				
+//			}
+//			
+////			b.updatePoints(b.getParent().getTranslateX(), 
+////					       b.getParent().getTranslateY());
+//			
+//			for (Object element : A.getChildren().toArray()) {
+//				
+//				Piece piece = (Piece) element;
+//				boolean selected = piece.equals(a);
+//
+//				piece.setTranslateX(piece.getTranslateX() + dx);
+//				piece.setTranslateY(piece.getTranslateY() + dy);
+//				
+//				if (selected) {
+//					piece.updatePoints(B.getTranslateX() + dx,
+//									   B.getTranslateY() + dy);
+//				} else {
+//					piece.updatePoints(B.getTranslateX() - A.getTranslateX() + dx, 
+//							           B.getTranslateY() - A.getTranslateY() + dy);
+//				}
+//				
+//				A.getChildren().remove(piece);
+//				B.getChildren().add(piece);
+//				
+//			}
+//			
+//			groups.getChildren().remove(A);
+			
+//			for (Object element : B.getChildren().toArray()) {
+//				((Piece) element).updateGroupRotate(B.getRotate(), B);
+//			}
+			if(a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
+				for(int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
 					((Shape) a.getParent().getChildrenUnmodifiable().get(i)).setFill(Color.BISQUE);
 				}
 			}
-			
-//			for(int i = 0; i < A.getChildren().size(); i++) {
-//			
-//			Piece currPiece = (Piece) A.getChildren().get(i);
-//			A.getChildren().remove(currPiece);
-//			B.getChildren().add(currPiece);
-//		}
-//		groups.getChildren().remove(A);
 		}
 	}
-
+	
 	public static JSONReader getReader() {
 		return reader;
 	}
-
+	
 	public String getFilename() {
 		return filename;
 	}
-
+	
 	public static void setGroups(Group groups) {
 		CanvasController.groups = groups;
 	}
