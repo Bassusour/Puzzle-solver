@@ -77,7 +77,7 @@ public class JSONReader {
 					double x = (double) coordinate.get("x") * 100;
 					double y = (double) coordinate.get("y") * 100;
 
-					piece.getPoints().addAll(x + 400, y + 400);
+					piece.getPoints().addAll(x + 400, y + 200);
 				}
 				if(counter > maxNoCorners) {
 					maxNoCorners = counter;
@@ -95,7 +95,7 @@ public class JSONReader {
 				}
 				puzzle.setSolveable(true);
 				//System.out.println(maxNoCorners);
-				//System.out.println("new matches: " + matches);
+				System.out.println("new matches: " + matches);
 			} else {
 				puzzle.setSolveable(false);
 			}
