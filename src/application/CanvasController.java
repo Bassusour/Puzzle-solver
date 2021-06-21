@@ -227,7 +227,7 @@ public class CanvasController {
 					originalTX = ((Polygon) event.getSource()).getTranslateX();
 					originalTY = ((Polygon) event.getSource()).getTranslateY();
 					
-					//System.out.println("før venstreklik: " + piece.getParent().getRotate());
+					//System.out.println("fr venstreklik: " + piece.getParent().getRotate());
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
@@ -436,14 +436,7 @@ public class CanvasController {
 			//Already same group
 			if (A == B) { return; }
 			
-//			a.setMatchingPoints(points);
-//			b.setMatchingPoints(points);
-			
-			
-			a.setRotate(Math.round(a.getRotate()));
 			a.updatePointsRotate(a.getRotate());
-
-			b.setRotate(Math.round(b.getRotate()));
 			b.updatePointsRotate(b.getRotate());
 			
 			//Distances between points in each piece
@@ -455,35 +448,9 @@ public class CanvasController {
 			double dy = 0;
 			double rot = 0;
 			
-//			for (Point2D point : a.getPointList()) {
-//				Circle circle = new Circle(point.getX(), point.getY(), 5);
-//				pane.getChildren().add(circle);
-//				circle.setFill(Color.RED);
-//				
-//			}
-			
-			for (Object element : A.getChildren().toArray()) {
-				Piece piece = (Piece) element;
-				double changeX = piece.getTranslateX() - a.getTranslateX();
-				double changeY = piece.getTranslateY() - a.getTranslateY();
-				piece.setTranslateX(changeX);
-				piece.setTranslateY(changeY);
-				piece.updatePoints(changeX, changeY);
-			}
-			
-			a.updatePointsRotate(a.getRotate());
-			b.updatePointsRotate(b.getRotate());
-			
 			//Distances should be same when orientation fits
 			while (notEqualDistances) {
-
-				
-//				Circle circle = new Circle(a.getPointList().get(4).getX(), a.getPointList().get(4).getY(), 5);
-//				pane.getChildren().add(circle);
-//				circle.setFill(Color.RED);
-
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
-					
 					//Distances are calculated
 					dx = points.get(i + 1).getX() - points.get(i).getX();
 					dy = points.get(i + 1).getY() - points.get(i).getY();
@@ -492,10 +459,6 @@ public class CanvasController {
 				}
 				
 				notEqualDistances = false;
-				
-//				System.out.println(Arrays.toString(distances));
-				
-//				System.out.println("Old: " + a.getPoints().toString());
 				
 				for (int i = 0; i < distances.length - 1; i ++) {
                     if (Math.abs(distances[i] - distances[i + 1]) > 0.1) {
@@ -506,69 +469,12 @@ public class CanvasController {
                         break;
                     }
 				}
-
-//				System.out.println("New: " + a.getPointList().toString());
-//				System.out.println("Rotation: " + rot);
 				
 				rot += 0.1;
-				
-//				System.out.println("Piece number: " + a.getNumber());
-//				System.out.println("Piece rotation: " + a.getRotate());
-//				System.out.println("Center X: " + a.getLayoutBounds().getCenterX());
-//				System.out.println("Center X: " + a.getLayoutBounds().getCenterY());
-//				System.out.println("Piece original points: " + a.getPoints().toString());
-//				System.out.println("Piece points: " + a.getPointList().toString());
-//				System.out.println();
-				
-				
 			}
 			
-//			b.updatePoints(b.getParent().getTranslateX(), 
-//					       b.getParent().getTranslateY());
-			
 			for (Object element : A.getChildren().toArray()) {
-				
 				Piece piece = (Piece) element;
-//				boolean selected = piece.equals(a);
-//				
-//				System.out.println("X: " + piece.getParent().getTranslateX());
-//				System.out.println("Y: " + piece.getParent().getTranslateY());
-//
-//				piece./*getParent().*/setTranslateX(piece./*getParent().*/getTranslateX() + dx);
-//				piece./*getParent().*/setTranslateY(piece./*getParent().*/getTranslateY() + dy);
-//				
-//				if (selected) {
-//					piece.updatePoints(B.getTranslateX() - A.getTranslateX() + dx,
-//									   B.getTranslateY() - A.getTranslateX() + dy);
-//				} else {
-//					piece.updatePoints(B.getTranslateX() - A.getTranslateX() + dx, 
-//							           B.getTranslateY() - A.getTranslateY() + dy);
-//				}
-				
-//				piece.setTranslateX(0);
-//				piece.setTranslateY(0);
-//				System.out.println("Piece translateX: " + piece.getTranslateX());
-//				for (Object e : A.getChildren().toArray()) {
-//					Piece p = (Piece) e;
-//					double newX;
-//					double newY;
-//					newX = piece.getTranslateX() + dx;
-//					newY = piece.getTranslateY() + dy;
-////					if (piece == a) {
-////						newX = piece.getTranslateX() + dx;
-////						newY = piece.getTranslateY() + dy;
-////					} else {
-////						newX = dx;
-////						newY = dy;
-////					}
-//					piece.setTranslateX(newX);
-//					piece.setTranslateY(newY);
-//				}
-				
-//				System.out.println("Piece: " + piece);
-//				System.out.println("Translate: " + piece.getTranslateX() + ", " + piece.getTranslateY());
-//				System.out.println("Distance: " + dx + ", " + dy);
-				
 				
 				double newX = piece.getTranslateX() + dx;
 				double newY = piece.getTranslateY() + dy;
@@ -582,41 +488,10 @@ public class CanvasController {
 					System.out.println("Sum " + piece.getRotate());
 				} 
 				
-//				System.out.println("Piece translateX: " + piece.getTranslateX());
-//				System.out.println("Piece translateX: " + piece.getTranslateX());
-				
-//				piece.setTranslateX(piece.getTranslateX() + dx);
-				
-//				ArrayList<Point2D> pointList = a.getPointList();
-//				
-//				Piece newPiece = new Piece();
-//				
-//				for (Point2D point : pointList) {
-//					newPiece.getPoints().addAll(point.getX(), point.getY());
-//				}
-//				
-//				System.out.println(newPiece.getRotate());
-				
-//				for (Object elementA : A.getChildren().toArray()) {
-//					((Piece) elementA).updateGroupRotate(A.getRotate(), A);
-//				}
-				
 				A.getChildren().remove(piece);
 				B.getChildren().add(piece);
 				
 			}
-			
-			
-//			for (Object element : B.getChildren().toArray()) {
-//				Piece piece = (Piece) element;
-//				ArrayList<Point2D> matchpoints = piece.getMatchingPoints();
-//				double deltaX = matchpoints.get(1).getX() - points.get(0).getX();
-//				double deltaY = matchpoints.get(1).getY() - points.get(0).getY();
-//				System.out.println("Delta: " + deltaX + ", " + deltaY);
-//				piece.setTranslateX(piece.getTranslateX() + deltaX);
-//				piece.setTranslateY(piece.getTranslateY() + deltaY);
-//
-//			}
 			
 			for (Object element : B.getChildren().toArray()) {
 				Piece piece = (Piece) element;
@@ -633,8 +508,6 @@ public class CanvasController {
 			}
 			
 			groups.getChildren().remove(A);
-		
-
 
 			if(a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
 				for(int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
@@ -643,6 +516,101 @@ public class CanvasController {
 			}
 
 		}
+	}
+	
+	public void powerMatchPoints(Piece a, Piece b, ArrayList<Point2D> points) {
+		Group A = (Group) a.getParent();
+		Group B = (Group) b.getParent();
+		
+		a.updatePointsRotate(a.getRotate());
+		b.updatePointsRotate(b.getRotate());
+		
+		//Distances between points in each piece
+		double[] distances = new double[3];
+		
+		boolean notEqualDistances = true;
+		
+		double dx = 0;
+		double dy = 0;
+		double rot = 0;
+		
+		for(int g = 0; g < 4; g++) {
+			Circle circle1 = new Circle(points.get(g).getX(), points.get(g).getY(),5);
+			pane.getChildren().addAll(circle1);
+		}
+		
+		//Distances should be same when orientation fits
+		while (notEqualDistances) {
+			//System.out.println("asd");
+			if(rot == 360) {
+				break;
+			}
+			
+			for (int i = 0; i < 6; i+=2) {
+				//Distances are calculated
+				dx = points.get(i+1).getX() - points.get(i).getX();
+				dy = points.get(i+1).getY() - points.get(i).getY();
+				System.out.println(dx);
+				distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
+			}
+			
+			notEqualDistances = false;
+			
+			for (int i = 0; i < distances.length - 1; i ++) {
+                if (Math.abs(distances[i] - distances[i + 1]) > 0.1) {
+//                    a.getTransforms().add(new Rotate(rot, a.getLayoutBounds().getCenterX(), a.getLayoutBounds().getCenterY()));
+                    a.setRotate(rot);
+                	a.updateGroupRotate2(rot, A);
+                    notEqualDistances = true;
+                    break;
+                }
+			}
+			
+			rot += 0.1;
+		}
+		
+		for (Object element : A.getChildren().toArray()) {
+			Piece piece = (Piece) element;
+			
+			double newX = piece.getTranslateX() + dx;
+			double newY = piece.getTranslateY() + dy;
+			piece.setTranslateX(newX);
+			piece.setTranslateY(newY);
+
+			System.out.println("A " + a.getRotate());
+			System.out.println("Piece " + piece.getRotate());
+			if (piece != a) {
+				piece.setRotate(a.getRotate() + piece.getRotate());
+				System.out.println("Sum " + piece.getRotate());
+			} 
+			
+			A.getChildren().remove(piece);
+			B.getChildren().add(piece);
+			
+		}
+		
+		for (Object element : B.getChildren().toArray()) {
+			Piece piece = (Piece) element;
+			if (piece == a) {
+				piece.updatePieceRotate(piece.getRotate());
+			} 
+			System.out.println("Rotation: " + piece.getRotate());
+			
+		}
+		
+		for (Object element : B.getChildren().toArray()) {
+			Piece piece = (Piece) element;
+			piece.updateGroupRotate(B.getRotate(), B);
+		}
+		
+		groups.getChildren().remove(A);
+
+		if(a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
+			for(int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
+				((Shape) a.getParent().getChildrenUnmodifiable().get(i)).setFill(DEFAULT_COLOR);
+			}
+		}
+
 	}
 	
 	public static JSONReader getReader() {

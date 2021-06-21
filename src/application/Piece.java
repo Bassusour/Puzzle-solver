@@ -75,6 +75,24 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		avg = avg / (this.getStaticPoints().size() / 2);
 		return avg;
 	}
+	
+//	public double getLocalCenterX() {
+//		double avg = 0;
+//		for (int i = 0; i < this.getPoints().size(); i += 2) {
+//			avg += this.getPoints().get(i);
+//		}
+//		avg = avg / (this.getPoints().size() / 2);
+//		return avg;
+//	}
+//	
+//	public double getLocalCenterY() {
+//		double avg = 0;
+//		for (int i = 1; i < this.getPoints().size()-1; i += 2) {
+//			avg += this.getPoints().get(i);
+//		}
+//		avg = avg / (this.getPoints().size() / 2);
+//		return avg;
+//	}
 
 	public double getCenterY() {
 		double avg = 0;
