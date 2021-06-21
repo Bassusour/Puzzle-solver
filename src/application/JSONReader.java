@@ -2,7 +2,9 @@ package application;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -76,6 +78,7 @@ public class JSONReader {
 				
 				JSONArray cornerArray = (JSONArray) pieces.get("corners");
 				Iterator<JSONObject> cornerIterator = cornerArray.iterator();
+//				List<Double> list = new ArrayList<Double>();
 				while (cornerIterator.hasNext()) {
 					
 					corners = corners + 1;
@@ -83,12 +86,61 @@ public class JSONReader {
 					JSONObject corners = (JSONObject) cornerIterator.next();
 					JSONObject coordinate = (JSONObject) corners.get("coord");
 					
-					double x = (double) coordinate.get("x") * 100;
-					double y = (double) coordinate.get("y") * 100;
+//					double x = (double) coordinate.get("x");
+//					double y = (double) coordinate.get("y");
+//					
+//					list.add(x);
+//					list.add(y);
 					
-					piece.getPoints().addAll(x + 400, y + 200);
+					double xs = (double) coordinate.get("x") * 100;
+					double ys = (double) coordinate.get("y") * 100;
+					
+					piece.getPoints().addAll(xs+600,ys+200);
 				
 				}
+				
+//				System.out.println("size: " + list.size());
+//				
+//				double xMax = list.get(0);
+//				double xMin = list.get(0);
+//				double yMax = list.get(0);
+//				double yMin = list.get(0);
+//				
+//				for (int i = 0; i < list.size(); i++) {
+//					if (i % 2 == 0) {
+//						if (list.get(i) > xMax) {
+//							xMax = list.get(i);
+//						}
+//						if (list.get(i) < xMin) {
+//							xMin = list.get(i);
+//						}
+//					} else {
+//						if (list.get(i) > yMax) {
+//							yMax = list.get(i);
+//						}
+//						if (list.get(i) < yMin) {
+//							yMin = list.get(i);
+//						}
+//					}
+//				}
+//				
+//				double centerX = (xMax - xMin) / 2;
+//				double centerY = (yMax - yMin) / 2;
+//				
+//				for (int i = 0; i < list.size(); i++) {
+//					double x = 0;
+//					double y = 0;
+//					if (i % 2 == 0) {
+//						x = (list.get(i) - centerX) * 100;
+//						piece.getPoints().add(x + 400);
+//					} else {
+//						y = (list.get(i) - centerY) * 100;
+//						piece.getPoints().add(y + 200);
+//					}
+////					piece.getPoints().addAll(x, y);
+//				}
+				
+//				System.out.println(piece.getPoints().toString());
 				
 				puzzle.addPieceToArray(piece);
 			}

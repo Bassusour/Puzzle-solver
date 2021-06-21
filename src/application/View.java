@@ -51,6 +51,7 @@ public class View {
 		window.setScene(sceneMenu);
 		window.setTitle("Puzzle");
 		window.show();
+		
 	}
 	
 	

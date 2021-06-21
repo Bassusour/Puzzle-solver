@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.sun.javafx.geom.Shape;
 
+import javafx.scene.Group;
 import javafx.scene.shape.*;
 
 public class Puzzlesolver {
@@ -110,6 +111,7 @@ public class Puzzlesolver {
 				
 				puzzle.getPiece(0).getParent().setTranslateX(-maxX/2);
 				puzzle.getPiece(0).getParent().setTranslateY(-maxY/2);
+				
 				
 
 	}

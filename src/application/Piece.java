@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
 public class Piece extends Polygon implements Comparable<Piece>{
@@ -14,11 +15,31 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	private double unorderedAngles[];
 	private double sumOfAngles = 0;
 	private double sumOfLengths = 0;
+	private ArrayList<Double> staticPoints = new ArrayList<Double>();
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
 	private ArrayList<Double> lengths = new ArrayList<Double>();
+	private ArrayList<Point2D> matchingPoints = new ArrayList<Point2D>();
 	
 	private double OriginalCenterX;
 	private double OriginalCenterY;
+	
+	public ArrayList<Point2D> getMatchingPoints() {
+		return matchingPoints;
+	}
+	
+	public void setMatchingPoints(ArrayList<Point2D> points) {
+		this.matchingPoints = points;
+	}
+	
+	public ArrayList<Double> getStaticPoints() {
+		return staticPoints;
+	}
+	
+	public void setStaticPoints() {
+		for (Double value : this.getPoints()) {
+			this.staticPoints.add(value);
+		}
+	}
 	
 	public long getNumber() {
 		return number;
@@ -46,19 +67,19 @@ public class Piece extends Polygon implements Comparable<Piece>{
 
 	public double getCenterX() {
 		double avg = 0;
-		for (int i = 0; i < this.getPoints().size(); i += 2) {
-			avg += this.getPoints().get(i) + this.getTranslateX();
+		for (int i = 0; i < this.getStaticPoints().size(); i += 2) {
+			avg += this.getStaticPoints().get(i) + this.getTranslateX();
 		}
-		avg = avg / (this.getPoints().size() / 2);
+		avg = avg / (this.getStaticPoints().size() / 2);
 		return avg;
 	}
 
 	public double getCenterY() {
 		double avg = 0;
-		for (int i = 1; i < this.getPoints().size(); i += 2) {
-			avg += this.getPoints().get(i) + this.getTranslateY();
+		for (int i = 1; i < this.getStaticPoints().size(); i += 2) {
+			avg += this.getStaticPoints().get(i) + this.getTranslateY();
 		}
-		avg = avg / (this.getPoints().size() / 2);
+		avg = avg / (this.getStaticPoints().size() / 2);
 		return avg;
 	}
 
@@ -246,10 +267,11 @@ public class Piece extends Polygon implements Comparable<Piece>{
 			sin = Math.sin(Math.toRadians(degrees));
 			cos = Math.cos(Math.toRadians(degrees));
 		}
-		for(int i = 0; i < this.getPoints().size(); i += 2) {
+		
+		for(int i = 0; i < this.getStaticPoints().size(); i += 2) {
             
-            double oldX = (this.getPoints().get(i) + group.getTranslateX() + this.getTranslateX()) - (group.getLayoutBounds().getCenterX()+group.getTranslateX());
-            double oldY = (this.getPoints().get(i+1) + group.getTranslateY() + this.getTranslateY()) - (group.getLayoutBounds().getCenterY()+group.getTranslateY());
+            double oldX = (this.getStaticPoints().get(i) + group.getTranslateX() + this.getTranslateX()) - (group.getLayoutBounds().getCenterX()+group.getTranslateX());
+            double oldY = (this.getStaticPoints().get(i+1) + group.getTranslateY() + this.getTranslateY()) - (group.getLayoutBounds().getCenterY()+group.getTranslateY());
 
             double newX = oldX * cos - oldY * sin;
             double newY = oldX * sin + oldY * cos;
@@ -259,6 +281,71 @@ public class Piece extends Polygon implements Comparable<Piece>{
             
             this.points.get(i/2).setLocation(newX, newY);
         }
+		
+//		System.out.println("Points before: " + this.getPointList().toString());
+		
+//		updatePieceRotate(this.getRotate());
+		
+//		System.out.println("Points after: " + this.getPointList().toString());
+		
 	}
+	
+	public void updateGroupRotate2(double degrees, Group group) {
+		double sin;
+		double cos;
+
+		if (degrees % 180.0 == 0 && degrees != 0 && degrees % 360 != 0) {
+			sin = 0.0;
+			cos = -1.0;
+		} else {
+			sin = Math.sin(Math.toRadians(degrees));
+			cos = Math.cos(Math.toRadians(degrees));
+		}
+		for(int i = 0; i < this.getStaticPoints().size(); i += 2) {
+            
+            double oldX = this.getStaticPoints().get(i) - this.getLayoutBounds().getCenterX();
+            double oldY = this.getStaticPoints().get(i+1) - this.getLayoutBounds().getCenterY();
+
+            double newX = (oldX * cos) - (oldY * sin);
+            double newY = (oldX * sin) + (oldY * cos);
+
+            newX += this.getLayoutBounds().getCenterX();
+            newY += this.getLayoutBounds().getCenterY();
+            
+          
+            
+            this.points.get(i/2).setLocation(newX, newY);
+        }
+	}
+	
+	public void updatePieceRotate(double degrees) {
+		double sin;
+		double cos;
+
+		if (degrees % 180.0 == 0 && degrees != 0 && degrees % 360 != 0) {
+			sin = 0.0;
+			cos = -1.0;
+		} else {
+			sin = Math.sin(Math.toRadians(degrees));
+			cos = Math.cos(Math.toRadians(degrees));
+		}
+		for(int i = 0; i < this.getStaticPoints().size(); i+=2) {
+            
+            double oldX = (this.getStaticPoints().get(i)) - (this.getLayoutBounds().getCenterX());
+            double oldY = (this.getStaticPoints().get(i + 1)) - (this.getLayoutBounds().getCenterY());
+            
+            double newX = (oldX * cos) - (oldY * sin);
+            double newY = (oldX * sin) + (oldY * cos);
+
+            newX += (this.getLayoutBounds().getCenterX());
+            newY += (this.getLayoutBounds().getCenterY());         
+            
+            this.getStaticPoints().set(i, newX);
+            this.getStaticPoints().set(i + 1, newY);
+            
+//            this.points.get(i/2).setLocation(newX, newY);
+        }
+	}
+
 
 }
