@@ -7,6 +7,8 @@ public class Puzzle extends Polygon {
 	private String name;
 	private long noOfPieces;
 	private Piece[] pieces;
+	private int currPieceNo = 0;
+	private boolean solveable = false;
 
 	public String getName() {
 		return name;
@@ -30,11 +32,21 @@ public class Puzzle extends Polygon {
 	}
 	
 	public void addPieceToArray(Piece piece) {
-		pieces[(int) piece.getNumber()] = piece;
+		pieces[currPieceNo] = piece;
+		piece.setNumber(currPieceNo);
+		currPieceNo++;
 	}
 	
 	public Piece getPiece(int index) {
 		return pieces[index];
+	}
+	
+	public boolean getSolveable() {
+		return solveable;
+	}
+	
+	public void setSolveable(boolean solveable) {
+		this.solveable = solveable;
 	}
 
 }

@@ -53,6 +53,7 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 public class CanvasController {
@@ -64,42 +65,83 @@ public class CanvasController {
 
 	private static String filename = "Puzzles/Puzzle-1r-2c-0995.json";
 	
-	public static int width = 1000;
-	public static int height = 600;
+//	public static int width = 1000;
+//	public static int height = 600;
 	private static JSONReader reader;
-	private Puzzle puzzle;
+	private static Puzzle puzzle;
 
-	double originalX;
-	double originalY;
-	double originalTX;
-	double originalTY;
-	double deltaTX;
-	double deltaTY;
-	double originalGX;
-	double originalGY;
-	double oldGroupRotate;
-
-	private static int snapRange = 10;
+	private double originalX;
+	private double originalY;
+	private double originalTX;
+	private double originalTY;
+	private double deltaTX;
+	private double deltaTY;
+	private double originalGX;
+	private double originalGY;
+	
+	private static int snapRange =10;
 	private static int amountOfCorners = 0;
-	private ArrayList<Circle> circles = new ArrayList<Circle>();
-	private static Group groups;
+	//private ArrayList<Circle> circles = new ArrayList<Circle>();
+	public static Group groups;
 	
-//	MenuController menuController;
-	CanvasController canvasController;
+//	private static Stage window;
+//	private static Scene sceneMenu;
+//	private static Scene sceneCanvas;
 	
-	static Stage window;
-	static Scene sceneMenu;
-	static Scene sceneCanvas;
+//	private FXMLLoader loaderMenu;
+//	private FXMLLoader loaderCanvas;
+//	
+//	private Parent parentMenu;
+//	private Parent parentCanvas;
+	private Puzzlesolver puzzlesolver;
 	
-	FXMLLoader loaderMenu;
-	FXMLLoader loaderCanvas;
-	
-	Parent parentMenu;
-	Parent parentCanvas;
+	public final static Color DEFAULT_COLOR = Color.BISQUE;
 	
 	public void solvePuzzle() {
-		Puzzlesolver puzzlesolver = new Puzzlesolver();
-		puzzlesolver.solvePuzzle();
+		if(puzzle.getSolveable()) {
+			//System.out.println("Puzzle is solveable");
+			puzzlesolver.solvePuzzle(false, true);
+		} else {
+			System.out.println("Puzzle is not solveable");
+		}
+		//showIdenticalPieces();
+		//puzzlesolver.giveHint();
+	}
+	
+	public boolean solveable() {
+		return puzzlesolver.solveable();
+	}
+	
+	public void puzzleHint() {
+		puzzlesolver.giveHint();
+	}
+	
+	public void showIdenticalPieces() {
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			puzzle.getPiece(i).setFill(DEFAULT_COLOR);
+		}
+		boolean[][] identicals = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(i != j) {
+					if(puzzle.getPiece(i).compareTo(puzzle.getPiece(j)) == 0) {
+						identicals[i][j] = true;
+					}
+				}
+			}
+		}
+		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
+			if(puzzle.getPiece(i).getFill() == DEFAULT_COLOR) {
+				puzzle.getPiece(i).setFill(Color.color(Math.random(), Math.random(), Math.random()));
+			} else {
+				continue;
+			}
+			for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
+				if(identicals[i][j]) {
+					puzzle.getPiece(j).setFill(puzzle.getPiece(i).getFill());
+				}
+			}
+		}
 	}
 	
 	
@@ -118,7 +160,7 @@ public class CanvasController {
 			 public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
 				 pane.getChildren().clear();
 				 try {
-//					System.out.println(filename);
+					//System.out.println(filename);
 					puzzleSetup(filename);
 				} catch (IOException e) {
 					 e.printStackTrace();
@@ -144,7 +186,6 @@ public class CanvasController {
 		
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
-		
 		amountOfCorners = reader.getMatches();
 		groups = new Group();
 		
@@ -155,43 +196,47 @@ public class CanvasController {
 				continue;
 			}
 			Piece piece = puzzle.getPiece(i);
-			initializePiece(piece, pane, i);
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
 			piece.setStaticPoints();
+			initializePiece(piece, pane, i);
 		}
-		
+		puzzlesolver = new Puzzlesolver(this);
 	}
 
 	private void initializePiece(Piece piece, Pane pane, int i) {
 		piece.setStroke(Color.LIGHTGRAY);
-		piece.setFill(Color.BISQUE);
 		piece.setCursor(Cursor.HAND);
+		piece.setFill(DEFAULT_COLOR);
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
 					
-					System.out.println("Piece rotation: " + piece.getRotate());
-					
-//					System.out.println("Translate: " + piece.getTranslateX() + ", " + piece.getTranslateY());
-					
+
+					// Position of piece wrt. its starting position
 					originalGX = piece.getParent().getTranslateX();
 					originalGY = piece.getParent().getTranslateY();
 					
+					// Position of cursor wrt. top left
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
+					
+					// Position of piece wrt. the difference between starting position and matched position (starting position)
 					originalTX = ((Polygon) event.getSource()).getTranslateX();
 					originalTY = ((Polygon) event.getSource()).getTranslateY();
+					
+					//System.out.println("før venstreklik: " + piece.getParent().getRotate());
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
+					//Position of cursor wrt. top left
 					originalX = event.getSceneX();
 					originalY = event.getSceneY();
-					oldGroupRotate = piece.getParent().getRotate();
-				}
+//					oldGroupRotate = piece.getParent().getRotate();
 
+				}
 			}
 		});
 
@@ -201,16 +246,44 @@ public class CanvasController {
 				
 				if (event.getButton() == MouseButton.PRIMARY) {
 					
+					// Movement from picked up to current position
 					double deltaX = event.getSceneX() - originalX;
 					double deltaY = event.getSceneY() - originalY;
+					//System.out.println("delta: " + deltaX);
+					//System.out.println(deltaY);
 					
+					// Position of piece wrt. starting position
 					double deltaGX = originalGX + deltaX;
 					double deltaGY = originalGY + deltaY;
+//					System.out.println(deltaGX);
+//					System.out.println(deltaGY);
+					// Position of piece wrt. picked up position
 					deltaTX = originalTX + deltaX;
 					deltaTY = originalTY + deltaY;
 					
+//					Translate translate = new Translate();
+//					translate.setX(deltaX);
+//					translate.setY(deltaY);
+//					piece.getTransforms().addAll(translate); 
+//					originalX = event.getSceneX();
+//					originalY = event.getSceneY();
+//					System.out.println(piece.getPoints());
+//					//System.out.println(piece.localToParent(0,0));
+//					System.out.println(piece.getTransforms());
+					//System.out.println("("+piece.getCenterX()+","+piece.getCenterY()+") "+ piece.localToParent(piece.getCenterX(),piece.getCenterY()));
+//					for(int i = 0; i < piece.getPoints().size()-1; i++) {
+//						
+//					}
+//					Circle circle = new Circle(deltaGX, deltaGY, 5);
+//					pane.getChildren().add(circle);
+					
+					
+//					System.out.println(piece.getPoints());
 					piece.getParent().setTranslateX(deltaGX);
 					piece.getParent().setTranslateY(deltaGY);
+//					piece.getTransforms().add(new Rotate(piece.getCenterY(), piece.getCenterX(), 1));
+//					System.out.println(piece.getParent().getTranslateX());
+//					System.out.println(piece.getParent().getTranslateY());
 				}
 
 				if (event.getButton() == MouseButton.SECONDARY) {
@@ -220,7 +293,6 @@ public class CanvasController {
 //					piece.getParent().getTransforms().add(new Rotate(deltaY, piece.getParent().getLayoutBounds().getCenterX(), piece.getParent().getLayoutBounds().getCenterY()));
 								
 					originalY = event.getSceneY();
-
 				}
 			}
 		});
@@ -241,9 +313,10 @@ public class CanvasController {
 						
 						piece.updatePoints(event.getSceneX() - originalX, 
 										   event.getSceneY() - originalY);
-						
-						
 					}
+//					System.out.println(piece.getPoints());
+//					System.out.println(piece.getPointList());
+					//System.out.println("efter venstreklik: " + piece.getParent().getRotate());
 					
 					for (Object element : groups.getChildren().toArray()) {
 						
@@ -265,10 +338,6 @@ public class CanvasController {
 					if (!groups.getChildren().contains(piece)) {
 						
 						for (Piece element : puzzle.getPieces()) {
-							//Some elements are null, since Piece numbers start at 1 or are not properly incremented (1-2-13-14)
-							if (element == null) {
-								continue;
-							}
 
 							if (piece != element) {
 								
@@ -294,6 +363,7 @@ public class CanvasController {
 						piece.updateGroupRotate(parent.getRotate(), parent);
 //						piece.updatePieceRotate(piece.getRotate() - oldGroupRotate);
 					}
+					//System.out.println("efter rotation: " + piece.getParent().getRotate());
 					
 					for (Object element : groups.getChildren().toArray()) {
 						
@@ -327,11 +397,17 @@ public class CanvasController {
 	}
 
 	public static void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
-
+		if(!puzzle.getSolveable()) {
+			return;
+		}
+		
 		int matches = 0;
 		
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
-
+//		System.out.println("a");
+//		System.out.println(a.getPointList());
+//		System.out.println("b");
+//		System.out.println(b.getPointList());
 		for (Point2D pointA : a.getPointList()) {
 
 			for (Point2D pointB : b.getPointList()) {
@@ -345,7 +421,6 @@ public class CanvasController {
 								points.add(pointB);
 
 								matches++;
-
 							}
 						}
 					}
@@ -363,6 +438,13 @@ public class CanvasController {
 			
 //			a.setMatchingPoints(points);
 //			b.setMatchingPoints(points);
+			
+			
+			a.setRotate(Math.round(a.getRotate()));
+			a.updatePointsRotate(a.getRotate());
+
+			b.setRotate(Math.round(b.getRotate()));
+			b.updatePointsRotate(b.getRotate());
 			
 			//Distances between points in each piece
 			double[] distances = new double[amountOfCorners];
@@ -394,11 +476,12 @@ public class CanvasController {
 			
 			//Distances should be same when orientation fits
 			while (notEqualDistances) {
+
 				
 //				Circle circle = new Circle(a.getPointList().get(4).getX(), a.getPointList().get(4).getY(), 5);
 //				pane.getChildren().add(circle);
 //				circle.setFill(Color.RED);
-				
+
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
 					
 					//Distances are calculated
@@ -552,11 +635,26 @@ public class CanvasController {
 			groups.getChildren().remove(A);
 		
 
+
+			if(a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
+				for(int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
+					((Shape) a.getParent().getChildrenUnmodifiable().get(i)).setFill(DEFAULT_COLOR);
+				}
+			}
+
 		}
 	}
 	
 	public static JSONReader getReader() {
 		return reader;
+	}
+	
+	public String getFilename() {
+		return filename;
+	}
+	
+	public static void setGroups(Group groups) {
+		CanvasController.groups = groups;
 	}
 
 }
