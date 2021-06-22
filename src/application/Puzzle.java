@@ -8,7 +8,7 @@ public class Puzzle extends Polygon {
 	private long noOfPieces;
 	private Piece[] pieces;
 	private int currPieceNo = 0;
-	private boolean solveable = false;
+	private boolean snapable = false;
 
 	public String getName() {
 		return name;
@@ -41,12 +41,12 @@ public class Puzzle extends Polygon {
 		return pieces[index];
 	}
 	
-	public boolean getSolveable() {
-		return solveable;
+	public boolean getSnapable() {
+		return snapable;
 	}
 	
-	public void setSolveable(boolean solveable) {
-		this.solveable = solveable;
+	public void setSnapable(boolean solveable) {
+		this.snapable = solveable;
 	}
 
 }

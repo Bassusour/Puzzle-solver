@@ -88,9 +88,9 @@ public class JSONReader {
 				} else {
 					matches = (maxNoCorners + 4) / 4;
 				}
-				puzzle.setSolveable(true);
+				puzzle.setSnapable(true);
 			} else {
-				puzzle.setSolveable(false);
+				puzzle.setSnapable(false);
 			}
 		} catch (IOException | ParseException e) {
 		}

@@ -110,11 +110,12 @@ public class CanvasController {
 	}
 	
 	public void puzzleHint() {
-		try {
-			puzzlesolver.giveHint();
-		} catch (Exception e) {
-			System.out.println("Puzzle broke an assumption");
-		}
+		puzzlesolver.giveHint();
+//		try {
+//			puzzlesolver.giveHint();
+//		} catch (Exception e) {
+//			System.out.println("Puzzle broke an assumption");
+//		}
 	}
 	
 	public void showIdenticalPieces() {
@@ -300,22 +301,22 @@ public class CanvasController {
 										   event.getSceneY() - originalY);
 					}
 
-					for (Object element : groups.getChildren().toArray()) {
-
-					                        Group group = (Group) element;
-
-					                        for (Object things : group.getChildren().toArray()) {
-
-					                            Piece piece = (Piece) things;
-					                            for (Point2D point : piece.getPointList()) {
-					                                Circle circle = new Circle(point.getX(), point.getY(), 5);
-					                                pane.getChildren().add(circle);
-
-					                            }
-
-					                        }
-
-					                    }
+//					for (Object element : groups.getChildren().toArray()) {
+//
+//					                        Group group = (Group) element;
+//
+//					                        for (Object things : group.getChildren().toArray()) {
+//
+//					                            Piece piece = (Piece) things;
+//					                            for (Point2D point : piece.getPointList()) {
+//					                                Circle circle = new Circle(point.getX(), point.getY(), 5);
+//					                                pane.getChildren().add(circle);
+//
+//					                            }
+//
+//					                        }
+//
+//					                    }
 					
 					if (!groups.getChildren().contains(piece)) {
 						
@@ -354,7 +355,7 @@ public class CanvasController {
 
 	public void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
 	
-		if(!puzzle.getSolveable()) {	
+		if(!puzzle.getSnapable()) {	
 			return;
 		}
 		
