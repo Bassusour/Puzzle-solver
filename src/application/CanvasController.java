@@ -192,9 +192,6 @@ public class CanvasController {
 		pane.getChildren().add(groups);
 
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
-			if(puzzle.getPiece(i) == null) {
-				continue;
-			}
 			Piece piece = puzzle.getPiece(i);
 			piece.setOriginalCenterX(piece.getCenterX());
 			piece.setOriginalCenterY(piece.getCenterY());
@@ -208,6 +205,19 @@ public class CanvasController {
 		piece.setStroke(Color.LIGHTGRAY);
 		piece.setCursor(Cursor.HAND);
 		piece.setFill(DEFAULT_COLOR);
+		
+		if(piece.getNumber() == 0) {
+			piece.setFill(Color.RED);
+		} 
+//		else if(piece.getNumber() == 1) {
+//			piece.setFill(Color.GREEN);
+//		} else if(piece.getNumber() == 2) {
+//			piece.setFill(Color.BLUE);
+//		} else if(piece.getNumber() == 3) {
+//			piece.setFill(Color.YELLOW);
+//		}
+		
+		
 
 		piece.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -541,23 +551,22 @@ public class CanvasController {
 		
 		//Distances should be same when orientation fits
 		while (notEqualDistances) {
-			//System.out.println("asd");
 			if(rot == 360) {
 				break;
 			}
 			
 			for (int i = 0; i < 6; i+=2) {
 				//Distances are calculated
-				dx = points.get(i+1).getX() - points.get(i).getX();
-				dy = points.get(i+1).getY() - points.get(i).getY();
-				System.out.println(dx);
+				dx = points.get(i).getX() - points.get(i+1).getX();
+				dy = points.get(i).getY() - points.get(i+1).getY();
+//				System.out.println(dx);
 				distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
 			}
 			
 			notEqualDistances = false;
 			
 			for (int i = 0; i < distances.length - 1; i ++) {
-                if (Math.abs(distances[i] - distances[i + 1]) > 0.1) {
+                if (Math.abs(distances[i] - distances[i + 1]) > 0.05) {
 //                    a.getTransforms().add(new Rotate(rot, a.getLayoutBounds().getCenterX(), a.getLayoutBounds().getCenterY()));
                     a.setRotate(rot);
                 	a.updateGroupRotate2(rot, A);
@@ -577,11 +586,11 @@ public class CanvasController {
 			piece.setTranslateX(newX);
 			piece.setTranslateY(newY);
 
-			System.out.println("A " + a.getRotate());
-			System.out.println("Piece " + piece.getRotate());
+//			System.out.println("A " + a.getRotate());
+//			System.out.println("Piece " + piece.getRotate());
 			if (piece != a) {
 				piece.setRotate(a.getRotate() + piece.getRotate());
-				System.out.println("Sum " + piece.getRotate());
+//				System.out.println("Sum " + piece.getRotate());
 			} 
 			
 			A.getChildren().remove(piece);
@@ -594,7 +603,7 @@ public class CanvasController {
 			if (piece == a) {
 				piece.updatePieceRotate(piece.getRotate());
 			} 
-			System.out.println("Rotation: " + piece.getRotate());
+//			System.out.println("Rotation: " + piece.getRotate());
 			
 		}
 		
