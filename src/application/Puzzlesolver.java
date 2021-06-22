@@ -54,8 +54,8 @@ public class Puzzlesolver {
 								if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
 //									if (!currPiece.getParent().getChildrenUnmodifiable().contains(otherPiece)
 //											|| !otherPiece.getParent().getChildrenUnmodifiable().contains(currPiece)) {
-//										System.out.println("match between piece " + i + " and piece " + k
-//												+ " with values j: " + j + " and h: " + h);
+										System.out.println("match between piece " + i + " and piece " + k
+												+ " with values j: " + j + " and h: " + h);
 
 									if (hint) {
 										matchingPieces[0] = i;
@@ -88,7 +88,7 @@ public class Puzzlesolver {
 									otherPiece.updatePoints(point1.getX() - point2.getX(),
 											point1.getY() - point2.getY());
 
-									CanvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
+									canvasController.matchPoints(currPiece, otherPiece, sideMatch + 1, 1);
 									// }
 								}
 							}
@@ -118,18 +118,9 @@ public class Puzzlesolver {
 			}
 		}
 
-		puzzle.getPiece(0).getParent().setTranslateX(-maxX / 2);
-		puzzle.getPiece(0).getParent().setTranslateY(-maxY / 2);
+//		puzzle.getPiece(0).getParent().setTranslateX(-maxX / 2);
+//		puzzle.getPiece(0).getParent().setTranslateY(-maxY / 2);
 		
-		for (int i = 0; i < puzzle.getNoOfPieces() - 1; i++) {
-			if (puzzle.getPiece(i).getParent() == puzzle.getPiece(i + 1).getParent()) {
-				continue;
-			} else {
-				System.out.println("Puzzle was not solveable");
-				return;
-			}
-		}
-		System.out.println("Puzzle was solveable");
 	}
 
 	public void giveHint() {
@@ -158,7 +149,6 @@ public class Puzzlesolver {
 				continue;
 			} else {
 				returnValue = false;
-				;
 				break;
 			}
 		}

@@ -31,6 +31,7 @@ public class JSONReader {
 		JSONParser parser = new JSONParser();
 
 		try {
+			System.out.println(file);
 			Object obj = parser.parse(new FileReader(file));
 			JSONObject jsonObject = (JSONObject) obj;
 
@@ -146,7 +147,7 @@ public class JSONReader {
 				}
 				puzzle.setSolveable(true);
 				//System.out.println(maxNoCorners);
-				System.out.println("new matches: " + matches);
+//				System.out.println("new matches: " + matches);
 			} else {
 				puzzle.setSolveable(false);
 			}
@@ -158,7 +159,7 @@ public class JSONReader {
 		if (input == null) {
 			file = "Puzzles/Puzzle-1r-2c-0995.json";
 		} else {
-			file = "Puzzles/" + input + ".json";
+			file = input;
 		}
 	}
 

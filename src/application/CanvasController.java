@@ -17,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -62,6 +63,10 @@ public class CanvasController {
 	@FXML private MenuBar menuBar;
 	@FXML private Pane pane;
 	@FXML private MenuItem solve;
+	@FXML private MenuItem identical;
+	@FXML private MenuItem hint;
+	@FXML private ImageView solvable;
+	@FXML private ImageView notSolvable;
 
 	private static String filename = "Puzzles/Puzzle-1r-2c-0995.json";
 	
@@ -130,6 +135,10 @@ public class CanvasController {
 				}
 			}
 		}
+		
+		int green = 0;
+		int red = 0;
+		
 		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			if(puzzle.getPiece(i).getFill() == DEFAULT_COLOR) {
 				puzzle.getPiece(i).setFill(Color.color(Math.random(), Math.random(), Math.random()));
@@ -144,6 +153,16 @@ public class CanvasController {
 		}
 	}
 	
+	
+	public void showSolvable() {
+		solvable.setOpacity(1);
+		notSolvable.setOpacity(0);
+	}
+	
+	public void showNotSolvable() {
+		solvable.setOpacity(0);
+		notSolvable.setOpacity(1);
+	}
 	
 	public void backToMenuButtonPushed(ActionEvent event) throws IOException {
 		
@@ -162,6 +181,11 @@ public class CanvasController {
 				 try {
 					//System.out.println(filename);
 					puzzleSetup(filename);
+					if (solveable()) {
+						showSolvable();
+					} else {
+						showNotSolvable();
+					}
 				} catch (IOException e) {
 					 e.printStackTrace();
 				}
@@ -318,22 +342,22 @@ public class CanvasController {
 //					System.out.println(piece.getPointList());
 					//System.out.println("efter venstreklik: " + piece.getParent().getRotate());
 					
-					for (Object element : groups.getChildren().toArray()) {
-						
-						Group group = (Group) element;
-						
-						for (Object things : group.getChildren().toArray()) {
-							
-							Piece piece = (Piece) things;
-							for (Point2D point : piece.getPointList()) {
-								Circle circle = new Circle(point.getX(), point.getY(), 5);
-								pane.getChildren().add(circle);
-								
-							}
-							
-						}
-						
-					}
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+//						}
+//						
+//					}
 					
 					if (!groups.getChildren().contains(piece)) {
 						
@@ -365,24 +389,24 @@ public class CanvasController {
 					}
 					//System.out.println("efter rotation: " + piece.getParent().getRotate());
 					
-					for (Object element : groups.getChildren().toArray()) {
-						
-						Group group = (Group) element;
-						
-						for (Object things : group.getChildren().toArray()) {
-							
-							Piece piece = (Piece) things;
-							for (Point2D point : piece.getPointList()) {
-								Circle circle = new Circle(point.getX(), point.getY(), 5);
-								pane.getChildren().add(circle);
-								
-							}
-							
-//							Circle circle = new Circle(piece.getPointList().get(4).getX(), piece.getPointList().get(4).getY(), 5);
-//							pane.getChildren().add(circle);
-						}
-						
-					}
+//					for (Object element : groups.getChildren().toArray()) {
+//						
+//						Group group = (Group) element;
+//						
+//						for (Object things : group.getChildren().toArray()) {
+//							
+//							Piece piece = (Piece) things;
+//							for (Point2D point : piece.getPointList()) {
+//								Circle circle = new Circle(point.getX(), point.getY(), 5);
+//								pane.getChildren().add(circle);
+//								
+//							}
+//							
+////							Circle circle = new Circle(piece.getPointList().get(4).getX(), piece.getPointList().get(4).getY(), 5);
+////							pane.getChildren().add(circle);
+//						}
+//						
+//					}
 						
 
 				}
@@ -396,7 +420,7 @@ public class CanvasController {
 
 	}
 
-	public static void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
+	public void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
 		if(!puzzle.getSolveable()) {
 			return;
 		}
@@ -462,25 +486,25 @@ public class CanvasController {
 //				
 //			}
 			
-			for (Object element : A.getChildren().toArray()) {
-				Piece piece = (Piece) element;
-				double changeX = piece.getTranslateX() - a.getTranslateX();
-				double changeY = piece.getTranslateY() - a.getTranslateY();
-				piece.setTranslateX(changeX);
-				piece.setTranslateY(changeY);
-				piece.updatePoints(changeX, changeY);
-			}
-			
-			a.updatePointsRotate(a.getRotate());
-			b.updatePointsRotate(b.getRotate());
+//			for (Object element : A.getChildren().toArray()) {
+//				Piece piece = (Piece) element;
+//				double changeX = piece.getTranslateX() - a.getTranslateX();
+//				double changeY = piece.getTranslateY() - a.getTranslateY();
+//				piece.setTranslateX(changeX);
+//				piece.setTranslateY(changeY);
+//				piece.updatePoints(changeX, changeY);
+//			}
+//			
+//			a.updatePointsRotate(a.getRotate());
+//			b.updatePointsRotate(b.getRotate());
 			
 			//Distances should be same when orientation fits
 			while (notEqualDistances) {
 
 				
-//				Circle circle = new Circle(a.getPointList().get(4).getX(), a.getPointList().get(4).getY(), 5);
-//				pane.getChildren().add(circle);
-//				circle.setFill(Color.RED);
+				Circle circle = new Circle(a.getPointList().get(4).getX(), a.getPointList().get(4).getY(), 5);
+				pane.getChildren().add(circle);
+				circle.setFill(Color.RED);
 
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
 					
@@ -575,11 +599,8 @@ public class CanvasController {
 				piece.setTranslateX(newX);
 				piece.setTranslateY(newY);
 	
-				System.out.println("A " + a.getRotate());
-				System.out.println("Piece " + piece.getRotate());
 				if (piece != a) {
 					piece.setRotate(a.getRotate() + piece.getRotate());
-					System.out.println("Sum " + piece.getRotate());
 				} 
 				
 //				System.out.println("Piece translateX: " + piece.getTranslateX());
@@ -623,7 +644,6 @@ public class CanvasController {
 				if (piece == a) {
 					piece.updatePieceRotate(piece.getRotate());
 				} 
-				System.out.println("Rotation: " + piece.getRotate());
 				
 			}
 			

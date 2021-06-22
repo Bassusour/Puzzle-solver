@@ -281,6 +281,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 			cos = Math.cos(Math.toRadians(degrees));
 		}
 		
+
 		for(int i = 0; i < this.getStaticPoints().size(); i += 2) {
             
             double oldX = (this.getStaticPoints().get(i) + group.getTranslateX() + this.getTranslateX()) - (group.getLayoutBounds().getCenterX()+group.getTranslateX());

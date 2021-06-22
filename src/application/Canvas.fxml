@@ -3,6 +3,8 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
@@ -19,11 +21,21 @@
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem fx:id="solve" mnemonicParsing="false" onAction="#solvePuzzle" text="Solve puzzle" />
-                  <MenuItem fx:id="solve1" mnemonicParsing="false" onAction="#solvePuzzle" text="Show identical pieces" />
-                  <MenuItem mnemonicParsing="false" text="Give hint" />
+                  <MenuItem fx:id="identical" mnemonicParsing="false" onAction="#showIdenticalPieces" text="Show identical pieces" />
+                  <MenuItem fx:id="hint" mnemonicParsing="false" onAction="#puzzleHint" text="Give hint" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
+      <ImageView fx:id="solvable" fitHeight="150.0" fitWidth="130.0" layoutX="2.0" layoutY="561.0" opacity="0.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+         <image>
+            <Image url="@solvabe.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="notSolvable" fitHeight="150.0" fitWidth="150.0" layoutX="12.0" layoutY="571.0" opacity="0.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
+         <image>
+            <Image url="@notsolvable.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
