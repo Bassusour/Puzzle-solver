@@ -18,25 +18,23 @@ import javafx.scene.transform.Rotate;
 public class Puzzlesolver {
 	private Puzzle puzzle;
 	private int sideMatch;
-	private int[] matchingPiecesSingle;
-	private boolean[][] matchingPiecesFull;
+	private int[] twoMatchingPieces;
+	private boolean[][] allMatchingPieces;
 	private Point2D[][][] matchingPoints;
 	private JSONReader js;
 	private CanvasController canvasController;
-	// Group groups = new Group();
 
 	public Puzzlesolver(CanvasController canvasController) {
 		js = CanvasController.getReader();
 		puzzle = js.getPuzzle();
 		sideMatch = js.getMatches() - 1;
-		matchingPiecesSingle = new int[2];
-
-		matchingPiecesFull = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
+		twoMatchingPieces = new int[2];
+		allMatchingPieces = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
 		matchingPoints = new Point2D[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()][6];
 		this.canvasController = canvasController;
 	}
 
-	public void solvePuzzle(boolean hint, boolean solve) {
+	public void solvePuzzle(boolean hint, boolean solve) throws IllegalArgumentException {
 		// Loop for current piece
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			Piece currPiece = puzzle.getPiece(i);
@@ -61,9 +59,9 @@ public class Puzzlesolver {
 								if (checkMiddleAngles(currPiece, otherPiece, j, h)) {
 									if (!currPiece.getParent().getChildrenUnmodifiable().contains(otherPiece)
 											|| !otherPiece.getParent().getChildrenUnmodifiable().contains(currPiece)) {
-if (hint) {
-											matchingPiecesSingle[0] = i;
-											matchingPiecesSingle[1] = k;
+										if (hint) {
+											twoMatchingPieces[0] = i;
+											twoMatchingPieces[1] = k;
 											return;
 										} else if (!solve) {
 											Group A = (Group) currPiece.getParent();
@@ -75,10 +73,10 @@ if (hint) {
 												A.getChildren().remove(piece);
 												B.getChildren().add(piece);
 											}
-
 											continue;
 										}
-										// Gets 6 points, that match the next
+
+										// p1 match p2, p3 match p4...)
 										Point2D point1 = currPiece.getPointList().get(j + 1);
 										Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
 										Point2D point3 = currPiece.getPointList().get(j);
@@ -89,7 +87,7 @@ if (hint) {
 										Point2D point6 = otherPiece.getPointList()
 												.get((h + sideMatch - 2) % otherPiece.getPointList().size());
 
-										matchingPiecesFull[i][k] = true;
+										allMatchingPieces[i][k] = true;
 										matchingPoints[i][k][0] = point1;
 										matchingPoints[i][k][1] = point2;
 										matchingPoints[i][k][2] = point3;
@@ -107,91 +105,56 @@ if (hint) {
 			}
 		}
 
-		for (int i = 0; i < puzzle.getPieces().length; i++) {
-			for (int j = 0; j < puzzle.getPieces().length; j++) {
-				System.out.print(matchingPiecesFull[i][j] + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
+		if (solve) {
+			// Acts as queue for pieces to be matched, starting with piece 0
+			ArrayList<Integer> matchNumber = new ArrayList<Integer>();
+			matchNumber.add(0);
 
-		// Acts as queue for pieces to be matched, starting with piece 0
-		ArrayList<Integer> matchNumber = new ArrayList<Integer>();
-		matchNumber.add(0);
+			// Matches the first point
+			for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
+				int currNum = matchNumber.get(0);
+				for (int j = 0; j < puzzle.getNoOfPieces(); j++) {
+					if (allMatchingPieces[currNum][j]) {
+						if (!puzzle.getPiece(0).getParent().getChildrenUnmodifiable().contains(puzzle.getPiece(j))
+								|| i == 0) {
 
-		// Matches the first point
-		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
-			int currNum = matchNumber.get(0);
-			for (int j = 0; j < puzzle.getNoOfPieces(); j++) {
-				if (matchingPiecesFull[currNum][j]) {
-					if (!puzzle.getPiece(0).getParent().getChildrenUnmodifiable().contains(puzzle.getPiece(j))
-							|| i == 0) {
-						
-						//Two pieces to be matched
-						Piece currPiece = puzzle.getPiece(currNum);
-						Piece otherPiece = puzzle.getPiece(j);
+							// Two pieces to be matched
+							Piece currPiece = puzzle.getPiece(currNum);
+							Piece otherPiece = puzzle.getPiece(j);
 
-						// adds to queue
-						matchNumber.add(j);
-						
-						
-						ArrayList<Point2D> points = new ArrayList<Point2D>();
-						for (int h = 0; h < 6; h++) {
-							points.add(matchingPoints[currNum][j][h]);
+							// adds to queue
+							matchNumber.add(j);
+
+							ArrayList<Point2D> points = new ArrayList<Point2D>();
+							for (int h = 0; h < 6; h++) {
+								points.add(matchingPoints[currNum][j][h]);
+							}
+							canvasController.powerMatchPoints(otherPiece, currPiece, points);
 						}
-						canvasController.powerMatchPoints(otherPiece,currPiece, points);
 					}
 				}
+				if (matchNumber.size() > 0) {
+					matchNumber.remove(0);
+				}
 			}
-			if (matchNumber.size() > 0) {
-//				System.out.println("removes index");
-				matchNumber.remove(0);
-				System.out.println(matchNumber);
+
+			double maxX = 0.0;
+			double maxY = 0.0;
+
+			for (int i = 0; i < js.getPuzzle().getNoOfPieces(); i++) {
+				double currX = js.getPuzzle().getPiece(i).getTranslateX();
+				double currY = js.getPuzzle().getPiece(i).getTranslateY();
+
+				if (Math.abs(currX) > Math.abs(maxX)) {
+					maxX = currX;
+				}
+				if (Math.abs(currY) > Math.abs(maxY)) {
+					maxY = currY;
+				}
 			}
+			puzzle.getPiece(0).getParent().setTranslateX(-maxX / 2);
+			puzzle.getPiece(0).getParent().setTranslateY(-maxY / 2);
 		}
-
-//		boolean solved = false;
-//		while(!solved) {
-//			for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
-//				Piece pieceGroup = puzzle.getPiece(i);
-//				if(pieceGroup.getParent().getChildrenUnmodifiable().size() < 2) {
-//					continue;
-//				}
-//				for(int j = i+1; j < puzzle.getNoOfPieces(); j++) {
-//					Piece otherPiece = puzzle.getPiece(j);
-//					if(otherPiece.getParent().getChildrenUnmodifiable().size() > 1) {
-//						continue;
-//					}
-//					
-//				}
-//			}
-//		}
-
-		double maxX = 0.0;
-		double maxY = 0.0;
-
-		for (int i = 0; i < js.getPuzzle().getNoOfPieces(); i++) {
-
-			double currX = js.getPuzzle().getPiece(i).getTranslateX();
-			double currY = js.getPuzzle().getPiece(i).getTranslateY();
-
-			if (Math.abs(currX) > Math.abs(maxX)) {
-				maxX = currX;
-			}
-
-			if (Math.abs(currY) > Math.abs(maxY)) {
-				maxY = currY;
-			}
-		}
-
-//		puzzle.getPiece(0).getParent().setTranslateX(-maxX / 2);
-//		puzzle.getPiece(0).getParent().setTranslateY(-maxY / 2);
-
-//		if(noOfMatches == puzzle.getNoOfPieces()-1) {
-//			System.out.println("Puzzle was solveable");
-//			return;
-//		} 
-//		System.out.println("Puzzle was not solveable");
 	}
 
 	public void giveHint() {
@@ -201,17 +164,17 @@ if (hint) {
 			}
 		}
 		solvePuzzle(true, false);
-		for (int i = 0; i < puzzle.getPiece(matchingPiecesSingle[0]).getParent().getChildrenUnmodifiable().size(); i++) {
-			((javafx.scene.shape.Shape) puzzle.getPiece(matchingPiecesSingle[0]).getParent().getChildrenUnmodifiable().get(i))
-					.setFill(Color.LIGHTBLUE);
+		for (int i = 0; i < puzzle.getPiece(twoMatchingPieces[0]).getParent().getChildrenUnmodifiable().size(); i++) {
+			((javafx.scene.shape.Shape) puzzle.getPiece(twoMatchingPieces[0]).getParent().getChildrenUnmodifiable()
+					.get(i)).setFill(Color.LIGHTBLUE);
 		}
-		for (int i = 0; i < puzzle.getPiece(matchingPiecesSingle[1]).getParent().getChildrenUnmodifiable().size(); i++) {
-			((javafx.scene.shape.Shape) puzzle.getPiece(matchingPiecesSingle[1]).getParent().getChildrenUnmodifiable().get(i))
-					.setFill(Color.LIGHTBLUE);
+		for (int i = 0; i < puzzle.getPiece(twoMatchingPieces[1]).getParent().getChildrenUnmodifiable().size(); i++) {
+			((javafx.scene.shape.Shape) puzzle.getPiece(twoMatchingPieces[1]).getParent().getChildrenUnmodifiable()
+					.get(i)).setFill(Color.LIGHTBLUE);
 		}
 	}
 
-	public boolean solveable() {
+	public boolean solveable() throws IllegalArgumentException {
 		boolean returnValue = true;
 		solvePuzzle(false, false);
 		Object parent = puzzle.getPiece(0).getParent();
@@ -230,15 +193,12 @@ if (hint) {
 			}
 			((Group) puzzle.getPiece(i).getParent()).getChildren().clear();
 		}
-
-		// currGroup.getChildren().clear();
 		try {
+			// Restarts the puzzle
 			canvasController.puzzleSetup(canvasController.getFilename());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return returnValue;
 	}
 
@@ -264,7 +224,6 @@ if (hint) {
 	}
 
 	private boolean checkMiddleAngles(Piece p1, Piece p2, int j, int h) {
-		// p1 = curr, p2 = other
 		double[] p1Angles = p1.getUnorderedAngles();
 		double[] p2Angles = p2.getUnorderedAngles();
 		int counter = 0;
@@ -283,7 +242,6 @@ if (hint) {
 		if (counter == sideMatch - 1) {
 			return true;
 		}
-
 		return false;
 	}
 }

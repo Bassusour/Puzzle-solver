@@ -57,27 +57,18 @@ public class MenuController {
 			"PieceList03", "PieceList04", "Classic-003-005-1331", "Classic-003-005-4813", "Classic-003-005-8825",
 			"Classic-005-008-4343", "Classic-005-008-4858", "Classic-005-008-7076", "Classic-008-015-0314",
 			"Classic-008-015-2625", "Classic-008-015-8137", "Classic-040-060-3882", "Spejlvendt", "checkIdentical",
-			"puzzle_01_manual", "puzzle_02_auto", "puzzle_03_manual", "puzzle_04_auto", "puzzle_05_auto", "puzzle_11_auto",
-			"puzzle_12_auto", "Unsolveable"};
+			"puzzle_01_manual", "puzzle_02_auto", "puzzle_03_manual", "puzzle_04_auto", "puzzle_05_auto",
+			"puzzle_11_auto", "puzzle_12_auto", "Unsolveable" };
 
 	public void playButtonPushed(ActionEvent event) throws IOException {
-
-//		Parent canvasParent = Main.canvas;	
-//		Scene canvasScene = Main.sceneCanvas;
-//		Node source = (Node) event.getSource();
-//		Stage window = (Stage) source.getScene().getWindow();
-//		CanvasController.getPane().getChildren().clear();
 		CanvasController.setPuzzle("Puzzles/" + getSelectedPuzzle() + ".json");
 		View.window.setScene(View.sceneCanvas);
 		View.window.show();
 		View.window.centerOnScreen();
-
 	}
 
 	public void filterList(String oldValue, String newValue) {
-
 		ObservableList<String> items = FXCollections.observableArrayList();
-
 		if ((textField == null) || (newValue == null)) {
 			listView.setItems(items);
 		} else {
@@ -89,17 +80,9 @@ public class MenuController {
 			}
 			listView.setItems(items);
 		}
-
 	}
 
 	public void initialize() {
-
-//		playButton.setOnAction(new EventHandler<ActionEvent>() {
-//		    @Override public void handle(ActionEvent e) {
-//		        System.out.println("Puzzles/" + getSelectedPuzzle() + ".json");
-//		    }
-//		});
-
 		textField.textProperty().addListener(new ChangeListener<Object>() {
 			public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
 				filterList((String) oldValue, (String) newValue);
@@ -113,9 +96,7 @@ public class MenuController {
 				});
 
 		randomButton.selectedProperty().set(true);
-
 		listView.getItems().addAll(puzzleList);
-
 	}
 
 	public String getSelectedPuzzle() {

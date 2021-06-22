@@ -11,18 +11,12 @@ import javafx.stage.Stage;
 
 
 public class View {
-//	private static int width = 1000;
-//	private static int height = 600;
-//	private Pane pane;
 	private Stage stage;
-	
 	public static Stage window;
 	public static Scene sceneMenu;
 	public static Scene sceneCanvas;
-	
 	private FXMLLoader loaderMenu;
 	private FXMLLoader loaderCanvas;
-	
 	private Parent parentMenu;
 	private Parent parentCanvas;
 	
@@ -31,12 +25,6 @@ public class View {
 	}
 	
 	public void setView() throws IOException {
-//		pane.getChildren().add(groups);
-//		Scene scene = new Scene(pane, width, height);
-//		stage.setScene(scene);
-//		stage.setTitle("test");
-//		stage.show();
-		
 		window = stage;
 		
 		loaderMenu = new FXMLLoader(getClass().getResource("Menu.fxml"));
@@ -51,9 +39,5 @@ public class View {
 		window.setScene(sceneMenu);
 		window.setTitle("Puzzle");
 		window.show();
-		
 	}
-	
-	
-	
 }

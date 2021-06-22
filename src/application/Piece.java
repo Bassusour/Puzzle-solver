@@ -21,7 +21,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	private ArrayList<Point2D> points = new ArrayList<Point2D>();
 	private ArrayList<Double> lengths = new ArrayList<Double>();
 	private ArrayList<Point2D> matchingPoints = new ArrayList<Point2D>();
-	
 	private double OriginalCenterX;
 	private double OriginalCenterY;
 	
@@ -75,24 +74,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		avg = avg / (this.getStaticPoints().size() / 2);
 		return avg;
 	}
-	
-//	public double getLocalCenterX() {
-//		double avg = 0;
-//		for (int i = 0; i < this.getPoints().size(); i += 2) {
-//			avg += this.getPoints().get(i);
-//		}
-//		avg = avg / (this.getPoints().size() / 2);
-//		return avg;
-//	}
-//	
-//	public double getLocalCenterY() {
-//		double avg = 0;
-//		for (int i = 1; i < this.getPoints().size()-1; i += 2) {
-//			avg += this.getPoints().get(i);
-//		}
-//		avg = avg / (this.getPoints().size() / 2);
-//		return avg;
-//	}
 
 	public double getCenterY() {
 		double avg = 0;
@@ -118,7 +99,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		
 		//Calculate and save the lengths between points
 		setLengths(noOfLines);
-		
 		while(!closeEnough(sumOfAngles, expectedSumOfAngles)) {
 			for (int i = 0; i < noOfLines; i++) {
 				//If wrong order, start over with correct order
@@ -178,24 +158,16 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		
 		//Re-order array, so the first element corresponds to the smallest value of the angle
 		unorderedAngles = angles.clone();
-//		System.out.println(this.getNumber());
-//		System.out.println("before: " + Arrays.toString(angles));
-		//ArrayList<Double> tmpLengths = new ArrayList<Double>(lengths);
 		if(!reverseOrder) {
 			for(int i = 0; i < noOfLines; i++) {
 				angles[i] = unorderedAngles[(indexOfSV+i)%noOfLines];
-				//lengths.set(i, tmpLengths.get((indexOfSV+i)%noOfLines));
 			}
 		} else {
 			for(int i = 0; i < noOfLines; i++) {
 				int negMod = Math.floorMod(-i, noOfLines);
 				angles[negMod] = unorderedAngles[(indexOfSV+i)%noOfLines];
-				//lengths.set(negMod, tmpLengths.get((indexOfSV+i)%noOfLines));
 			}
 		}
-//		System.out.println("after: " + Arrays.toString(angles));
-//		System.out.println();
-	
 	}
 	
 	public static boolean closeEnough(double v1, double v2) {
@@ -214,7 +186,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 	}
 	
 	public ArrayList<Point2D> getPointList() {
-		//System.out.println("points size is " + this.points);
 		return this.points;
 	}
 	
@@ -312,13 +283,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
             
             this.points.get(i/2).setLocation(newX, newY);
         }
-		
-//		System.out.println("Points before: " + this.getPointList().toString());
-		
-//		updatePieceRotate(this.getRotate());
-		
-//		System.out.println("Points after: " + this.getPointList().toString());
-		
 	}
 	
 	public void updateGroupRotate2(double degrees, Group group) {
@@ -342,8 +306,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
 
             newX += this.getLayoutBounds().getCenterX();
             newY += this.getLayoutBounds().getCenterY();
-            
-          
             
             this.points.get(i/2).setLocation(newX, newY);
         }
@@ -373,10 +335,6 @@ public class Piece extends Polygon implements Comparable<Piece>{
             
             this.getStaticPoints().set(i, newX);
             this.getStaticPoints().set(i + 1, newY);
-            
-//            this.points.get(i/2).setLocation(newX, newY);
         }
 	}
-
-
 }
