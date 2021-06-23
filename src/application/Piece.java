@@ -66,6 +66,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		this.OriginalCenterY = centerY;
 	}
 
+	// Victor A.
 	public double getCenterX() {
 		double avg = 0;
 		for (int i = 0; i < this.getStaticPoints().size(); i += 2) {
@@ -75,6 +76,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		return avg;
 	}
 
+	// Victor A.
 	public double getCenterY() {
 		double avg = 0;
 		for (int i = 1; i < this.getStaticPoints().size(); i += 2) {
@@ -84,6 +86,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		return avg;
 	}
 
+	// Victor A.
 	public void setPoints(ObservableList<Double> list) {
 		for (int i = 0; i < list.size(); i += 2) {
 			this.points.add(new Point2D.Double(list.get(i), list.get(i+1)));
@@ -91,6 +94,8 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		calculateValues(list);
 	}
 	
+	// Bastian P.
+	// Calculates angles and sides
 	private void calculateValues(ObservableList<Double> list) {
 		int noOfLines = list.size()/2;
 		int expectedSumOfAngles = 180*(noOfLines-2);
@@ -98,7 +103,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		angles = new double[noOfLines];
 		
 		//Calculate and save the lengths between points
-		setLengths(noOfLines);
+		calculateLengths(noOfLines);
 		while(!closeEnough(sumOfAngles, expectedSumOfAngles)) {
 			for (int i = 0; i < noOfLines; i++) {
 				//If wrong order, start over with correct order
@@ -170,6 +175,8 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		}
 	}
 	
+	// Bastian P.
+	// Fixes rounding error
 	public static boolean closeEnough(double v1, double v2) {
 	    if(Math.abs(v1 - v2) <= 1e-5) {
 	    	return true;
@@ -193,6 +200,8 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		return unorderedAngles;
 	}
 
+	// Bastian P.
+	// Compare two pieces with each other (and see if they are identical)
 	@Override
 	public int compareTo(Piece p) {
 		if(closeEnough(p.sumOfLengths, this.sumOfLengths) && closeEnough(p.sumOfAngles, this.sumOfAngles)) {
@@ -214,7 +223,8 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		return -1;
 	}
 	
-	private void setLengths(int noOfLines) {
+	// Bastian P.
+	private void calculateLengths(int noOfLines) {
 		lengths.clear();
 		sumOfLengths = 0;
 		for (int i = 0; i < noOfLines; i++) {			
@@ -228,6 +238,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		points.set(index, element);
 	}
 
+	// Victor A.
 	public void updatePoints(double translatex, double translatey) {
 		for (int i = 0; i < this.getPointList().size(); i++) {
 			this.points.get(i).setLocation(this.getPointList().get(i).getX() + translatex,
@@ -235,6 +246,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
 		}
 	}
 
+	// Victor A. + Victor W.
 	public void updatePointsRotate(double degrees) {
 		double sin;
 		double cos;
@@ -258,6 +270,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
         }
 	}
 	
+	// Victor A. + Victor W.
 	public void updateGroupRotate(double degrees, Group group) {
 		double sin;
 		double cos;
@@ -286,6 +299,8 @@ public class Piece extends Polygon implements Comparable<Piece>{
         }
 	}
 	
+	// Victor A. + Victor W.
+	// Update pieces in group (as previously) but without translating
 	public void updateGroupRotate2(double degrees, Group group) {
 		double sin;
 		double cos;
@@ -312,6 +327,7 @@ public class Piece extends Polygon implements Comparable<Piece>{
         }
 	}
 	
+	// Victor A. + Victor W.
 	public void updatePieceRotate(double degrees) {
 		double sin;
 		double cos;

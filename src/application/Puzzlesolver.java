@@ -23,24 +23,29 @@ public class Puzzlesolver {
 	private boolean[][] allMatchingPieces;
 	private Point2D[][][] matchingPoints;
 	private JSONReader js;
-	private CanvasController canvasController;
+	private GameController canvasController;
 	private boolean start = true;
 	private ArrayList<Integer> matchNumberQueue = new ArrayList<Integer>();
 
-	public Puzzlesolver(CanvasController canvasController) {
-		js = CanvasController.getReader();
+	// Bastian P. + Victor A.
+	public Puzzlesolver(GameController canvasController) {
+		js = GameController.getReader();
 		puzzle = js.getPuzzle();
+		// Number of sides each piece has to match with
 		sideMatch = js.getMatches() - 1;
-//		twoMatchingPieces = new int[2];
+		// Array to keep track of all matching pair of pieces
 		allMatchingPieces = new boolean[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()];
+		// Array to keep track of 6 matching points for all pairs of matching pieces
 		matchingPoints = new Point2D[(int) puzzle.getNoOfPieces()][(int) puzzle.getNoOfPieces()][6];
 		this.canvasController = canvasController;
+		// Queue to keep track of what piece to match, starting with piece 0
 		matchNumberQueue.add(0);
 	}
 
+	// Bastian P. + Victor A.
 	public void solvePuzzle(boolean hint, boolean solve) throws IllegalArgumentException {
+		// Checks if puzzle information has already been calculated
 		if (!solved) {
-			System.out.println("not solved");
 			// Loop for current piece
 			for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 				Piece currPiece = puzzle.getPiece(i);
@@ -66,7 +71,7 @@ public class Puzzlesolver {
 										if (!currPiece.getParent().getChildrenUnmodifiable().contains(otherPiece)
 												|| !otherPiece.getParent().getChildrenUnmodifiable()
 														.contains(currPiece)) {
-
+											// If only check if solvable, do not spend time to rotate pieces
 											if (!solve) {
 												Group A = (Group) currPiece.getParent();
 												Group B = (Group) otherPiece.getParent();
@@ -79,7 +84,7 @@ public class Puzzlesolver {
 												}
 											}
 
-											// p1 match p2, p3 match p4...)
+											// Save 6 matching points for 2 matching pieces
 											Point2D point1 = currPiece.getPointList().get(j + 1);
 											Point2D point2 = otherPiece.getPointList().get(h + sideMatch - 1);
 											Point2D point3 = currPiece.getPointList().get(j);
@@ -89,21 +94,23 @@ public class Puzzlesolver {
 													.get((j + 2) % currPiece.getPointList().size());
 											Point2D point6 = otherPiece.getPointList()
 													.get((h + sideMatch - 2) % otherPiece.getPointList().size());
-
-											allMatchingPieces[i][k] = true;
 											matchingPoints[i][k][0] = point1;
 											matchingPoints[i][k][1] = point2;
 											matchingPoints[i][k][2] = point3;
 											matchingPoints[i][k][3] = point4;
 											matchingPoints[i][k][4] = point5;
 											matchingPoints[i][k][5] = point6;
+											//save that these two pieces are matching
+											allMatchingPieces[i][k] = true;
 										}
 									}
 								}
 							}
+							// Shifts all elements 1 to the left
 							shift(otherLengths);
 						}
 					}
+					// Shifts all emenets 1 to the left
 					shift(currLenghts);
 				}
 			}
@@ -111,12 +118,10 @@ public class Puzzlesolver {
 		}
 
 		if (solve) {
-			
-			
 			if(matchNumberQueue.isEmpty()) {
 				return;
 			}
-			// Matches the first point
+			// Matches all single pieces to group
 			for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 				int currNum = matchNumberQueue.get(0);
 				for (int j = 0; j < puzzle.getNoOfPieces(); j++) {
@@ -129,9 +134,10 @@ public class Puzzlesolver {
 							Piece currPiece = puzzle.getPiece(currNum);
 							Piece otherPiece = puzzle.getPiece(j);
 							
-							// adds to queue
+							// Adds to queue
 							matchNumberQueue.add(j);
 							
+							// If hint, only get first pair of matching pieces, color the group, and return
 							if (hint) {
 								System.out.println("currPiece is " + currPiece.getNumber() + " and otherPiece is " + otherPiece.getNumber());
 								for (int k = 0; k < currPiece.getParent().getChildrenUnmodifiable().size(); k++) {
@@ -144,39 +150,23 @@ public class Puzzlesolver {
 								}
 								return;
 							}
-
 							
-
 							ArrayList<Point2D> points = new ArrayList<Point2D>();
 							for (int h = 0; h < 6; h++) {
 								points.add(matchingPoints[currNum][j][h]);
 							}
+							// Matches points visually
 							canvasController.powerMatchPoints(otherPiece, currPiece, points);
 						}
 					}
 				}
+				// Removes piece from queue
 				if (matchNumberQueue.size() > 0) {
 					matchNumberQueue.remove(0);
 				}
 			}
 
-//			double maxX = 0.0;
-//			double maxY = 0.0;
-//
-//			for (int i = 0; i < js.getPuzzle().getNoOfPieces(); i++) {
-//				double currX = js.getPuzzle().getPiece(i).getTranslateX();
-//				double currY = js.getPuzzle().getPiece(i).getTranslateY();
-//
-//				if (Math.abs(currX) > Math.abs(maxX)) {
-//					maxX = currX;
-//				}
-//				if (Math.abs(currY) > Math.abs(maxY)) {
-//					maxY = currY;
-//				}
-//			}
-//			puzzle.getPiece(0).getParent().setTranslateX(0);
-//			puzzle.getPiece(0).getParent().setTranslateY(0);
-
+			// Centers puzzle after solved
 			puzzle.getPiece(0).getParent()
 					.setTranslateX(500 - puzzle.getPiece(0).getParent().getLayoutBounds().getCenterX());
 			puzzle.getPiece(0).getParent()
@@ -185,6 +175,7 @@ public class Puzzlesolver {
 
 	}
 
+	// Bastian P.
 	public void giveHint() {
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			if (puzzle.getPiece(i).getFill() == Color.LIGHTBLUE) {
@@ -194,6 +185,7 @@ public class Puzzlesolver {
 		solvePuzzle(true, true);
 	}
 
+	// Bastian P.
 	public boolean solveable() throws IllegalArgumentException {
 		boolean returnValue = true;
 		solvePuzzle(false, false);
@@ -207,6 +199,7 @@ public class Puzzlesolver {
 			}
 		}
 
+		//Restets puzzle after check if solvable
 		for (int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			if (puzzle.getPiece(i).getParent() == null) {
 				continue;
@@ -214,7 +207,6 @@ public class Puzzlesolver {
 			((Group) puzzle.getPiece(i).getParent()).getChildren().clear();
 		}
 		try {
-			// Restarts the puzzle
 			canvasController.puzzleSetup(canvasController.getFilename());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -222,6 +214,8 @@ public class Puzzlesolver {
 		return returnValue;
 	}
 
+	// Bastian P. + Victor A.
+	// Checks if lenghts for two pieces
 	private boolean closeEnoughLists(List<Double> list1, List<Double> list2) {
 		for (int i = 0; i < list1.size(); i++) {
 			if (Piece.closeEnough(list1.get(i), list2.get(i))) {
@@ -233,6 +227,7 @@ public class Puzzlesolver {
 		return true;
 	}
 
+	// Bastian P. + Victor A.
 	private ArrayList<Double> shift(ArrayList<Double> a) {
 		int n = a.size();
 		double temp = a.get(0);
@@ -243,6 +238,7 @@ public class Puzzlesolver {
 		return a;
 	}
 
+	// Bastian P. + Victor A.
 	private boolean checkMiddleAngles(Piece p1, Piece p2, int j, int h) {
 		double[] p1Angles = p1.getUnorderedAngles();
 		double[] p2Angles = p2.getUnorderedAngles();

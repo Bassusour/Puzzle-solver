@@ -1,12 +1,9 @@
 package application;
 
 import java.io.IOException;
-
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 
@@ -24,18 +21,22 @@ public class View {
 		this.stage = stage;
 	}
 	
+	// Victor W.
 	public void setView() throws IOException {
 		window = stage;
 		
+		// Loads the relevant FXML files
 		loaderMenu = new FXMLLoader(getClass().getResource("Menu.fxml"));
-		loaderCanvas = new FXMLLoader(getClass().getResource("Canvas.fxml"));
+		loaderCanvas = new FXMLLoader(getClass().getResource("Game.fxml"));
 		
 		parentMenu = loaderMenu.load();
 		parentCanvas = loaderCanvas.load();
 		
+		// Creates the scenes
 		sceneMenu = new Scene(parentMenu);
 		sceneCanvas = new Scene(parentCanvas);
 		
+		// Displays the scenes
 		window.setScene(sceneMenu);
 		window.setTitle("Puzzle");
 		window.show();

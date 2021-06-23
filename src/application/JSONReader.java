@@ -21,11 +21,11 @@ public class JSONReader {
 	private int maxNoCorners = 0;
 	private long noOfPieces;
 
+	// Victor A. + Victor W.
 	public JSONReader(String filename) {
 		this.file = filename;
 		JSONParser parser = new JSONParser();
 		try {
-			System.out.println(file);
 			Object obj = parser.parse(new FileReader(file));
 			JSONObject jsonObject = (JSONObject) obj;
 
@@ -35,32 +35,25 @@ public class JSONReader {
 			if (start.equals("Pu") && !file.contains("PieceList") && !file.contains("checkIdentical")) {
 				JSONObject puzzles = (JSONObject) jsonObject.get("puzzle");
 				JSONArray formArray = (JSONArray) puzzles.get("form");
-
-				Iterator<JSONObject> formIterator = formArray.iterator();
-				while (formIterator.hasNext()) {
-					JSONObject corners = (JSONObject) formIterator.next();
-					JSONObject coordinate = (JSONObject) corners.get("coord");
-
-					double x = (double) coordinate.get("x") * 100;
-					double y = (double) coordinate.get("y") * 100;
-					puzzle.getPoints().addAll(x, y);
-
-					name = (String) jsonObject.get("name");
-					name = name.substring(0, name.length() - 5);
-					puzzle.setName(name);
-				}
+				
 			}
 
 			noOfPieces = (long) jsonObject.get("no. of pieces");
 			puzzle.setNoOfPieces(noOfPieces); 
 
 			JSONArray pieceArray = (JSONArray) jsonObject.get("pieces");
+			
+			// Goes through all pieces
+			
 			Iterator<JSONObject> pieceIterator = pieceArray.iterator();
 
 			while (pieceIterator.hasNext()) {
 				JSONObject pieces = pieceIterator.next();
 				Piece piece = new Piece();
 				JSONArray cornerArray = (JSONArray) pieces.get("corners");
+				
+				// Goes through all corners
+				
 				Iterator<JSONObject> cornerIterator = cornerArray.iterator();
 				int counter = 0;
 
@@ -79,6 +72,7 @@ public class JSONReader {
 				puzzle.addPieceToArray(piece);
 			}
 
+			// Calculates the required number of matches for the puzzle (assumptions are made here)
 			if (start.equals("Pu") && !file.contains("PieceList") && !file.contains("checkIdentical")
 					&& !file.contains("Spejlvendt")) {
 				if (noOfPieces < 3) {
@@ -96,6 +90,7 @@ public class JSONReader {
 		}
 	}
 
+	// Victor W.
 	public void setFile(String input) {
 		if (input == null) {
 			file = "Puzzles/Puzzle-1r-2c-0995.json";

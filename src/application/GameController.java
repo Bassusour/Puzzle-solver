@@ -57,8 +57,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
-public class CanvasController {
-	
+public class GameController {
 	
 	@FXML private MenuBar menuBar;
 	@FXML private Pane pane;
@@ -88,6 +87,7 @@ public class CanvasController {
 	
 	public final static Color DEFAULT_COLOR = Color.BISQUE;
 	
+	// Bastian P.
 	public void solvePuzzle() {
 		if(solveable()) {
 			try {
@@ -100,6 +100,7 @@ public class CanvasController {
 		}
 	}
 	
+	// Bastian P.
 	public boolean solveable() {
 		try {
 			return puzzlesolver.solveable();
@@ -109,15 +110,12 @@ public class CanvasController {
 		}
 	}
 	
+	// Bastian P.
 	public void puzzleHint() {
 		puzzlesolver.giveHint();
-//		try {
-//			puzzlesolver.giveHint();
-//		} catch (Exception e) {
-//			System.out.println("Puzzle broke an assumption");
-//		}
 	}
 	
+	// Bastian P. + Victor A.
 	public void showIdenticalPieces() {
 		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			puzzle.getPiece(i).setFill(DEFAULT_COLOR);
@@ -133,9 +131,6 @@ public class CanvasController {
 			}
 		}
 		
-		int green = 0;
-		int red = 0;
-		
 		for(int i = 0; i < puzzle.getNoOfPieces(); i++) {
 			if(puzzle.getPiece(i).getFill() == DEFAULT_COLOR) {
 				puzzle.getPiece(i).setFill(Color.color(Math.random(), Math.random(), Math.random()));
@@ -150,22 +145,32 @@ public class CanvasController {
 		}
 	}
 	
+	// Victor W.
+	// Shows solvable indicator in the graphical interface
+	// And hides unsolvable indicator
 	public void showSolvable() {
 		solvable.setOpacity(1);
 		notSolvable.setOpacity(0);
 	}
 	
+	// Victor W.
+	// Shows unsolvable indicator in the graphical interface
+	// And hides solvable indicator
 	public void showNotSolvable() {
 		solvable.setOpacity(0);
 		notSolvable.setOpacity(1);
 	}
 	
+	// Victor W.
 	public void backToMenuButtonPushed(ActionEvent event) throws IOException {
 		View.window.setScene(View.sceneMenu);
 		View.window.show();
 		View.window.centerOnScreen();
 	}
 	
+	// Victor W.
+	// Uses a SceneChanged listener to set the chosen puzzle up and display it on screen
+	// Also clears the scene after a scene change to avoid having the previous puzzle show up before the new one has loaded
 	public void initialize() throws IOException {
 		 View.window.sceneProperty().addListener(new ChangeListener<Scene>() {
 			 @Override
@@ -195,7 +200,10 @@ public class CanvasController {
 		filename = input;
 	}
 	
+	// Victor W.
 	public void puzzleSetup(String file) throws IOException {
+		
+		// All the necessary objects and variables
 		reader = new JSONReader(file);
 		puzzle = reader.getPuzzle();
 		amountOfCorners = reader.getMatches();
@@ -210,7 +218,11 @@ public class CanvasController {
 			piece.setStaticPoints();
 			initializePiece(piece, pane);
 		}
+		
+		// New instance of the puzzlesolver
 		puzzlesolver = new Puzzlesolver(this);
+		
+		// Places all the generated pieces in approximately the middle of the screen
 		
 		Object[] children = groups.getChildren().toArray();
 		
@@ -229,6 +241,7 @@ public class CanvasController {
 		}
 	}
 
+	// Bastian P. + Victor A. + Victor W.
 	private void initializePiece(Piece piece, Pane pane) {
 		piece.setStroke(Color.LIGHTGRAY);
 		piece.setCursor(Cursor.HAND);
@@ -274,6 +287,7 @@ public class CanvasController {
 					// Position of piece wrt. picked up position
 					deltaTX = originalTX + deltaX;
 					deltaTY = originalTY + deltaY;
+					
 					piece.getParent().setTranslateX(deltaGX);
 					piece.getParent().setTranslateY(deltaGY);
 				}
@@ -293,6 +307,8 @@ public class CanvasController {
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY) {
 					
+					// Updates all point lists for the selected group
+					
 					Group parent = (Group) piece.getParent();
 					
 					for (Object element : parent.getChildren().toArray()) {
@@ -301,6 +317,8 @@ public class CanvasController {
 										   event.getSceneY() - originalY);
 					}
 
+					// Checks if a match has been detected
+					
 					if (!groups.getChildren().contains(piece)) {
 						
 						for (Piece element : puzzle.getPieces()) {
@@ -322,7 +340,10 @@ public class CanvasController {
 
 				} else if (event.getButton() == MouseButton.SECONDARY) {
 
+					// Updates all the point lists (in terms of rotation) in the selected group
+					
 					Group parent = (Group) piece.getParent();
+					
 					for (Object element : parent.getChildren().toArray()) {
 						Piece piece = (Piece) element;
 						piece.updateGroupRotate(parent.getRotate(), parent);
@@ -336,6 +357,7 @@ public class CanvasController {
 		groups.getChildren().add(group);
 	}
 
+	// Victor A. + Victor W.
 	public void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
 	
 		if(!puzzle.getSnapable()) {	
@@ -343,7 +365,10 @@ public class CanvasController {
 		}
 		
 		int matches = 0;
+		
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
+		
+		// Finds the pairs of point that are in close proximity to each other
 		for (Point2D pointA : a.getPointList()) {
 			for (Point2D pointB : b.getPointList()) {
 				if (pointA.getX() < pointB.getX() + snap_range) {
@@ -362,17 +387,19 @@ public class CanvasController {
 			}
 		}
 		
+		// Found a piece match
 		if (matches == threshold) {
+			
 			Group A = (Group) a.getParent();
 			Group B = (Group) b.getParent();
 			
-			//Already same group
+			// Pieces are already in same group (should not match them again)
 			if (A == B) { return; }
 			
 			a.updatePointsRotate(a.getRotate());
 			b.updatePointsRotate(b.getRotate());
 			
-			//Distances between matching points in each piece
+			// Distances between matching points in each piece
 			double[] distances = new double[amountOfCorners];
 			
 			boolean notEqualDistances = true;
@@ -380,10 +407,11 @@ public class CanvasController {
 			double dy = 0;
 			double rot = 0;
 			
+			// Attempts to find the correct rotation for the match
 			while (notEqualDistances && rot <= 360) {
 
 				for (int i = 0; i < amountOfCorners * 2; i = i + 2) {
-					//Distances are calculated
+					// Distances are calculated
 					dx = points.get(i + 1).getX() - points.get(i).getX();
 					dy = points.get(i + 1).getY() - points.get(i).getY();
 					distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
@@ -393,6 +421,7 @@ public class CanvasController {
 				
 				for (int i = 0; i < distances.length - 1; i ++) {
                     if (Math.abs(distances[i] - distances[i + 1]) > 0.1) {
+                    	// Updates points in regards to rotation
                         a.setRotate(rot);
                     	a.updateGroupRotate2(rot, A);
                         notEqualDistances = true;
@@ -402,6 +431,7 @@ public class CanvasController {
 				rot += 0.1;
 			}
 			
+			// Adds them into the new group with correct position
 			for (Object element : A.getChildren().toArray()) {
 				Piece piece = (Piece) element;
 				double newX = piece.getTranslateX() + dx;
@@ -412,10 +442,12 @@ public class CanvasController {
 				if (piece != a) {
 					piece.setRotate(a.getRotate() + piece.getRotate());
 				} 
+				
 				A.getChildren().remove(piece);
 				B.getChildren().add(piece);
 			}
 			
+			// Fixes the pieces rotation
 			for (Object element : B.getChildren().toArray()) {
 				Piece piece = (Piece) element;
 				if (piece == a) {
@@ -423,6 +455,7 @@ public class CanvasController {
 				} 
 			}
 			
+			// Updates the points again
 			for (Object element : B.getChildren().toArray()) {
 				Piece piece = (Piece) element;
 				piece.updateGroupRotate(B.getRotate(), B);
@@ -430,6 +463,7 @@ public class CanvasController {
 			
 			groups.getChildren().remove(A);
 
+			// Resets color in the case that a hint was used
 			if(a.getFill() == Color.LIGHTBLUE && b.getFill() == Color.LIGHTBLUE) {
 				for(int i = 0; i < a.getParent().getChildrenUnmodifiable().size(); i++) {
 					((Shape) a.getParent().getChildrenUnmodifiable().get(i)).setFill(DEFAULT_COLOR);
@@ -438,14 +472,17 @@ public class CanvasController {
 		}
 	}
 	
+	// Bastian P. + (Victor W.)
+	// Redundant code. Actually a re-use of the previous method above, but with slight differences. 
+	// Used for the puzzlesolving algorithm to match points automatically.
+	// Had we a bit more time, we would have standardized the method as to not have the redundant code here.
 	public void powerMatchPoints(Piece a, Piece b, ArrayList<Point2D> points) {
 		Group A = (Group) a.getParent();
 		Group B = (Group) b.getParent();
 		
 		a.updatePointsRotate(a.getRotate());
 		b.updatePointsRotate(b.getRotate());
-		
-		//Distances between points in each piece
+
 		double[] distances = new double[3];
 		
 		boolean notEqualDistances = true;
@@ -454,14 +491,13 @@ public class CanvasController {
 		double dy = 0;
 		double rot = 0;
 		
-		//Distances should be same when orientation fits
 		while (notEqualDistances) {
 			if(rot == 360) {
 				break;
 			}
 			
 			for (int i = 0; i < 6; i+=2) {
-				//Distances are calculated
+
 				dx = points.get(i).getX() - points.get(i+1).getX();
 				dy = points.get(i).getY() - points.get(i+1).getY();
 				distances[i/2] = Math.sqrt(Math.pow(Math.abs(dx), 2) + Math.pow(Math.abs(dy), 2));
@@ -525,6 +561,6 @@ public class CanvasController {
 	}
 	
 	public static void setGroups(Group groups) {
-		CanvasController.groups = groups;
+		GameController.groups = groups;
 	}
 }

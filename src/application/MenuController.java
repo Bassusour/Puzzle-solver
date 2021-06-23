@@ -26,26 +26,25 @@ import javafx.stage.Window;
 
 public class MenuController {
 
-	@FXML
-	private ListView<String> listView;
-	@FXML
-	private TextField searchField;
-	@FXML
-	private RadioButton randomButton;
-	@FXML
-	private Button playButton;
+	@FXML private ListView<String> listView;
+	@FXML private TextField searchField;
+	@FXML private RadioButton randomButton;
+	@FXML private Button playButton;
 
 	private Scene scene;
-	
-	public ArrayList<String> puzzleList = new ArrayList<String>(); 
+	private ArrayList<String> puzzleList = new ArrayList<String>(); 
 
+	// Victor W.
+	// Changes the scene to the game window and loads the selected puzzle
 	public void playButtonPushed(ActionEvent event) throws IOException {
-		CanvasController.setPuzzle("Puzzles/" + getSelectedPuzzle());
+		GameController.setPuzzle("Puzzles/" + getSelectedPuzzle());
 		View.window.setScene(View.sceneCanvas);
 		View.window.show();
 		View.window.centerOnScreen();
 	}
 
+	// Victor W.
+	// Creates the functional search bar for the puzzle list
 	public void filterList(String oldValue, String newValue) {
 		ObservableList<String> items = FXCollections.observableArrayList();
 
@@ -62,6 +61,7 @@ public class MenuController {
 		}
 	}
 
+	// Victor W.
 	public void initialize() {
 		
 		File folder = new File("Puzzles");
@@ -71,12 +71,14 @@ public class MenuController {
 			puzzleList.add(file.getName());
 		}
 
+		// Updates the search bar
 		searchField.textProperty().addListener(new ChangeListener<Object>() {
 			public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
 				filterList((String) oldValue, (String) newValue);
 			}
 		});
 
+		// Updates the list
 		listView.getSelectionModel().selectedItemProperty()
 				.addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
 					String selectedItems = listView.getSelectionModel().getSelectedItem();
@@ -87,6 +89,7 @@ public class MenuController {
 		listView.getItems().addAll(puzzleList);
 	}
 
+	// Victor W.
 	public String getSelectedPuzzle() {
 		String selectedPuzzle;
 		if (randomButton.isSelected() || listView.getSelectionModel().getSelectedItem() == null) {
@@ -99,6 +102,7 @@ public class MenuController {
 		return selectedPuzzle;
 	}
 
+	// Victor W.
 	public Scene getScene() {
 		return scene;
 	}
