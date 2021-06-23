@@ -299,23 +299,6 @@ public class CanvasController {
 						piece.updatePoints(event.getSceneX() - originalX, 
 										   event.getSceneY() - originalY);
 					}
-
-					for (Object element : groups.getChildren().toArray()) {
-
-					                        Group group = (Group) element;
-
-					                        for (Object things : group.getChildren().toArray()) {
-
-					                            Piece piece = (Piece) things;
-					                            for (Point2D point : piece.getPointList()) {
-					                                Circle circle = new Circle(point.getX(), point.getY(), 5);
-					                                pane.getChildren().add(circle);
-
-					                            }
-
-					                        }
-
-					                    }
 					
 					if (!groups.getChildren().contains(piece)) {
 						
