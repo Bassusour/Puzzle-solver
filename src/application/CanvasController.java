@@ -110,11 +110,12 @@ public class CanvasController {
 	}
 	
 	public void puzzleHint() {
-		try {
-			puzzlesolver.giveHint();
-		} catch (Exception e) {
-			System.out.println("Puzzle broke an assumption");
-		}
+		puzzlesolver.giveHint();
+//		try {
+//			puzzlesolver.giveHint();
+//		} catch (Exception e) {
+//			System.out.println("Puzzle broke an assumption");
+//		}
 	}
 	
 	public void showIdenticalPieces() {
@@ -299,7 +300,7 @@ public class CanvasController {
 						piece.updatePoints(event.getSceneX() - originalX, 
 										   event.getSceneY() - originalY);
 					}
-					
+
 					if (!groups.getChildren().contains(piece)) {
 						
 						for (Piece element : puzzle.getPieces()) {
@@ -337,7 +338,7 @@ public class CanvasController {
 
 	public void matchPoints(Piece a, Piece b, int threshold, int snap_range) {
 	
-		if(!puzzle.getSolveable()) {	
+		if(!puzzle.getSnapable()) {	
 			return;
 		}
 		
